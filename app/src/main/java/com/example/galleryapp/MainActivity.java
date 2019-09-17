@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.galleryapp.Camera.CameraActivity;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Util.ClearEditText;
 import com.gun0912.tedpermission.PermissionListener;
@@ -27,7 +28,7 @@ import com.gun0912.tedpermission.TedPermission;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private RecyclerView RV_HashTagList;
     private HashTagAdapter hashTagAdapter;
     private ClearEditText ET_SearchHashTag;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity{
         BT_Album.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, GalleryFragment.class));
+                startActivity(new Intent(MainActivity.this, CameraActivity.class));
             }
         });
 
