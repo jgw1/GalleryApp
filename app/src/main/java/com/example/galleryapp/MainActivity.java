@@ -1,19 +1,28 @@
 package com.example.galleryapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Util.ClearEditText;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +30,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
     private RecyclerView RV_HashTagList;
     private HashTagAdapter hashTagAdapter;
-    private EditText ET_SearchHashTag;
+    private ClearEditText ET_SearchHashTag;
+    private Button BT_Album;
     ArrayList<String> AL_HashTagList = new ArrayList<>();
-    int a = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +42,18 @@ public class MainActivity extends AppCompatActivity{
 
         ET_SearchHashTag = findViewById(R.id.edittext);
         RV_HashTagList = findViewById(R.id.hashtaglist);
+        BT_Album = findViewById(R.id.button2);
+        BT_Album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, GalleryFragment.class));
+            }
+        });
+
 
         hashTagAdapter = new HashTagAdapter(getApplicationContext(),AL_HashTagList);
         RV_HashTagList.setAdapter(hashTagAdapter);
+
 
 
 
@@ -50,7 +69,7 @@ public class MainActivity extends AppCompatActivity{
                 {
                     Toast.makeText(getApplicationContext(),"로그인 성공",Toast.LENGTH_SHORT).show();
                     AL_HashTagList.add(ET_SearchHashTag.getText().toString());
-                    a++;
+
                     hashTagAdapter.notifyDataSetChanged();
                     Log.d("AGAG",""+AL_HashTagList);
 
@@ -61,10 +80,14 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-
+        ET_SearchHashTag.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ET_SearchHashTag.setSelection(0,ET_SearchHashTag.length());
+                return true;
+            }
+        });
 
     }
 
-
-    //엔터키 눌렀을때 item 생성
 }
