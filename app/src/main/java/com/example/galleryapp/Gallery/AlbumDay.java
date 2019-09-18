@@ -67,7 +67,7 @@ public class AlbumDay extends Fragment {
         this.databaseAccess = DatabaseAccess.getInstance(getContext());
         allSampleData = new ArrayList<>();
         databaseAccess.open();
-        allSampleData = databaseAccess.getAllMemos();
+        allSampleData = databaseAccess.getAllPictures();
         databaseAccess.close();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.GalleryDay.DayMotherModel;
@@ -18,6 +19,7 @@ public class DatabaseAccess {
     private SQLiteDatabase database;
     private DatabaseOpenHelper openHelper;
     private static volatile DatabaseAccess instance;
+    private Picture picture;
     private static DateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
     ArrayList<DayMotherModel> allSampleData = new ArrayList<>();
     String file_name;
@@ -75,7 +77,27 @@ public class DatabaseAccess {
         values.put("favorite",Favorite);
         database.update(DatabaseOpenHelper.TABLE, values, "date = ?", new String[]{PictureName});
     }
-
+    public void InsertData(Double longitude, Double latitude,String hashtag1,String hashtag2,String hashtag3){
+        instance.open();
+        Picture temp = new Picture();
+        if(picture == null) {
+            temp.setLatitude(latitude);
+            temp.setLongitude(longitude);
+            temp.setHashTag1(hashtag1);
+            temp.setHashTag2(hashtag2);
+            temp.setHashTag3(hashtag3);
+          instance.save(temp);
+        } else {
+            // Update the memo
+            temp.setLatitude(latitude);
+            temp.setLongitude(longitude);
+            temp.setHashTag1(hashtag1);
+            temp.setHashTag2(hashtag2);
+            temp.setHashTag3(hashtag3);
+            instance.update(picture);
+        }
+        instance.close();
+    }
     public String FileName(String longitude, String latitude){
         Cursor cursor = database.rawQuery("SELECT * From picture ORDER BY date DESC", null);
         cursor.moveToFirst();
@@ -103,7 +125,7 @@ public class DatabaseAccess {
     }
 
 
-    public ArrayList getAllMemos() {
+    public ArrayList getAllPictures() {
         allSampleData = new ArrayList<>();
         MD = new DayMotherModel();
         childDataModels = new ArrayList<>();

@@ -44,13 +44,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
 
     public CameraPreview(Context context, AppCompatActivity activity, int cameraID, SurfaceView surfaceView) {
         super(context);
-        AudioManager  mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
         Log.d("@@@", "Preview");
-
-
-
         mActivity = activity;
         mCameraID = cameraID;
         mSurfaceView = surfaceView;
@@ -295,7 +290,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
 
         mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
     }
-
 
     Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
         public void onShutter() {

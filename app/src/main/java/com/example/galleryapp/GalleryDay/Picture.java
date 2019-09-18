@@ -28,6 +28,26 @@ public class Picture {
     }
 
 
+    public void setHashTag1(String Hashtag1){
+        this.HashTag1=Hashtag1;
+    }
+    public String getHashTag1(){
+        return HashTag1;
+    }
+
+    public void setHashTag2(String Hashtag2){
+        this.HashTag2=Hashtag2;
+    }
+    public String getHashTag2(){
+        return HashTag2;
+    }
+
+    public void setHashTag3(String Hashtag3){
+        this.HashTag3=Hashtag3;
+    }
+    public String getHashTag3(){
+        return HashTag3;
+    }
 
     public void setLongitude(Double Longitude){
         this.Longitude=Longitude;
