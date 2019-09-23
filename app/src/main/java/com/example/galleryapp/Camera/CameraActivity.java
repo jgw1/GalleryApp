@@ -32,7 +32,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private static final String TAG = "android_camera_example";
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION};
     private static final int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK; // Camera.CameraInfo.CAMERA_FACING_FRONT
     private Context context;
     private SurfaceView surfaceView;
@@ -58,7 +58,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         mLayout = findViewById(R.id.layout_main);
         surfaceView = findViewById(R.id.camera_preview_main);
         final DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
-        customDialog = new CustomDialog(this,positiveListener,negativeListener);
+        customDialog = new CustomDialog(this);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
         surfaceView.setVisibility(GONE);
 
@@ -79,16 +79,18 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
             int cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
             int writeExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
+            int accessfineLocationPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION);
 
             if ( cameraPermission == PackageManager.PERMISSION_GRANTED
-                    && writeExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
+                    && writeExternalStoragePermission == PackageManager.PERMISSION_GRANTED &&
+             accessfineLocationPermission == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
 
 
             }else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
+                || ActivityCompat.shouldShowRequestPermissionRationale(this,REQUIRED_PERMISSIONS[2])) {
 
                     Snackbar.make(mLayout, "이 앱을 실행하려면 카메라와 외부 저장소 접근 권한이 필요합니다.",
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
@@ -159,7 +161,8 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             else {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2])) {
 
                     Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요. ",
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
@@ -186,29 +189,29 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             }
         }
     }
-    private View.OnClickListener positiveListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
-            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
-            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
-
-            String Hashtag1 = hashtag1.getText().toString();
-            String Hashtag2 = hashtag2.getText().toString();
-            String Hashtag3 = hashtag3.getText().toString();
-
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-            customDialog.dismiss();
-        }
-    };
-    private View.OnClickListener negativeListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),"","","");
-            customDialog.dismiss();
-        }
-    };
+//    private View.OnClickListener positiveListener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
+//            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
+//            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+//
+//            String Hashtag1 = hashtag1.getText().toString();
+//            String Hashtag2 = hashtag2.getText().toString();
+//            String Hashtag3 = hashtag3.getText().toString();
+//
+//            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
+//            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+//            customDialog.dismiss();
+//        }
+//    };
+//    private View.OnClickListener negativeListener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
+//            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),"","","");
+//            customDialog.dismiss();
+//        }
+//    };
 
 }
