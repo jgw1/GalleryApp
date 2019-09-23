@@ -7,14 +7,14 @@ import java.util.Date;
 public class Picture {
     private Date date;
     private int favorite = 0;
-    protected String HashTag1,HashTag2,HashTag3;
+    private String HashTag1,HashTag2,HashTag3,time;
     private boolean fullDisplayed;
     private static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm aaa");
     private Double Longitude,Latitude;
     private static DateFormat date_Format = new SimpleDateFormat("MM월 dd일");
 
-    public Picture(long time, Double longitude,Double latitude, Integer favorite,String HashTag1,String HashTag2,String HashTag3) {
-        this.date = new Date(time);
+    public Picture(String time, Double longitude,Double latitude, Integer favorite,String HashTag1,String HashTag2,String HashTag3) {
+        this.time = time;
         this.Longitude = longitude;
         this.Latitude = latitude;
         this.favorite = favorite;
@@ -24,7 +24,7 @@ public class Picture {
     }
 
     public Picture() {
-        this.date = new Date();
+        this.time = new String();
     }
 
 
@@ -65,12 +65,12 @@ public class Picture {
         return Longitude;
     }
 
-    public long getTime() {
-        return date.getTime();
+    public String getTime() {
+        return time;
     }
 
-    public void setTime(long time) {
-        this.date = new Date(time);
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public int getFavorite(){

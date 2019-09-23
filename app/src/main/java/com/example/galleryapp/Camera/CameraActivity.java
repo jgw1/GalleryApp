@@ -7,21 +7,29 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.Gallery.GalleryFragment;
+import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.CustomDialog;
+import com.example.galleryapp.Util.Thumbnail;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.view.View.GONE;
@@ -57,20 +65,27 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
         mLayout = findViewById(R.id.layout_main);
         surfaceView = findViewById(R.id.camera_preview_main);
-        final DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
-        customDialog = new CustomDialog(this);
+        databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
+        customDialog = new CustomDialog(this,positiveListener,negativeListener);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
         surfaceView.setVisibility(GONE);
 
         Button button = findViewById(R.id.button_main_capture);
-        button.setOnClickListener(new View.OnClickListener() {
+        ImageButton IB_GoToGallery = findViewById(R.id.GoToGallery);
+        ImageButton IB_FlipCamera = findViewById(R.id.FlipCamera);
 
-            @Override
-            public void onClick(View v) {
-                mCameraPreview.takePicture();
-                customDialog.show();
+        IB_GoToGallery.setOnClickListener(v-> {
+            startActivity(new Intent(this, GalleryFragment.class));
+        });
+        IB_FlipCamera.setOnClickListener(v-> {
+            startActivity(new Intent(this, OneImage.class));
+        });
+        button.setOnClickListener(v -> {
+            mCameraPreview.takePicture();
 
-            }
+
+            customDialog.show();
+
         });
 
 
@@ -189,29 +204,31 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             }
         }
     }
-//    private View.OnClickListener positiveListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
-//            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
-//            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
-//
-//            String Hashtag1 = hashtag1.getText().toString();
-//            String Hashtag2 = hashtag2.getText().toString();
-//            String Hashtag3 = hashtag3.getText().toString();
-//
-//            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-//            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-//            customDialog.dismiss();
-//        }
-//    };
-//    private View.OnClickListener negativeListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-//            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),"","","");
-//            customDialog.dismiss();
-//        }
-//    };
+    private View.OnClickListener positiveListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
+            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
+            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+
+            String Hashtag1 = hashtag1.getText().toString();
+            String Hashtag2 = hashtag2.getText().toString();
+            String Hashtag3 = hashtag3.getText().toString();
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
+            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            String file_name = file.getName();
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
+            databaseAccess.open();
+            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+            databaseAccess.close();
+            customDialog.dismiss();
+        }
+    };
+    private View.OnClickListener negativeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
 
 }

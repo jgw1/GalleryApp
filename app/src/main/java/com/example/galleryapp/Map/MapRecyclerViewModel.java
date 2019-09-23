@@ -1,14 +1,15 @@
-package com.example.galleryapp.GalleryDay;
+package com.example.galleryapp.Map;
 
-import java.io.Serializable;
-
-public class DayChildModel implements Serializable {
+public class MapRecyclerViewModel {
     private int thumbnail, Favorite;
     private String Filename,Hashtag1,Hashtag2,Hashtag3;
+    private Double Longitude,Latitude;
 
 
-    public DayChildModel(String Filename, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
+    public MapRecyclerViewModel(String Filename,Double Longitude,Double Latitude, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
         this.Filename = Filename;
+        this.Longitude = Longitude;
+        this.Latitude = Latitude;
         this.Hashtag1 = Hashtag1;
         this.Hashtag2 = Hashtag2;
         this.Hashtag3 = Hashtag3;
@@ -21,6 +22,21 @@ public class DayChildModel implements Serializable {
 
     public void setFavorite(int favorite) {
         Favorite = favorite;
+    }
+    public Double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        Longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        Latitude = latitude;
     }
 
     public String getFilename() {

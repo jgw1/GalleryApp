@@ -30,12 +30,9 @@ public class GalleryFragment extends AppCompatActivity {
         pager.setAdapter(new pagerAdapter(getSupportFragmentManager()));
         pager.setCurrentItem(0);
 
-        View.OnClickListener movePageListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int tag = (int) view.getTag();
-                pager.setCurrentItem(tag);
-            }
+        View.OnClickListener movePageListener = view -> {
+            int tag = (int) view.getTag();
+            pager.setCurrentItem(tag);
         };
 
         NewAlbumDay.setOnClickListener(movePageListener);
@@ -58,9 +55,9 @@ public class GalleryFragment extends AppCompatActivity {
             switch(position)
             {
                 case 0:
-                    return new AlbumDay();
-                case 1:
                     return new AlbumTotal();
+                case 1:
+                    return new AlbumDay();
                 case 2:
                     return new AlbumMap();
                 case 3:

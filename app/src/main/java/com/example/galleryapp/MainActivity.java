@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.galleryapp.Camera.CameraActivity;
 import com.example.galleryapp.DB.DatabaseAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
+import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.Util.ClearEditText;
 import com.example.galleryapp.Util.CustomDialog;
@@ -45,16 +46,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        customDialog = new CustomDialog(MainActivity.this);
-        final DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
         ET_SearchHashTag = findViewById(R.id.edittext);
         RV_HashTagList = findViewById(R.id.hashtaglist);
         BT_Album = findViewById(R.id.button2);
         BT_Album.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                customDialog.show();
-                //                startActivity(new Intent(MainActivity.this, CameraActivity.class));
+                startActivity(new Intent(MainActivity.this, GalleryFragment.class));
             }
         });
 
@@ -97,29 +95,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private View.OnClickListener positiveListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
-            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
-            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
 
-            String Hashtag1 = hashtag1.getText().toString();
-            String Hashtag2 = hashtag2.getText().toString();
-            String Hashtag3 = hashtag3.getText().toString();
-
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-            customDialog.dismiss();
-        }
-    };
-    private View.OnClickListener negativeListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),"","","");
-            customDialog.dismiss();
-        }
-    };
 
 }

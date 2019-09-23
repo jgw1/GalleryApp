@@ -1,9 +1,12 @@
 package com.example.galleryapp.Gallery;
 
+import android.app.Activity;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Picture;
 import android.location.Address;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +40,22 @@ public class AlbumDay extends Fragment {
     ArrayList<DayMotherModel> allSampleData;
     DayMotherModel MD = new DayMotherModel();
     ArrayList<DayChildModel> childDataModels = new ArrayList<>();
-    Long prevtime = null;
+    Activity activity;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        allSampleData = new ArrayList<>();
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        if (context  instanceof Activity){
+            activity = (Activity) context;
+        }
+
+    }
     public AlbumDay()
     {
         // required
@@ -64,14 +83,22 @@ public class AlbumDay extends Fragment {
         NewAlbumTotal = view.findViewById(R.id.NewAlbumTotal);
         NewAlbumMap = view.findViewById(R.id.NewAlbumMap);
         NewAlbumFavorite = view.findViewById(R.id.NewAlbumFavorite);
-        this.databaseAccess = DatabaseAccess.getInstance(getContext());
+        this.databaseAccess = DatabaseAccess.getInstance(activity);
         allSampleData = new ArrayList<>();
         databaseAccess.open();
-        allSampleData = databaseAccess.getAllPictures();
+        allSampleData = databaseAccess.getDataForGallery();
+        for(int i =0 ;i<allSampleData.size() ;i++){
+            if(allSampleData.get(i).getHeaderTitle() == null){
+                allSampleData.remove(i);
+            }
+        }
+
         databaseAccess.close();
+        Log.d("GWGW","SIZE : " + allSampleData.size());
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);
         DayMotherAdapter adapter = new DayMotherAdapter(getContext(),allSampleData);
+
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
     }

@@ -33,18 +33,19 @@ public class CustomDialog extends Dialog {
     private CustomDialog customDialog;
     private Context mContext;
     private View.OnClickListener mPositiveListener,mNegativeListener;
-
-    public CustomDialog(@NonNull Activity activity) {
+    private ArrayList<String> arrayList;
+    public CustomDialog(@NonNull Activity activity,View.OnClickListener mPositiveListener,View.OnClickListener mNegativeListener) {
         super(activity);
         this.activity=activity;
+        this.mPositiveListener = mPositiveListener;
+        this.mNegativeListener = mNegativeListener;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+        databaseAccess = DatabaseAccess.getInstance(activity);
         //다이얼로그 밖의 화면은 흐리게 만들어줌
-        customDialog = new CustomDialog(activity);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.8f;
@@ -64,55 +65,48 @@ public class CustomDialog extends Dialog {
         hashtag2.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         hashtag3.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-        hashtag3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if(actionId == EditorInfo.IME_ACTION_DONE)
-                {
-                    EditText hashtag1 = findViewById(R.id.hashtag1);
-                    EditText hashtag2 = findViewById(R.id.hashtag2);
-                    EditText hashtag3 = findViewById(R.id.hashtag3);
-
-                    String Hashtag1 = hashtag1.getText().toString();
-                    String Hashtag2 = hashtag2.getText().toString();
-                    String Hashtag3 = hashtag3.getText().toString();
-
-                    ArrayList<Double> LatLng = Location.GetCurrentLocation(activity.getApplicationContext());
-                    databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-                    customDialog.dismiss();
-                    return true;
-                }
-                return false;
-            }
-        });
+//        hashtag3.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+//            if(actionId == EditorInfo.IME_ACTION_DONE)
+//            {
+//                EditText hashtag1 = findViewById(R.id.hashtag1);
+//                EditText hashtag2 = findViewById(R.id.hashtag2);
+//                EditText hashtag3 = findViewById(R.id.hashtag3);
+//
+//                String Hashtag1 = hashtag1.getText().toString();
+//                String Hashtag2 = hashtag2.getText().toString();
+//                String Hashtag3 = hashtag3.getText().toString();
+//
+//                ArrayList<Double> LatLng = Location.GetCurrentLocation(activity.getApplicationContext());
+//                databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+//
+//                return true;
+//            }
+//            return false;
+//        });
 
         mPositiveButton.setOnClickListener(mPositiveListener);
         mNegativeButton.setOnClickListener(mNegativeListener);
     }
-    private View.OnClickListener positiveListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
-            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
-            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+    private ArrayList<String> DialogInformation(){
+        arrayList = new ArrayList<>();
 
-            String Hashtag1 = hashtag1.getText().toString();
-            String Hashtag2 = hashtag2.getText().toString();
-            String Hashtag3 = hashtag3.getText().toString();
+        EditText hashtag1 = findViewById(R.id.hashtag1);
+        EditText hashtag2 = findViewById(R.id.hashtag2);
+        EditText hashtag3 = findViewById(R.id.hashtag3);
 
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
-            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-            customDialog.dismiss();
-        }
-    };
-    private View.OnClickListener negativeListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
-            databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),"","","");
-            customDialog.dismiss();
-        }
-    };
+        String Hashtag1 = hashtag1.getText().toString();
+        String Hashtag2 = hashtag2.getText().toString();
+        String Hashtag3 = hashtag3.getText().toString();
+        ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
+
+        arrayList.add(0,String.valueOf(LatLng.get(0)));
+        arrayList.add(1,String.valueOf(LatLng.get(1)));
+        arrayList.add(2,Hashtag1);
+        arrayList.add(3,Hashtag2);
+        arrayList.add(4,Hashtag3);
+        return arrayList;
+    }
+
 
 
 }

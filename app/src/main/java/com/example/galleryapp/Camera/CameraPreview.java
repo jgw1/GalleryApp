@@ -337,7 +337,11 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
     };
 
 
+    public static String setFileName(){
+        String time = String.valueOf(System.currentTimeMillis());
+        return time;
 
+    }
     private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
         @Override
@@ -351,8 +355,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
                 if (!path.exists()) {
                     path.mkdirs();
                 }
-
-                String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                String time =  CameraPreview.setFileName();
+                String fileName = time + ".jpg";
+//                String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                Log.d("time","Preview TIME = " + time);
                 File outputFile = new File(path, fileName);
 
                 outStream = new FileOutputStream(outputFile);

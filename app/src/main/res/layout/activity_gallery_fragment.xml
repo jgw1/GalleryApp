@@ -85,7 +85,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
 
-                android:background="#00000000" />
+                android:background="#00000000"
+                android:src="@mipmap/ic_launcher_round" />
 
         </RelativeLayout>
 
@@ -100,7 +101,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
 
-                android:background="#00000000" />
+                android:background="#00000000"
+                android:src="@mipmap/ic_launcher_round" />
 
         </RelativeLayout>
 
@@ -115,7 +117,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
 
-                android:background="#00000000" />
+                android:background="#00000000"
+                android:src="@mipmap/ic_launcher_round" />
 
         </RelativeLayout>
 
@@ -129,7 +132,8 @@
                 android:id="@+id/NewAlbumFavorite"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="#00000000" />
+                android:background="#00000000"
+                android:src="@mipmap/ic_launcher_round" />
 
         </RelativeLayout>
 
