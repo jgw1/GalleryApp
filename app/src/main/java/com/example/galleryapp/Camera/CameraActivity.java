@@ -22,7 +22,6 @@ import android.widget.ImageButton;
 
 import com.example.galleryapp.DB.DatabaseAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
-import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.CustomDialog;
@@ -77,9 +76,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         IB_GoToGallery.setOnClickListener(v-> {
             startActivity(new Intent(this, GalleryFragment.class));
         });
-        IB_FlipCamera.setOnClickListener(v-> {
-            startActivity(new Intent(this, OneImage.class));
-        });
+
         button.setOnClickListener(v -> {
             mCameraPreview.takePicture();
 

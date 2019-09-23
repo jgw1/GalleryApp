@@ -1,6 +1,10 @@
 package com.example.galleryapp.Map;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galleryapp.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MapRecyclerViewAdapter extends RecyclerView.Adapter<MapRecyclerViewAdapter.ViewHolder> {
@@ -30,7 +35,22 @@ public class MapRecyclerViewAdapter extends RecyclerView.Adapter<MapRecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull MapRecyclerViewAdapter.ViewHolder holder, int position) {
- /*       final String thumbnail =  mDataset.get(position).getHeaderTitle();
+        String file_name = mDataset.get(position).getFilename();
+        File outputFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest/",file_name+".jpg");
+        holder.imageView.setImageURI(Uri.fromFile(outputFile));
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent inty = new Intent(mContext, OneImage.class);
+                inty.putExtra("position",position);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("List",mDataset);
+                inty.putExtras(bundle);
+                mContext.startActivity(inty);
+            }
+        });
+
+        /*       final String thumbnail =  mDataset.get(position).getHeaderTitle();
 
         if(thumbnail != "")
         {

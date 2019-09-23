@@ -22,6 +22,9 @@ public class DatabaseAccess {
     private static volatile DatabaseAccess instance;
     private Picture picture;
     private static DateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
+    private String hashtag1,hashtag2,hashtag3;
+    private Double Longit,latit;
+    private int favorite;
     ArrayList<DayMotherModel> allSampleData = new ArrayList<>();
     String file_name;
     DayMotherModel MD = new DayMotherModel();
@@ -110,7 +113,7 @@ public class DatabaseAccess {
         }
         instance.close();
     }
-    public String FileName(String longitude, String latitude){
+    public MapRecyclerViewModel getDataForMap(String longitude, String latitude){
         Cursor cursor = database.rawQuery("SELECT * From picture ORDER BY date DESC", null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast())
@@ -122,37 +125,24 @@ public class DatabaseAccess {
             String Latitude = String.valueOf(Latit);
 
             if((longitude.equals(Longitude)) & (latitude.equals(Latitude))){
-                Long fn = cursor.getLong(0);
-                file_name = String.valueOf(fn);
+                file_name = cursor.getString(0);
+                Longit = cursor.getDouble(1);
+                latit = cursor.getDouble(2);
+                favorite = cursor.getInt(3);
+                hashtag1 = cursor.getString(4);
+                hashtag2 = cursor.getString(5);
+                hashtag3 = cursor.getString(6);
+
                 //                Log.d("HAHAHA","Success");
                 cursor.close();
-                return file_name;
+                return new MapRecyclerViewModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite);
             }
             else{
                 cursor.moveToNext();
             }
         }
         cursor.close();
-        return file_name;
-    }
-
-    public ArrayList getDataForMap(){
-        mapRecyclerViewModels = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * From picture ORDER BY date DESC", null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()){
-            String file_name = cursor.getString(0);
-            Double longitude = cursor.getDouble(1);
-            Double latitude = cursor.getDouble(2);
-            Integer favorite = cursor.getInt(3);
-            String hashtag1 = cursor.getString(4);
-            String hashtag2 = cursor.getString(5);
-            String hashtag3 = cursor.getString(6);
-            mapRecyclerViewModels.add(new MapRecyclerViewModel(file_name,longitude,latitude,hashtag1,hashtag2,hashtag3,favorite));
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return childDataModels;
+        return new MapRecyclerViewModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite);
     }
 
     public ArrayList getDataForGallery() {

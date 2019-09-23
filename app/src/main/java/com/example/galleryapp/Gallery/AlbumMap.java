@@ -183,9 +183,8 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 //                if((a!=0)&(b!=0)){
 //                    mapRecyclerViewModels.add(new MapRecyclerViewModel("SUCCESS"));
 //                }
-                String File_name = databaseAccess.FileName(String.valueOf(a),String.valueOf(b));
-                mapRecyclerViewModels.add(new MapRecyclerViewModel(File_name));
-                Log.d("HAHAHA","File_name : " + File_name);
+                mapRecyclerViewModels.add(databaseAccess.getDataForMap(String.valueOf(b),String.valueOf(a)));
+
             }
 
             databaseAccess.close();
