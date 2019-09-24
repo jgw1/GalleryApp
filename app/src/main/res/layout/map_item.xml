@@ -8,5 +8,5 @@
         android:id="@+id/map_item"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
+        android:scaleType="fitXY"/>
 </LinearLayout>

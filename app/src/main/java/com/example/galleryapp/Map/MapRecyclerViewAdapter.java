@@ -13,16 +13,19 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.galleryapp.Gallery.GalleryModel;
+import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.GalleryAppCode;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class MapRecyclerViewAdapter extends RecyclerView.Adapter<MapRecyclerViewAdapter.ViewHolder> {
-    private ArrayList<MapRecyclerViewModel> mDataset;
+    private ArrayList<GalleryModel> mDataset;
     private Context mContext;
 
-    public MapRecyclerViewAdapter(Context context, ArrayList<MapRecyclerViewModel> allSampleData) {
+    public MapRecyclerViewAdapter(Context context, ArrayList<GalleryModel> allSampleData) {
         this.mContext = context;
         this.mDataset = allSampleData;
     }
@@ -35,16 +38,17 @@ public class MapRecyclerViewAdapter extends RecyclerView.Adapter<MapRecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull MapRecyclerViewAdapter.ViewHolder holder, int position) {
+
         String file_name = mDataset.get(position).getFilename();
-        File outputFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest/",file_name+".jpg");
+        File outputFile = new File(GalleryAppCode.Path,file_name);
         holder.imageView.setImageURI(Uri.fromFile(outputFile));
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent inty = new Intent(mContext, OneImage.class);
-                inty.putExtra("position",position);
+                inty.putExtra(GalleryAppCode.Position,position);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("List",mDataset);
+                bundle.putSerializable(GalleryAppCode.GalleryList,mDataset);
                 inty.putExtras(bundle);
                 mContext.startActivity(inty);
             }

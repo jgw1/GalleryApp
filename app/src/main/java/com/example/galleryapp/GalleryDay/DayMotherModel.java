@@ -1,17 +1,19 @@
 package com.example.galleryapp.GalleryDay;
 
+import com.example.galleryapp.Gallery.GalleryModel;
+
 import java.util.ArrayList;
 
 public class DayMotherModel {
     private String headerTitle;
     private String shotaddress;
-    private ArrayList<DayChildModel> allItemsInSection;
+    private ArrayList<GalleryModel> allItemsInSection;
 
 
     public DayMotherModel() {
 
     }
-    public DayMotherModel(String headerTitle,String shotaddress, ArrayList<DayChildModel> allItemsInSection) {
+    public DayMotherModel(String headerTitle,String shotaddress, ArrayList<GalleryModel> allItemsInSection) {
         this.headerTitle = headerTitle;
         this.shotaddress = shotaddress;
         this.allItemsInSection = allItemsInSection;
@@ -33,11 +35,11 @@ public class DayMotherModel {
         this.headerTitle = headerTitle;
     }
 
-    public ArrayList<DayChildModel> getAllItemsInSection() {
+    public ArrayList<GalleryModel> getAllItemsInSection() {
         return allItemsInSection;
     }
 
-    public void setAllItemsInSection(ArrayList<DayChildModel> allItemsInSection) {
+    public void setAllItemsInSection(ArrayList<GalleryModel> allItemsInSection) {
         this.allItemsInSection = allItemsInSection;
     }
 }

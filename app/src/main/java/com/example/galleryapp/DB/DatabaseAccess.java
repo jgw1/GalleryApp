@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.GalleryDay.DayMotherModel;
 import com.example.galleryapp.GalleryDay.Picture;
@@ -28,7 +29,7 @@ public class DatabaseAccess {
     ArrayList<DayMotherModel> allSampleData = new ArrayList<>();
     String file_name;
     DayMotherModel MD = new DayMotherModel();
-    ArrayList<DayChildModel> childDataModels = new ArrayList<>();
+    ArrayList<GalleryModel> childDataModels = new ArrayList<>();
     ArrayList<MapRecyclerViewModel> mapRecyclerViewModels = new ArrayList<>();
     Long prevtime = Long.valueOf(0);
 
@@ -113,36 +114,24 @@ public class DatabaseAccess {
         }
         instance.close();
     }
-    public MapRecyclerViewModel getDataForMap(String longitude, String latitude){
+    public ArrayList getDataForMap(){
+        ArrayList<GalleryModel> DataFromDatabase = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT * From picture ORDER BY date DESC", null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast())
         {
-            double Long = cursor.getDouble(1);
-            String Longitude = String.valueOf(Long);
-
-            double Latit = cursor.getDouble(2);
-            String Latitude = String.valueOf(Latit);
-
-            if((longitude.equals(Longitude)) & (latitude.equals(Latitude))){
-                file_name = cursor.getString(0);
-                Longit = cursor.getDouble(1);
-                latit = cursor.getDouble(2);
-                favorite = cursor.getInt(3);
-                hashtag1 = cursor.getString(4);
-                hashtag2 = cursor.getString(5);
-                hashtag3 = cursor.getString(6);
-
-                //                Log.d("HAHAHA","Success");
-                cursor.close();
-                return new MapRecyclerViewModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite);
-            }
-            else{
-                cursor.moveToNext();
-            }
+            file_name = cursor.getString(0);
+            Longit = cursor.getDouble(1);
+            latit = cursor.getDouble(2);
+            favorite = cursor.getInt(3);
+            hashtag1 = cursor.getString(4);
+            hashtag2 = cursor.getString(5);
+            hashtag3 = cursor.getString(6);
+            DataFromDatabase.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
+            cursor.moveToNext();
         }
         cursor.close();
-        return new MapRecyclerViewModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite);
+        return DataFromDatabase;
     }
 
     public ArrayList getDataForGallery() {
@@ -155,24 +144,37 @@ public class DatabaseAccess {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
 
-            long time = cursor.getLong(0);
+            Long time = cursor.getLong(0);
+
+            file_name = cursor.getString(0);
+            Longit = cursor.getDouble(1);
+            latit = cursor.getDouble(2);
+            favorite = cursor.getInt(3);
+            hashtag1 = cursor.getString(4);
+            hashtag2 = cursor.getString(5);
+            hashtag3 = cursor.getString(6);
+
+
+            Log.d("GWGWGWGWGWGW","time " + time);
 //            Date a = new Date(time);
             String currentTitle = dateFormat.format(new Date(time));
             String title = dateFormat.format(new Date(prevtime));
-            String file_name = String.valueOf(time);
+
+
+            Log.d("GWGWGWGWGWGW","file_name " + file_name);
 
             if (!currentTitle.equals(title)){
                 prevtime = time;
                 if(MD.getHeaderTitle() == null)
                 {
                     MD.setHeaderTitle(currentTitle);
-                    childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                    childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                 }
 
                 else{
                     if(cursor.isLast()){
                         if(currentTitle.equals(MD.getHeaderTitle())){
-                            childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                             MD.setAllItemsInSection(childDataModels);
                             allSampleData.add(MD);
                         }
@@ -183,7 +185,7 @@ public class DatabaseAccess {
                             MD = new DayMotherModel();
                             MD.setHeaderTitle(currentTitle);
                             childDataModels = new ArrayList<>();
-                            childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                             MD.setAllItemsInSection(childDataModels);
                             allSampleData.add(MD);
                         }
@@ -191,7 +193,7 @@ public class DatabaseAccess {
 
                     else{
                         if(currentTitle.equals(MD.getHeaderTitle())){
-                            childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                             MD.setAllItemsInSection(childDataModels);
                             allSampleData.add(MD);
                         }
@@ -202,7 +204,7 @@ public class DatabaseAccess {
                             MD = new DayMotherModel();
                             MD.setHeaderTitle(currentTitle);
                             childDataModels = new ArrayList<>();
-                            childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                         }
                     }
                 }
@@ -210,7 +212,7 @@ public class DatabaseAccess {
             }else{
                 if(cursor.isLast()){
                     if(currentTitle.equals(MD.getHeaderTitle())){
-                        childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                         MD.setAllItemsInSection(childDataModels);
                         allSampleData.add(MD);
                     }
@@ -222,14 +224,14 @@ public class DatabaseAccess {
                         MD = new DayMotherModel();
                         MD.setHeaderTitle(currentTitle);
                         childDataModels = new ArrayList<>();
-                        childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                         MD.setAllItemsInSection(childDataModels);
                         allSampleData.add(MD);
                     }
 
                 }else{
                     if(currentTitle.equals(MD.getHeaderTitle())){
-                        childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                     }
                     else{
                         MD.setAllItemsInSection(childDataModels);
@@ -237,7 +239,7 @@ public class DatabaseAccess {
                         MD = new DayMotherModel();
                         MD.setHeaderTitle(currentTitle);
                         childDataModels = new ArrayList<>();
-                        childDataModels.add(new DayChildModel(file_name,cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(3)));
+                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite));
                     }
                 }
             }

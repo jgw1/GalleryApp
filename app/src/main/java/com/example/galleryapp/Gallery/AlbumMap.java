@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,20 +26,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galleryapp.DB.DatabaseAccess;
-import com.example.galleryapp.GalleryDay.DayMotherAdapter;
 import com.example.galleryapp.Map.MapMarkerItem;
 import com.example.galleryapp.Map.MapRecyclerViewAdapter;
-import com.example.galleryapp.Map.MapRecyclerViewModel;
 import com.example.galleryapp.R;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.ClusterRenderer;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,10 +55,12 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private TextView tv_marker,position;
     private Context mContext;
     private DatabaseAccess databaseAccess;
-    private ArrayList<MapRecyclerViewModel> mapRecyclerViewModels;
+    private ArrayList<GalleryModel> mapClusterModel,mapModel;
     private LinearLayout linearLayout;
     private RecyclerView mapRecyclerView;
+    private int TotalClusterItem;
     private Activity activity;
+    ArrayList<GalleryModel> mapClusterItemModel;
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -82,6 +89,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         RelativeLayout layout = (RelativeLayout)inflater.inflate(R.layout.fragment_albummap,
 
                 container, false);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -92,8 +100,10 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         linearLayout = view.findViewById(R.id.menu);
         mapRecyclerView = view.findViewById(R.id.mapRecyclerView);
         position = view.findViewById(R.id.address);
+
         linearLayout.setVisibility(View.INVISIBLE);
-        mapRecyclerViewModels = new ArrayList<>();
+
+        mapClusterItemModel = new ArrayList<>();
 
         this.databaseAccess = DatabaseAccess.getInstance(mContext);
     }
@@ -105,7 +115,9 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return false;
+        CameraUpdate center = CameraUpdateFactory.newLatLng(marker.getPosition());
+        mMap.animateCamera(center);
+        return true;
     }
 
     @Override
@@ -113,9 +125,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap = googleMap;
         ClusterManager<MapMarkerItem> mClusterManager = new ClusterManager<>(activity,mMap);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.537523, 126.96558), 14));
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnMapClickListener(this);
+
 
         //위치값 받아 오는데 필요한 허가 확인
         final LocationManager lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
@@ -138,25 +148,72 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
 
 
-        // Custom 마커를 위해 Render setting
-//        ClusterRenderer renderer = new ClusterRenderer(mContext,mMap,mClusterManager);
-//        mClusterManager.setRenderer(renderer);
+        //Custom 마커를 위해 Render setting
 
         //선택 클러스터를 화면 중앙에 배치
         mMap.setOnCameraChangeListener(mClusterManager);
 
+        databaseAccess.open();
+        mapModel = databaseAccess.getDataForMap();
+        databaseAccess.close();
+
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 14));
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnMapClickListener(this);
 
         //결과확인을 위한 테스트용 세팅
-        for(int i = 0; i<50;i++){
-            double lat = 37.537523 + (i/200d);
-            double lng = 126.96558 + (i/200d);
-            mClusterManager.addItem(new MapMarkerItem((new LatLng(lat, lng)),"1"));
+        for(int i = 0; i<mapModel.size();i++){
+            double lat = mapModel.get(i).getLatitude();
+            double lng = mapModel.get(i).getLongitude();
+            mClusterManager.addItem(new MapMarkerItem((new LatLng(lat, lng))));
         }
-
         //전체 다 하나의 마커를 하나의 클러스터로 묶을 경우 사용
         mClusterManager.cluster();
 
         //클러스터 선택시 해당 주소와 그 이하의 섬네일 표시
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MapMarkerItem>() {
+            @Override
+            public boolean onClusterItemClick(MapMarkerItem mapMarkerItem) {
+
+
+                Geocoder mGeoCoder = new Geocoder(activity);
+                //섬네일 리스트 상단에 선택 클러스터 주소 표시
+                try {
+                    List<Address> mResultList = mGeoCoder.getFromLocation(mapMarkerItem.getPosition().latitude,mapMarkerItem.getPosition().longitude,1);
+                    position.setText(String.valueOf(mResultList.get(0).getAddressLine(0)));
+                    position.setTextColor(Color.WHITE);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+                double a = mapMarkerItem.getPosition().latitude;
+                double b = mapMarkerItem.getPosition().longitude;
+
+                linearLayout.setVisibility(View.VISIBLE);
+
+                for(int i = 0; i<mapModel.size();i++){
+                    double lat = mapModel.get(i).getLatitude();
+                    double lng = mapModel.get(i).getLongitude();
+                    if((a==lat) && (b ==lng))
+                        mapClusterItemModel.add(mapModel.get(i));
+                }
+                MapRecyclerViewAdapter itemListDataAdapter = new MapRecyclerViewAdapter(activity, mapClusterItemModel);
+                TotalClusterItem = mapClusterItemModel.size();
+                mapRecyclerView.setHasFixedSize(true);
+                mapRecyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+                mapRecyclerView.setAdapter(itemListDataAdapter);
+
+                return true;
+            }
+        });
+
+        ClusterRenderer renderer = new ClusterRenderer(activity,mMap,mClusterManager);
+        mClusterManager.setRenderer(renderer);
+
+
+
+
         mClusterManager.setOnClusterClickListener(cluster -> {
             Geocoder mGeoCoder = new Geocoder(activity);
             //섬네일 리스트 상단에 선택 클러스터 주소 표시
@@ -170,30 +227,108 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             }
 
 
-            databaseAccess.open();
+
             //선택 클러스터에 포함된 마커들 섬네일 표시
             for(ClusterItem clusterItem : cluster.getItems()){
                 double a = clusterItem.getPosition().latitude;
                 double b = clusterItem.getPosition().longitude;
 
                 linearLayout.setVisibility(View.VISIBLE);
-
-                //DB제작 이후 해당부분 업데이트 필요 - 현재는 테스트용으로 코딩함
-                // 위도,경도 받은 이후 DB 서치 -> 해당 섬네일 또는 경로ArrayList에 저장
-//                if((a!=0)&(b!=0)){
-//                    mapRecyclerViewModels.add(new MapRecyclerViewModel("SUCCESS"));
-//                }
-                mapRecyclerViewModels.add(databaseAccess.getDataForMap(String.valueOf(b),String.valueOf(a)));
-
+                for(int i = 0; i<mapModel.size();i++){
+                    double lat = mapModel.get(i).getLatitude();
+                    double lng = mapModel.get(i).getLongitude();
+                    if((a==lat) && (b ==lng))
+                        mapClusterModel.add(mapModel.get(i));
+                }
             }
 
-            databaseAccess.close();
-            MapRecyclerViewAdapter itemListDataAdapter = new MapRecyclerViewAdapter(mContext, mapRecyclerViewModels);
+            MapRecyclerViewAdapter itemListDataAdapter = new MapRecyclerViewAdapter(activity, mapClusterModel);
             mapRecyclerView.setHasFixedSize(true);
+            mapRecyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
             mapRecyclerView.setAdapter(itemListDataAdapter);
-            mapRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
-            mapRecyclerViewModels = new ArrayList<>();
+
+            mapClusterModel = new ArrayList<>();
             return false;
         });
+    }
+    public class ClusterRenderer extends DefaultClusterRenderer<MapMarkerItem> {
+        public ClusterRenderer(Context context, GoogleMap map, ClusterManager<MapMarkerItem> clusterManager) {
+            super(context, map, clusterManager);
+            activity  = (Activity) context;
+        }
+        @Override
+        //뭉치 마커 커스텀 해주는 부분
+        protected void onBeforeClusterRendered(Cluster<MapMarkerItem> cluster, MarkerOptions markerOptions){
+            final IconGenerator mClusterIconGenerator;
+            mClusterIconGenerator = new IconGenerator(activity);
+
+            //클러스터 디자인 설정
+            LayoutInflater myInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View activityview = myInflater.inflate(R.layout.view,null,false);
+            TextView textview = activityview.findViewById(R.id.textview);
+            ImageView imageView = activityview.findViewById(R.id.flag);
+//
+//            Bitmap bitmap = Thumbnail.MakeThumbnail("FullscreenActionBarStyle");
+
+            //해당 클러스터에 포함된 마커 개수들 표현
+            textview.setText(String.valueOf(cluster.getSize()));
+//            for(ClusterItem clusterItem : cluster.getItems()){
+//                Log.d("HAHAHA","GETITEMS"+clusterItem.getPosition());
+//            }
+
+//            textview.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
+            //해당 클러스터에 포함된 마커 개수들 표현 디자인 설정
+            textview.setTextColor(Color.BLACK);
+
+            textview.setTextSize(15f);
+            textview.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+            mClusterIconGenerator.setContentView(activityview);
+            // mClusterIconGenerator.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
+            mClusterIconGenerator.setTextAppearance(R.style.AppTheme_WhiteTextAppearance);
+            final Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+        }
+
+        //낱개 마커 커스텀 해주는 부분
+        @Override
+        protected void  onBeforeClusterItemRendered(MapMarkerItem markerItem, MarkerOptions markerOptions){
+            final IconGenerator mClusterIconGenerator;
+            mClusterIconGenerator = new IconGenerator(activity);
+
+            //클러스터 디자인 설정
+            LayoutInflater myInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View activityview = myInflater.inflate(R.layout.view,null,false);
+            TextView textview = activityview.findViewById(R.id.textview);
+            ImageView imageView = activityview.findViewById(R.id.flag);
+
+            //
+//            Bitmap bitmap = Thumbnail.MakeThumbnail("FullscreenActionBarStyle");
+
+            //해당 클러스터에 포함된 마커 개수들 표현
+
+//            for(ClusterItem clusterItem : cluster.getItems()){
+//                Log.d("HAHAHA","GETITEMS"+clusterItem.getPosition());
+//            }
+
+//            textview.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
+            //해당 클러스터에 포함된 마커 개수들 표현 디자인 설정
+            textview.setText(String.valueOf(TotalClusterItem));
+
+            textview.setTextColor(Color.BLACK);
+            Log.d("HAHAHA","TotalClusterItem" + TotalClusterItem);
+            Log.d("HAHAHA","markerItem" + markerItem.getLocation());
+            textview.setTextSize(15f);
+            textview.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+            mClusterIconGenerator.setContentView(activityview);
+            // mClusterIconGenerator.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
+            mClusterIconGenerator.setTextAppearance(R.style.AppTheme_WhiteTextAppearance);
+            final Bitmap icon = mClusterIconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+//            markerOptions.title("HAHAHA");
+        }
+
+
     }
 }

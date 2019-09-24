@@ -1,14 +1,14 @@
-package com.example.galleryapp.Map;
+package com.example.galleryapp.Gallery;
 
 import java.io.Serializable;
 
-public class MapRecyclerViewModel implements Serializable {
+public class GalleryModel implements Serializable {
     private int thumbnail, Favorite;
     private String Filename,Hashtag1,Hashtag2,Hashtag3;
     private Double Longitude,Latitude;
 
 
-    public MapRecyclerViewModel(String Filename,Double Longitude,Double Latitude, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
+    public GalleryModel(String Filename,Double Longitude,Double Latitude, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
         this.Filename = Filename;
         this.Longitude = Longitude;
         this.Latitude = Latitude;

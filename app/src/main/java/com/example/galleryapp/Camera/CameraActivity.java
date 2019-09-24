@@ -213,7 +213,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             String Hashtag3 = hashtag3.getText().toString();
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
-            String file_name = file.getName();
+            String file_name = file.getName().replace(".jpg","");
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
             databaseAccess.open();
             databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);

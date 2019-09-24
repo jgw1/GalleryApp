@@ -5,11 +5,10 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class MapMarkerItem implements ClusterItem {
     private LatLng location;
-    private String address;
 
-    public MapMarkerItem(LatLng location, String address) {
+
+    public MapMarkerItem(LatLng location) {
         this.location = location;
-        this.address = address;
     }
 
     public LatLng getLocation() {
@@ -18,14 +17,6 @@ public class MapMarkerItem implements ClusterItem {
 
     public void setLocation(LatLng location) {
         this.location = location;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public double getLat(){

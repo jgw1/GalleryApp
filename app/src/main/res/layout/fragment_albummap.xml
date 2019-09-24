@@ -16,13 +16,13 @@
         android:layout_height="match_parent" />
 
 
-
     <LinearLayout
         android:id="@+id/menu"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:background="@color/black_overlay"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/map"
         android:layout_alignParentBottom="true"
+        android:background="@color/black_overlay"
         android:orientation="vertical"
         android:weightSum="4">
 
@@ -44,6 +44,6 @@
             android:id="@+id/mapRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
     </LinearLayout>
 </RelativeLayout>
