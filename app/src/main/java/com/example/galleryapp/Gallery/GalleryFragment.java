@@ -29,7 +29,7 @@ public class GalleryFragment extends AppCompatActivity {
 
         pager.setAdapter(new pagerAdapter(getSupportFragmentManager()));
         pager.setCurrentItem(0);
-
+        pager.setOffscreenPageLimit(3);
         View.OnClickListener movePageListener = view -> {
             int tag = (int) view.getTag();
             pager.setCurrentItem(tag);

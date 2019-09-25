@@ -9,11 +9,14 @@ public class GalleryAppCode {
     // UI THREAD 해결 참고 - https://stackoverflow.com/questions/14678593/the-application-may-be-doing-too-much-work-on-its-main-thread
     // Image Filter 관련 : https://www.androidhive.info/2017/11/android-building-image-filters-like-instagram/
 
-    // 일정시간 동안 진행하기
-   /* long now = System.currentTimeMillis();
-    int runtime=5000;//in milliseconds
-do
-    {
-        //enter your code here
-    }while (now+runtime<System.currentTimeMillis());*/
+
+//    Image Filter 예시
+//    Bitmap.Config config = bitmap.getConfig();
+//    Bitmap newBitmap = bitmap.copy(config,true);
+//    Filter newFilter = FilterPack.getNightWhisperFilter(context);
+//    //                myFilter.addSubFilter(new BrightnessSubFilter(30));
+////                myFilter.addSubFilter(new ContrastSubFilter(1.1f));
+//    Bitmap outputImage = newFilter.processFilter(newBitmap);
+//                imageView.setImageBitmap(outputImage);
+
 }

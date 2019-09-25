@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.media.AudioManager;
+import android.hardware.camera2.CameraDevice;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -32,7 +32,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
     private int mCameraID;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
+
     private Camera mCamera;
+    private CameraDevice cameraDevice;
     private Camera.CameraInfo mCameraInfo;
     private int mDisplayOrientation;
     private List<Camera.Size> mSupportedPreviewSizes;
@@ -49,7 +51,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         mActivity = activity;
         mCameraID = cameraID;
         mSurfaceView = surfaceView;
-
 
         mSurfaceView.setVisibility(View.VISIBLE);
 

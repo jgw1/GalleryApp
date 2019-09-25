@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 
 import com.example.galleryapp.DB.DatabaseAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
+import com.example.galleryapp.MainActivity;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.CustomDialog;
@@ -76,7 +77,6 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         IB_GoToGallery.setOnClickListener(v-> {
             startActivity(new Intent(this, GalleryFragment.class));
         });
-
         button.setOnClickListener(v -> {
             mCameraPreview.takePicture();
 
@@ -213,7 +213,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             String Hashtag3 = hashtag3.getText().toString();
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
-            String file_name = file.getName().replace(".jpg","");
+            String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
             databaseAccess.open();
             databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);

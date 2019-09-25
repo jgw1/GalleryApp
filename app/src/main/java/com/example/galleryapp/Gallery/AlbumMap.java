@@ -126,7 +126,6 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         ClusterManager<MapMarkerItem> mClusterManager = new ClusterManager<>(activity,mMap);
 
 
-
         //위치값 받아 오는데 필요한 허가 확인
         final LocationManager lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -168,6 +167,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             double lng = mapModel.get(i).getLongitude();
             mClusterManager.addItem(new MapMarkerItem((new LatLng(lat, lng))));
         }
+        Log.d("GQGQGQ","AAFA" + mClusterManager.getMarkerCollection());
         //전체 다 하나의 마커를 하나의 클러스터로 묶을 경우 사용
         mClusterManager.cluster();
 
@@ -203,7 +203,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 mapRecyclerView.setHasFixedSize(true);
                 mapRecyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
                 mapRecyclerView.setAdapter(itemListDataAdapter);
-
+                mapClusterItemModel = new ArrayList<>();
                 return true;
             }
         });
@@ -313,9 +313,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
 //            textview.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
             //해당 클러스터에 포함된 마커 개수들 표현 디자인 설정
-            textview.setText(String.valueOf(TotalClusterItem));
-
-            textview.setTextColor(Color.BLACK);
+            textview.setText("");
             Log.d("HAHAHA","TotalClusterItem" + TotalClusterItem);
             Log.d("HAHAHA","markerItem" + markerItem.getLocation());
             textview.setTextSize(15f);

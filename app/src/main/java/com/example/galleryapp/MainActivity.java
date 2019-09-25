@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,9 +30,13 @@ import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.Util.ClearEditText;
 import com.example.galleryapp.Util.CustomDialog;
+import com.example.galleryapp.Util.GalleryAppCode;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.zomato.photofilters.FilterPack;
+import com.zomato.photofilters.imageprocessors.Filter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseAccess databaseAccess;
     private CustomDialog customDialog;
     private Button BT_Album;
+
     ArrayList<String> AL_HashTagList = new ArrayList<>();
 
     @Override
@@ -59,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         hashTagAdapter = new HashTagAdapter(getApplicationContext(),AL_HashTagList);
         RV_HashTagList.setAdapter(hashTagAdapter);
-
-
-
 
         RV_HashTagList.setLayoutManager(new GridLayoutManager(getApplicationContext(),6));
 
