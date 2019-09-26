@@ -63,7 +63,7 @@ public class MapRecyclerViewAdapter extends RecyclerView.Adapter<MapRecyclerView
             holder.imageView.setImageBitmap(bitmap);
         }
 
-        holder.imageView.setOnClickListener(view -> {
+        holder.imageView.setOnClickListener(clustermarker -> {
         Intent intent = new Intent(mContext, AlbumView.class);
         intent.putExtra("List", mDataset);-- 클러스터 내의 사진들만 돌려서 볼수 있게금 조성
         intent.putExtra("PicturePath", video.getPath()); -- 해당 경로 제공

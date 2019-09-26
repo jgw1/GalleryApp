@@ -58,7 +58,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(View view, Object object) {
         // object를 LinearLayout 형태로 형변환했을 때 view와 같은지 여부를 반환
-//        return view == ((LinearLayout)object); 으로 했을때 오류 나서 View 로 바꿈..
+//        return clustermarker == ((LinearLayout)object); 으로 했을때 오류 나서 View 로 바꿈..
         return view == ((View)object);
     }
 
@@ -76,7 +76,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         Bitmap bitmap = BitmapFactory.decodeFile(outputFile.getPath());
 
 
-        imageView.setImageBitmap(BitmapFactory.decodeFile(outputFile.getPath()));
+        imageView.setImageURI(Uri.fromFile(outputFile));
 
 
 

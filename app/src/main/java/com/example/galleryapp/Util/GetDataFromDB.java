@@ -9,7 +9,7 @@ import com.example.galleryapp.GalleryDay.DayMotherModel;
 
 import java.util.ArrayList;
 
-public class GetDataFromDB extends AsyncTask<String, Void, ArrayList<DayMotherModel>> {
+public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherModel>> {
     private DatabaseAccess databaseAccess;
     private ArrayList<DayMotherModel> DataForAlbumDay;
     private ArrayList<GalleryModel> DataForAlbumTotal;
@@ -17,14 +17,14 @@ public class GetDataFromDB extends AsyncTask<String, Void, ArrayList<DayMotherMo
     public GetDataFromDB(Activity activity){
         this.databaseAccess = DatabaseAccess.getInstance(activity);
     }
-    @Override
 
+    @Override
     protected  void onPreExecute(){
 
     }
 
     @Override
-    protected ArrayList<DayMotherModel> doInBackground(String... strings) {
+    protected ArrayList<DayMotherModel> doInBackground(Void... voids) {
         databaseAccess.open();
         DataForAlbumDay = databaseAccess.getDataForGallery();
         for(int i =0 ;i<DataForAlbumDay.size() ;i++){

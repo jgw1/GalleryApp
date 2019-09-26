@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    >
 
     <com.example.galleryapp.Util.ClearEditText
         android:id="@+id/edittext"

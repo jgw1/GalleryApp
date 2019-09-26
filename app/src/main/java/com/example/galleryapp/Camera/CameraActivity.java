@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,7 +21,6 @@ import android.widget.ImageButton;
 
 import com.example.galleryapp.DB.DatabaseAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
-import com.example.galleryapp.MainActivity;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.CustomDialog;
@@ -77,6 +75,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         IB_GoToGallery.setOnClickListener(v-> {
             startActivity(new Intent(this, GalleryFragment.class));
         });
+
         button.setOnClickListener(v -> {
             mCameraPreview.takePicture();
 
@@ -145,7 +144,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
     void startCamera(){
 
-        // Create the Preview view and set it as the content of this Activity.
+        // Create the Preview clustermarker and set it as the content of this Activity.
         mCameraPreview = new CameraPreview(this, this, CAMERA_FACING, surfaceView);
 
     }

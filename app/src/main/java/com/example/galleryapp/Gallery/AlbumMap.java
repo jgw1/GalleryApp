@@ -264,7 +264,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
             //클러스터 디자인 설정
             LayoutInflater myInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View activityview = myInflater.inflate(R.layout.view,null,false);
+            View activityview = myInflater.inflate(R.layout.clustermarker,null,false);
             TextView textview = activityview.findViewById(R.id.textview);
             ImageView imageView = activityview.findViewById(R.id.flag);
 //
@@ -298,7 +298,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
             //클러스터 디자인 설정
             LayoutInflater myInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View activityview = myInflater.inflate(R.layout.view,null,false);
+            View activityview = myInflater.inflate(R.layout.clustermarker,null,false);
             TextView textview = activityview.findViewById(R.id.textview);
             ImageView imageView = activityview.findViewById(R.id.flag);
 

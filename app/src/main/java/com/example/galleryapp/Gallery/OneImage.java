@@ -1,13 +1,12 @@
 package com.example.galleryapp.Gallery;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,20 +16,23 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.galleryapp.CompareFilter.CompareFilter;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.GalleryAppCode;
-import com.example.galleryapp.Util.OnSwipeTouchListener;
 import com.example.galleryapp.Util.ViewPagerAdapter;
 
 import java.util.ArrayList;
 
-public class OneImage extends AppCompatActivity {
-    private ImageButton IB_GalleryBack;
+import static com.example.galleryapp.Util.GalleryAppCode.GoToFilterPath;
+
+public class OneImage extends AppCompatActivity implements View.OnClickListener{
+
     private ImageView IV_GalleryImage;
     private LinearLayout ll_TopGalleryLayout,ll_BottomGalleryLayout;
     private ToggleButton TB_SetFavorite;
     private TextView TV_GalleryHashtag1,TV_GalleryHashtag2,TV_GalleryHashtag3;
-    private int InitPosition;
+    private ImageButton IB_CompareButton;
+    private int InitPosition, CurrentPosition;
     ViewPagerAdapter viewPagerAdapter;
     ViewPager viewPager;
     ArrayList<GalleryModel> ImageList;
@@ -70,6 +72,7 @@ public class OneImage extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void InitComponents(){
         viewPager = findViewById(R.id.view);
         ll_TopGalleryLayout = findViewById(R.id.OneImage_Topnavigation);
@@ -77,7 +80,7 @@ public class OneImage extends AppCompatActivity {
 
         ll_TopGalleryLayout.setVisibility(View.INVISIBLE);
         ll_BottomGalleryLayout.setVisibility(View.INVISIBLE);
-
+        IB_CompareButton = findViewById(R.id.CompareButton);
 
         TV_GalleryHashtag1 = findViewById(R.id.Gallery_Hashtag1);
         TV_GalleryHashtag2 = findViewById(R.id.Gallery_Hashtag2);
@@ -108,6 +111,7 @@ public class OneImage extends AppCompatActivity {
             }
             return false;
         });
+
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setCurrentItem(InitPosition);
 
@@ -119,5 +123,17 @@ public class OneImage extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.CompareButton:
+                CurrentPosition = viewPager.getCurrentItem();
+                String CurrentFile = ImageList.get(CurrentPosition).getFilename();
+                Intent intent = new Intent(this, CompareFilter.class);
+                intent.putExtra(GoToFilterPath,CurrentFile);
+                startActivity(intent);
+                break;
 
+        }
+    }
 }

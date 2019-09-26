@@ -1,4 +1,4 @@
-package com.example.galleryapp;
+package com.example.galleryapp.Util;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,8 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.galleryapp.R;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class HashTagAdapter extends RecyclerView.Adapter<HashTagAdapter.ViewHolder>{
     private ArrayList<String> mDataset;

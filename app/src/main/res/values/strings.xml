@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">GalleryApp</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyA2Ge-iofvC5Z9prHrYbyqMXjIkM6O5-vo </string>
+    <string name="filter_normal">Normal</string>
+    <string name="tab_filters">FILTERS</string>
 </resources>

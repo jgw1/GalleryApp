@@ -25,6 +25,7 @@ import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.GalleryDay.DayMotherAdapter;
 import com.example.galleryapp.GalleryDay.DayMotherModel;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.GetDataFromDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.List;
 public class AlbumDay extends Fragment {
     private RecyclerView mRecyclerView;
     SQLiteDatabase database;
+    private GetDataFromDB getDataFromDB;
     private DatabaseAccess databaseAccess;
     private Picture picture;
     DatabaseOpenHelper openHelper;
@@ -85,10 +87,8 @@ public class AlbumDay extends Fragment {
         NewAlbumFavorite = view.findViewById(R.id.NewAlbumFavorite);
 
         allSampleData = new ArrayList<>();
-        databaseAccess.open();
-        allSampleData = databaseAccess.getDataForGallery();
-
-        databaseAccess.close();
+        getDataFromDB = new GetDataFromDB(activity);
+        getDataFromDB.execute();
         Log.d("GWGW","SIZE : " + allSampleData.size());
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);
