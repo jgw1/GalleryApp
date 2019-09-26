@@ -83,15 +83,10 @@ public class AlbumDay extends Fragment {
         NewAlbumTotal = view.findViewById(R.id.NewAlbumTotal);
         NewAlbumMap = view.findViewById(R.id.NewAlbumMap);
         NewAlbumFavorite = view.findViewById(R.id.NewAlbumFavorite);
-        this.databaseAccess = DatabaseAccess.getInstance(activity);
+
         allSampleData = new ArrayList<>();
         databaseAccess.open();
         allSampleData = databaseAccess.getDataForGallery();
-        for(int i =0 ;i<allSampleData.size() ;i++){
-            if(allSampleData.get(i).getHeaderTitle() == null){
-                allSampleData.remove(i);
-            }
-        }
 
         databaseAccess.close();
         Log.d("GWGW","SIZE : " + allSampleData.size());
