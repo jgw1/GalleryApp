@@ -45,6 +45,8 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_filters_list,container,false);
+        recyclerView = view.findViewById(R.id.filter_recyclerView);
+
         thumbnailItemList = new ArrayList<>();
         thumbnailAdapter = new ThumbnailAdapter(getActivity(),thumbnailItemList,this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);

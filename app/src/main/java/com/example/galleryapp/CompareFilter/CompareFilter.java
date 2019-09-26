@@ -39,8 +39,9 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_compare_filter);
         ImagePath = getIntent().getStringExtra(GalleryAppCode.GoToFilterPath);
-        setupViewPager(viewPager);
         initComponents();
+        setupViewPager(viewPager);
+
 
     }
 

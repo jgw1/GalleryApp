@@ -81,7 +81,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         ll_TopGalleryLayout.setVisibility(View.INVISIBLE);
         ll_BottomGalleryLayout.setVisibility(View.INVISIBLE);
         IB_CompareButton = findViewById(R.id.CompareButton);
-
+        IB_CompareButton.setOnClickListener(this);
         TV_GalleryHashtag1 = findViewById(R.id.Gallery_Hashtag1);
         TV_GalleryHashtag2 = findViewById(R.id.Gallery_Hashtag2);
         TV_GalleryHashtag3 = findViewById(R.id.Gallery_Hashtag3);
@@ -127,6 +127,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.CompareButton:
+                Log.d("GWGWGW","Success");
                 CurrentPosition = viewPager.getCurrentItem();
                 String CurrentFile = ImageList.get(CurrentPosition).getFilename();
                 Intent intent = new Intent(this, CompareFilter.class);
