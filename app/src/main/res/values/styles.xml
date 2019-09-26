@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.WhiteTextAppearance">
+    <style name="AppTheme_WhiteTextAppearance">
         <item name="android:textColor">@android:color/white</item>
     </style>
 
