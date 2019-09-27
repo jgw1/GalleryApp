@@ -42,6 +42,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
     private boolean isPreview = false;
     private Context context = getContext();
     private AppCompatActivity mActivity;
+    private int backCameraId, frontCameraId;
 
 
     public CameraPreview(Context context, AppCompatActivity activity, int cameraID, SurfaceView surfaceView) {
@@ -54,10 +55,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
 
         mSurfaceView.setVisibility(View.VISIBLE);
 
-
         // SurfaceHolder.Callback를 등록하여 surface의 생성 및 해제 시점을 감지
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
+
 
     }
 
@@ -134,7 +135,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         mCamera.setDisplayOrientation(orientation);
 
 
-
         mSupportedPreviewSizes =  mCamera.getParameters().getSupportedPreviewSizes();
         requestLayout();
 
@@ -180,7 +180,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         }
 
     }
-
+    public int getmCameraID(){
+        return mCameraID;
+    }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
@@ -250,8 +252,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         }
 
     }
-
-
 
     /**
      * 안드로이드 디바이스 방향에 맞는 카메라 프리뷰를 화면에 보여주기 위해 계산합니다.

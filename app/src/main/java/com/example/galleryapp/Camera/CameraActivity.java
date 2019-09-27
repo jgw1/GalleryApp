@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -32,14 +34,17 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 
-public class CameraActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
+public class CameraActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback,View.OnClickListener{
     private CustomDialog customDialog;
     private DatabaseAccess databaseAccess;
     private static final String TAG = "android_camera_example";
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION};
-    private static final int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK; // Camera.CameraInfo.CAMERA_FACING_FRONT
+    private int CameraID;
+    private static final int CAMERA_FACING_BACK = Camera.CameraInfo.CAMERA_FACING_BACK;
+    private static final int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;
+    private Camera camera;
     private Context context;
     private SurfaceView surfaceView;
     private CameraPreview mCameraPreview;
@@ -60,7 +65,15 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_camera);
+        CameraID = CAMERA_FACING_FRONT;
+        initComponents();
+        CameraPermissionCheck(CameraID);
 
+
+
+    }
+
+    private void initComponents(){
         mLayout = findViewById(R.id.layout_main);
         surfaceView = findViewById(R.id.camera_preview_main);
         databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
@@ -72,20 +85,12 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         ImageButton IB_GoToGallery = findViewById(R.id.GoToGallery);
         ImageButton IB_FlipCamera = findViewById(R.id.FlipCamera);
 
-        IB_GoToGallery.setOnClickListener(v-> {
-            startActivity(new Intent(this, GalleryFragment.class));
-        });
+        button.setOnClickListener(this::onClick);
+        IB_GoToGallery.setOnClickListener(this::onClick);
+        IB_FlipCamera.setOnClickListener(this::onClick);
+    }
 
-        button.setOnClickListener(v -> {
-            mCameraPreview.takePicture();
-
-
-            customDialog.show();
-
-        });
-
-
-
+    private void CameraPermissionCheck(int CameraID){
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
 
             int cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -94,14 +99,14 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
             if ( cameraPermission == PackageManager.PERMISSION_GRANTED
                     && writeExternalStoragePermission == PackageManager.PERMISSION_GRANTED &&
-             accessfineLocationPermission == PackageManager.PERMISSION_GRANTED) {
-                startCamera();
+                    accessfineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                startCamera(CameraID);
 
 
             }else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
                         || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
-                || ActivityCompat.shouldShowRequestPermissionRationale(this,REQUIRED_PERMISSIONS[2])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this,REQUIRED_PERMISSIONS[2])) {
 
                     Snackbar.make(mLayout, "이 앱을 실행하려면 카메라와 외부 저장소 접근 권한이 필요합니다.",
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
@@ -136,16 +141,15 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             });
             snackbar.show();
         }
-
-
     }
 
 
 
-    void startCamera(){
+    void startCamera(int CameraID){
 
         // Create the Preview clustermarker and set it as the content of this Activity.
-        mCameraPreview = new CameraPreview(this, this, CAMERA_FACING, surfaceView);
+        mCameraPreview = new CameraPreview(this, this, CameraID, surfaceView);
+
 
     }
 
@@ -167,7 +171,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
             if ( check_result ) {
 
-                startCamera();
+                startCamera(CameraID);
             }
             else {
 
@@ -180,13 +184,11 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
                         @Override
                         public void onClick(View view) {
-
                             finish();
                         }
                     }).show();
 
                 }else {
-
                     Snackbar.make(mLayout, "설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
@@ -223,8 +225,34 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private View.OnClickListener negativeListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
+            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            String file_name = file.getName();
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
+            databaseAccess.open();
+            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
+            databaseAccess.close();
+            customDialog.dismiss();
         }
     };
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.button_main_capture:
+                mCameraPreview.takePicture();
+                customDialog.show();
+                break;
+            case R.id.GoToGallery:
+                startActivity(new Intent(this, GalleryFragment.class));
+                break;
+            case R.id.FlipCamera:
+                CameraPermissionCheck(CAMERA_FACING_BACK);
+                break;
+
+        }
+    }
+
+
 
 }

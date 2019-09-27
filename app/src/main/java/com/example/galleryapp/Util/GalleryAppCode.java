@@ -11,7 +11,7 @@ public class GalleryAppCode {
     // Camera 관련 참고 : https://yeolco.tistory.com/45?category=757621
     // UI THREAD 해결 참고 - https://stackoverflow.com/questions/14678593/the-application-may-be-doing-too-much-work-on-its-main-thread
     // Image Filter 관련 : https://www.androidhive.info/2017/11/android-building-image-filters-like-instagram/
-
+    // Viewpager - Spinner로 교환 https://stackoverflow.com/questions/29859950/update-fragments-in-viewpager-when-a-spinner-item-is-selected
 
 //    Image Filter 예시
 //    Bitmap.Config config = bitmap.getConfig();
