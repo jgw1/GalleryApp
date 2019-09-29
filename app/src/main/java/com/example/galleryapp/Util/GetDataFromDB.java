@@ -10,6 +10,7 @@ import com.example.galleryapp.GalleryDay.DayMotherModel;
 import java.util.ArrayList;
 
 public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherModel>> {
+    
     private DatabaseAccess databaseAccess;
     private ArrayList<DayMotherModel> DataForAlbumDay;
     private ArrayList<GalleryModel> DataForAlbumTotal;
@@ -39,7 +40,7 @@ public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherMode
 
     @Override
     protected void onPostExecute(ArrayList<DayMotherModel> Result){
-
+        super.onPostExecute(Result);
     }
 
 

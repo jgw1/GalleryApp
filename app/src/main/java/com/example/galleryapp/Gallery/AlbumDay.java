@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Picture;
 import android.location.Address;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import com.example.galleryapp.Util.GetDataFromDB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class AlbumDay extends Fragment {
     private RecyclerView mRecyclerView;
@@ -87,8 +89,22 @@ public class AlbumDay extends Fragment {
         NewAlbumFavorite = view.findViewById(R.id.NewAlbumFavorite);
 
         allSampleData = new ArrayList<>();
+//        this.databaseAccess = DatabaseAccess.getInstance(activity);
+//        databaseAccess.open();
+//        allSampleData = databaseAccess.getDataForGallery();
+//        for(int i =0 ;i<allSampleData.size() ;i++){
+//            if(allSampleData.get(i).getHeaderTitle() == null){
+//                allSampleData.remove(i);
+//            }
+//        }
+//
+//        databaseAccess.close();
         getDataFromDB = new GetDataFromDB(activity);
-        getDataFromDB.execute();
+        try {
+            allSampleData = getDataFromDB.execute().get();;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Log.d("GWGW","SIZE : " + allSampleData.size());
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);

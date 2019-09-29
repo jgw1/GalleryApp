@@ -25,6 +25,7 @@ public class Thumbnail {
         }
         return choice;
     }
+
     public static Bitmap MakeThumbnail(String PATH){
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(PATH);
