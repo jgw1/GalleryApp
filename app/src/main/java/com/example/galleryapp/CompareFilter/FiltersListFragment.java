@@ -1,6 +1,8 @@
 package com.example.galleryapp.CompareFilter;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.utils.ThumbnailItem;
 import com.zomato.photofilters.utils.ThumbnailsManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +51,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         recyclerView = view.findViewById(R.id.filter_recyclerView);
 
         thumbnailItemList = new ArrayList<>();
+
         thumbnailAdapter = new ThumbnailAdapter(getActivity(),thumbnailItemList,this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -55,51 +59,52 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         int space =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
         recyclerView.setAdapter(thumbnailAdapter);
-        prepareThumbnail(null);
+        File ImageFile = new File(GalleryAppCode.Path,CompareFilter.File_Name);
+        Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
+        prepareThumbnail(bitmap);
         return view;
     }
     public void prepareThumbnail(final Bitmap bitmap) {
-        Runnable r = new Runnable() {
-            public void run() {
-                Bitmap thumbImage;
+        Runnable r = () -> {
+            Bitmap thumbImage;
 
-                if (bitmap == null) {
-                    thumbImage = BitmapUtils.getBitmapFromAssets(getActivity(), GalleryAppCode.SampleImageName, 100, 100);
-                } else {
-                    thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
-                }
-
-                if (thumbImage == null)
-                    return;
-
-                ThumbnailsManager.clearThumbs();
-                thumbnailItemList.clear();
-
-                // add normal bitmap first
-                ThumbnailItem thumbnailItem = new ThumbnailItem();
-                thumbnailItem.image = thumbImage;
-                thumbnailItem.filterName = getString(R.string.filter_normal);
-                ThumbnailsManager.addThumb(thumbnailItem);
-
-                List<Filter> filters = FilterPack.getFilterPack(getActivity());
-
-                for (Filter filter : filters) {
-                    ThumbnailItem tI = new ThumbnailItem();
-                    tI.image = thumbImage;
-                    tI.filter = filter;
-                    tI.filterName = filter.getName();
-                    ThumbnailsManager.addThumb(tI);
-                }
-
-                thumbnailItemList.addAll(ThumbnailsManager.processThumbs(getActivity()));
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        thumbnailAdapter.notifyDataSetChanged();
-                    }
-                });
+            if (bitmap == null) {
+                File ImageFile = new File(GalleryAppCode.Path,CompareFilter.File_Name);
+                thumbImage = BitmapUtils.getBitmapFromGallery(getActivity(), Uri.fromFile(ImageFile), 100, 100);
+            } else {
+                thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
             }
+
+            if (thumbImage == null)
+                return;
+
+            ThumbnailsManager.clearThumbs();
+            thumbnailItemList.clear();
+
+            // add normal bitmap first
+            ThumbnailItem thumbnailItem = new ThumbnailItem();
+            thumbnailItem.image = thumbImage;
+            thumbnailItem.filterName = getString(R.string.filter_normal);
+            ThumbnailsManager.addThumb(thumbnailItem);
+
+            List<Filter> filters = FilterPack.getFilterPack(getActivity());
+
+            for (Filter filter : filters) {
+                ThumbnailItem tI = new ThumbnailItem();
+                tI.image = thumbImage;
+                tI.filter = filter;
+                tI.filterName = filter.getName();
+                ThumbnailsManager.addThumb(tI);
+            }
+
+            thumbnailItemList.addAll(ThumbnailsManager.processThumbs(getActivity()));
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    thumbnailAdapter.notifyDataSetChanged();
+                }
+            });
         };
 
         new Thread(r).start();
