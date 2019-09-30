@@ -27,12 +27,12 @@ import static com.example.galleryapp.Util.GalleryAppCode.GoToFilterPath;
 
 public class OneImage extends AppCompatActivity implements View.OnClickListener{
 
-    private ImageView IV_GalleryImage;
     private LinearLayout ll_TopGalleryLayout,ll_BottomGalleryLayout;
     private ToggleButton TB_SetFavorite;
-    private TextView TV_GalleryHashtag1,TV_GalleryHashtag2,TV_GalleryHashtag3;
-    private ImageButton IB_CompareButton;
+    private TextView TV_GalleryHashtag;
+    private ImageView IV_Filter;
     private int InitPosition, CurrentPosition;
+    private String hashtag1, hashtag2,hashtag3,total_hashtag;
     ViewPagerAdapter viewPagerAdapter;
     ViewPager viewPager;
     ArrayList<GalleryModel> ImageList;
@@ -48,7 +48,6 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         InitComponents();
 
 
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -58,9 +57,13 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void onPageSelected(int position) {
                 GalleryModel galleryModel = ImageList.get(position);
-                TV_GalleryHashtag1.setText(galleryModel.getHashtag1());
-                TV_GalleryHashtag2.setText(galleryModel.getHashtag2());
-                TV_GalleryHashtag3.setText(galleryModel.getHashtag3());
+                hashtag1 = galleryModel.getHashtag1();
+                hashtag2 = galleryModel.getHashtag2();
+                hashtag3 = galleryModel.getHashtag3();
+
+                total_hashtag = hashtag1+","+hashtag2+","+hashtag3;
+
+                TV_GalleryHashtag.setText(total_hashtag);
                 Log.d("GWGWGW","Position" + position);
 
             }
@@ -80,11 +83,9 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
 
         ll_TopGalleryLayout.setVisibility(View.INVISIBLE);
         ll_BottomGalleryLayout.setVisibility(View.INVISIBLE);
-        IB_CompareButton = findViewById(R.id.CompareButton);
-        IB_CompareButton.setOnClickListener(this);
-        TV_GalleryHashtag1 = findViewById(R.id.Gallery_Hashtag1);
-        TV_GalleryHashtag2 = findViewById(R.id.Gallery_Hashtag2);
-        TV_GalleryHashtag3 = findViewById(R.id.Gallery_Hashtag3);
+        IV_Filter = findViewById(R.id.CompareButton);
+        IV_Filter.setOnClickListener(this);
+        TV_GalleryHashtag = findViewById(R.id.Gallery_Hashtag);
         TB_SetFavorite = findViewById(R.id.SetFavorite);
 
         viewPagerAdapter = new ViewPagerAdapter(this, ImageList);
@@ -92,7 +93,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
             switch(motionEvent.getAction()){
                 case MotionEvent.ACTION_DOWN:
                    // 터치 이벤트
-                    CountDownTimer CDT = new CountDownTimer(2 * 1000, 1000) {
+                    CountDownTimer CDT = new CountDownTimer(2 * 1000, 5000) {
                         public void onTick(long millisUntilFinished) {
                             ll_TopGalleryLayout.setVisibility(View.VISIBLE);
                             ll_TopGalleryLayout.bringToFront();
@@ -116,9 +117,12 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         viewPager.setCurrentItem(InitPosition);
 
         GalleryModel galleryModel = ImageList.get(InitPosition);
-        TV_GalleryHashtag1.setText(galleryModel.getHashtag1());
-        TV_GalleryHashtag2.setText(galleryModel.getHashtag2());
-        TV_GalleryHashtag3.setText(galleryModel.getHashtag3());
+        hashtag1 = galleryModel.getHashtag1();
+        hashtag2 = galleryModel.getHashtag2();
+        hashtag3 = galleryModel.getHashtag3();
+
+        total_hashtag = hashtag1+","+hashtag2+","+hashtag3;
+        TV_GalleryHashtag.setText(total_hashtag);
 
     }
 
@@ -131,10 +135,17 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                 CurrentPosition = viewPager.getCurrentItem();
                 String CurrentFile = ImageList.get(CurrentPosition).getFilename();
                 Intent intent = new Intent(this, CompareFilter.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
+                intent.putExtras(bundle);
+
                 intent.putExtra(GoToFilterPath,CurrentFile);
+                intent.putExtra(GalleryAppCode.Position,CurrentPosition);
                 startActivity(intent);
                 break;
 
         }
     }
 }
+

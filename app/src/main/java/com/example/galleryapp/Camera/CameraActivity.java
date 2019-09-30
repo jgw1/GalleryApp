@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.galleryapp.DB.DatabaseAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
@@ -65,7 +66,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_camera);
-        CameraID = CAMERA_FACING_FRONT;
+        CameraID = CAMERA_FACING_BACK;
         initComponents();
         CameraPermissionCheck(CameraID);
 
@@ -79,8 +80,8 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
         customDialog = new CustomDialog(this,positiveListener,negativeListener);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
-        surfaceView.setVisibility(GONE);
 
+        surfaceView.setVisibility(GONE);
         Button button = findViewById(R.id.button_main_capture);
         ImageButton IB_GoToGallery = findViewById(R.id.GoToGallery);
         ImageButton IB_FlipCamera = findViewById(R.id.FlipCamera);
@@ -209,9 +210,9 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
             EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
 
-            String Hashtag1 = hashtag1.getText().toString();
-            String Hashtag2 = hashtag2.getText().toString();
-            String Hashtag3 = hashtag3.getText().toString();
+            String Hashtag1 = "#" + hashtag1.getText().toString();
+            String Hashtag2 = "#" + hashtag2.getText().toString();
+            String Hashtag3 = "#" + hashtag3.getText().toString();
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
             String file_name = file.getName();

@@ -7,14 +7,16 @@
     tools:context=".CompareFilter.CompareFilter">
 
     <ImageButton
+        android:id="@+id/SaveFilterImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
+        app:srcCompat="@mipmap/download"
         >
 
     </ImageButton>
+
     <ImageView
         android:id="@+id/leftImage"
         android:layout_width="match_parent"

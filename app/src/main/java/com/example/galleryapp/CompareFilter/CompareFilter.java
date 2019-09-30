@@ -1,11 +1,17 @@
 package com.example.galleryapp.CompareFilter;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -16,29 +22,43 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.Gallery.GalleryFragment;
+import com.example.galleryapp.Gallery.GalleryModel;
+import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
+import com.example.galleryapp.Util.CustomDialog;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
+import com.example.galleryapp.Util.Thumbnail;
 import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompareFilter extends AppCompatActivity implements  FiltersListFragment.FiltersListFragmentListener{
-    private RecyclerView RV_FilterList;
+public class CompareFilter extends AppCompatActivity implements  FiltersListFragment.FiltersListFragmentListener,View.OnClickListener{
+
     private Bitmap originalImage, filteredImage,finalImage;
     private ImageView IV_LeftImage;
     private ViewPager viewPager;
-    private String ImagePath;
+    private String ImagePath,Hashtag1,Hashtag2,Hashtag3;
     private File ImageFile;
-    private ArrayList<Filter> filterArrayList;
+    private Filter Selectedfilter;
+    private CustomDialog customDialog;
+    private DatabaseAccess databaseAccess;
+    private ImageButton IB_SaveFilterImage;
+    ArrayList<GalleryModel> ImageList;
+    private int InitPosition;
     private FiltersListFragment filtersListFragment;
     static{
         System.loadLibrary("NativeImageProcessor");
     }
     public static String File_Name;
+
+    public CompareFilter() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +87,25 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         adapter.addFragment(filtersListFragment, getString(R.string.tab_filters));
 
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View view) {
+            switch(view.getId()){
+                case R.id.SaveFilterImage:
+                    customDialog.show();
+                    EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
+                    hashtag1.setText(Hashtag1);
+
+                    EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
+                    hashtag2.setText(Hashtag2);
+
+                    EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+                    hashtag3.setText(Hashtag3);
+
+                    break;
+
+        }
     }
 
 
@@ -101,11 +140,28 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
 
     @SuppressLint("ClickableViewAccessibility")
     private void initComponents() {
+        this.databaseAccess = DatabaseAccess.getInstance(this);
         IV_LeftImage = findViewById(R.id.leftImage);
         File ImageFIle = new File(GalleryAppCode.Path+ImagePath);
 //        IV_LeftImage.setImageURI(Uri.fromFile(ImageFIle));
 
+        InitPosition = getIntent().getIntExtra(GalleryAppCode.Position, InitPosition);
+        ImageList = (ArrayList<GalleryModel>) getIntent().getSerializableExtra(GalleryAppCode.GalleryList);
+        GalleryModel galleryModel = ImageList.get(InitPosition);
+        IB_SaveFilterImage = findViewById(R.id.SaveFilterImage);
+        IB_SaveFilterImage.setOnClickListener(this::onClick);
+        IB_SaveFilterImage.bringToFront();
+
+
+        Hashtag1 = galleryModel.getHashtag1();
+        Hashtag2 = galleryModel.getHashtag2();
+        Hashtag3 = galleryModel.getHashtag3();
+
+
         viewPager = findViewById(R.id.filterViewPager);
+        customDialog = new CustomDialog(this,positiveListener,negativeListener);
+
+
 
         IV_LeftImage.setOnTouchListener(new OnSwipeTouchListener(this) {
 
@@ -137,7 +193,6 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         // preview filtered image
         IV_LeftImage.setImageBitmap(filter.processFilter(filteredImage));
 
-        finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
     }
 
     private void loadImage(){
@@ -148,5 +203,39 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         IV_LeftImage.setImageBitmap(bitmap);
     }
 
+    private View.OnClickListener positiveListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
+            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
+            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+
+            String Hashtag1 = "#" + hashtag1.getText().toString();
+            String Hashtag2 = "#" + hashtag2.getText().toString();
+            String Hashtag3 = "#" + hashtag3.getText().toString();
+
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
+            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            String file_name = file.getName();
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
+            databaseAccess.open();
+            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+            databaseAccess.close();
+            customDialog.dismiss();
+        }
+    };
+    private View.OnClickListener negativeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
+            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            String file_name = file.getName();
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
+            databaseAccess.open();
+            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
+            databaseAccess.close();
+            customDialog.dismiss();
+        }
+    };
 
 }
