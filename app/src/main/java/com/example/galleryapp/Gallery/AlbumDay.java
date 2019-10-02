@@ -5,18 +5,19 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Picture;
 import android.location.Address;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,26 +26,34 @@ import com.example.galleryapp.DB.DatabaseOpenHelper;
 import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.GalleryDay.DayMotherAdapter;
 import com.example.galleryapp.GalleryDay.DayMotherModel;
+import com.example.galleryapp.GalleryTotal.GalleryTotalAdapter;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.ClearEditText;
 import com.example.galleryapp.Util.GetDataFromDB;
+import com.example.galleryapp.Util.HashTagAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class AlbumDay extends Fragment {
-    private RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView,RV_HashtagSearchList;
+    private ClearEditText ET_SearchHashTag;
     SQLiteDatabase database;
+    private HashTagAdapter hashTagAdapter;
     private GetDataFromDB getDataFromDB;
+    private ImageButton IB_Search;
     private DatabaseAccess databaseAccess;
-    private Picture picture;
-    DatabaseOpenHelper openHelper;
+    private Boolean search = false;
+    private InputMethodManager inputMethodManager;
+
     ImageButton NewAlbumDay,NewAlbumTotal,NewAlbumMap,NewAlbumFavorite;
     List<Address> mResultList;
     ArrayList<DayMotherModel> allSampleData;
     DayMotherModel MD = new DayMotherModel();
     ArrayList<DayChildModel> childDataModels = new ArrayList<>();
     Activity activity;
+
+    ArrayList<String> AL_HashtagList = new ArrayList<>();
 
     @Override
     public void onDestroy() {
@@ -78,6 +87,9 @@ public class AlbumDay extends Fragment {
         RelativeLayout layout = (RelativeLayout)inflater.inflate(R.layout.fragment_albumday,
 
                 container, false);
+        RV_HashtagSearchList = layout.findViewById(R.id.SearchListDay);
+        IB_Search = layout.findViewById(R.id.SearchDay);
+        ET_SearchHashTag =layout.findViewById(R.id.HashtagSearchDay);
         return layout;
     }
 
@@ -101,7 +113,7 @@ public class AlbumDay extends Fragment {
 //        databaseAccess.close();
         getDataFromDB = new GetDataFromDB(activity);
         try {
-            allSampleData = getDataFromDB.execute().get();;
+            allSampleData = getDataFromDB.execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,8 +122,39 @@ public class AlbumDay extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         DayMotherAdapter adapter = new DayMotherAdapter(getContext(),allSampleData);
 
+        hashTagAdapter = new HashTagAdapter(activity,AL_HashtagList);
+        RV_HashtagSearchList.setAdapter(hashTagAdapter);
+        inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+
+        IB_Search.setOnClickListener(view1 -> {
+            search = !search;
+            if(search){
+                ET_SearchHashTag.requestFocus();
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);}
+            else{
+                ET_SearchHashTag.clearFocus();
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+        });
+
+        RV_HashtagSearchList.setLayoutManager(new GridLayoutManager(activity,3));
+        ET_SearchHashTag.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+
+        ET_SearchHashTag.setOnEditorActionListener((v, actionId, event) -> {
+            if(actionId == EditorInfo.IME_ACTION_SEARCH)
+            {
+                AL_HashtagList.add(ET_SearchHashTag.getText().toString());
+                hashTagAdapter.notifyDataSetChanged();
+                ET_SearchHashTag.setText(null);
+                return true;
+            }
+            return false;
+        });
+
+
     }
 
 }

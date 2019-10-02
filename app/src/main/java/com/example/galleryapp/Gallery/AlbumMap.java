@@ -196,6 +196,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                     double lat = mapModel.get(i).getLatitude();
                     double lng = mapModel.get(i).getLongitude();
                     if((a==lat) && (b ==lng))
+
                         mapClusterItemModel.add(mapModel.get(i));
                 }
                 MapRecyclerViewAdapter itemListDataAdapter = new MapRecyclerViewAdapter(activity, mapClusterItemModel);

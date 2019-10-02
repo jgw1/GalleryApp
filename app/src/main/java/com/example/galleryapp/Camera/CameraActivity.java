@@ -49,6 +49,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private Context context;
     private SurfaceView surfaceView;
     private CameraPreview mCameraPreview;
+    private boolean cameraFront = false;
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
     // (참고로 Toast에서는 Context가 필요했습니다.)
 
@@ -147,11 +148,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
 
     void startCamera(int CameraID){
-
-        // Create the Preview clustermarker and set it as the content of this Activity.
         mCameraPreview = new CameraPreview(this, this, CameraID, surfaceView);
-
-
     }
 
 
@@ -248,8 +245,14 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 startActivity(new Intent(this, GalleryFragment.class));
                 break;
             case R.id.FlipCamera:
-                CameraPermissionCheck(CAMERA_FACING_BACK);
-                break;
+                if(cameraFront) {
+                    mCameraPreview.ChangeCamera(CAMERA_FACING_BACK, surfaceView.getHolder());
+                    cameraFront = false;
+                }else{
+                    mCameraPreview.ChangeCamera(CAMERA_FACING_FRONT, surfaceView.getHolder());
+                    cameraFront = true;
+                }
+               break;
 
         }
     }

@@ -26,6 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT;
+
 public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
     private final String TAG = "CameraPreview";
 
@@ -110,7 +113,37 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         }
     }
 
+    public void ChangeCamera(int CameraID,SurfaceHolder holder){
+        if (mCamera != null) {
+            if (isPreview)
+                mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+            isPreview = false;
+        }
 
+        mCamera = Camera.open(CameraID);
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(CameraID, cameraInfo);
+
+        mCameraInfo = cameraInfo;
+        Log.d("mCameraINFOFACING","mCameraINFOFACING : " + mCameraInfo.facing);
+        mDisplayOrientation = mActivity.getWindowManager().getDefaultDisplay().getRotation();
+
+        int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
+        mCamera.setDisplayOrientation(orientation);
+
+        mSupportedPreviewSizes =  mCamera.getParameters().getSupportedPreviewSizes();
+        requestLayout();
+
+        try {
+            mCamera.setPreviewDisplay(holder);
+            mCamera.startPreview();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     // Surface가 생성되었을 때 어디에 화면에 프리뷰를 출력할지 알려줘야 한다.
     public void surfaceCreated(SurfaceHolder holder) {
@@ -180,9 +213,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         }
 
     }
-    public int getmCameraID(){
-        return mCameraID;
-    }
+
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
@@ -216,8 +247,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         }
         return optimalSize;
     }
-
-
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
 
@@ -324,6 +353,11 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
             //이미지를 디바이스 방향으로 회전
             Matrix matrix = new Matrix();
             matrix.postRotate(orientation);
+            if(mCameraInfo.facing == 1){
+                matrix.postScale(1,-1,w/2,h/2); // y축 반전
+                //matrix.postScale(-1,1,w/2,h/2); - x축 반전
+            }
+
             bitmap =  Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
 
             //bitmap을 byte array로 변환

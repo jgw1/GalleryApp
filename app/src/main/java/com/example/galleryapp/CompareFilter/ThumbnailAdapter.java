@@ -1,6 +1,8 @@
 package com.example.galleryapp.CompareFilter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.GalleryAppCode;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.utils.ThumbnailItem;
 
@@ -21,7 +24,9 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     private Context mContext;
     private ThumbnailsAdapterListener listener;
     private List<ThumbnailItem> thumbnailItemList;
-    private int selectedIndex = 0;
+    private int a=0;
+    private int currentindex;
+    private ViewHolder viewHolder;
     public ThumbnailAdapter(Context context,List<ThumbnailItem> thumbnailItemList,ThumbnailsAdapterListener listener){
         mContext = context;
         this.thumbnailItemList = thumbnailItemList;
@@ -38,29 +43,51 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final ThumbnailItem thumbnailItem = thumbnailItemList.get(position);
-        holder.thumbnail.setImageBitmap(thumbnailItem.image);
-        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onFilterSelected(thumbnailItem.filter);
-                selectedIndex = position;
-                notifyDataSetChanged();
-            }
-        });
 
+        holder.thumbnail.setImageBitmap(thumbnailItem.image);
+        holder.thumbnail.setBackgroundColor(Color.RED);
+        holder.thumbnail.setOnClickListener(view -> {
+            listener.onFilterSelected(thumbnailItem.filter);
+            currentindex = position;
+            notifyDataSetChanged();
+        });
         holder.filterName.setText(thumbnailItem.filterName);
 
-        if (selectedIndex == position) {
+        if (position == currentindex) {
+
             holder.filterName.setTextColor(ContextCompat.getColor(mContext, R.color.filter_label_selected));
         } else {
             holder.filterName.setTextColor(ContextCompat.getColor(mContext, R.color.filter_label_normal));
         }
-
     }
 
     @Override
     public int getItemCount() {
         return thumbnailItemList.size();
+    }
+
+    public void Swipe(String Direction){
+        if(Direction == GalleryAppCode.GoLeft){
+            if(currentindex-1<0){
+                currentindex = getItemCount();
+            }else{
+                currentindex -= 1;
+            }
+        }else if(Direction == GalleryAppCode.GoRight){
+            if(currentindex+1>getItemCount()){
+                currentindex = 0;
+            }else{
+                currentindex += 1;
+            }
+        }
+
+        ThumbnailItem item =  thumbnailItemList.get(currentindex);
+        listener.onFilterSelected(item.filter);
+        notifyDataSetChanged();
+    }
+
+    public int getCurrentIndex(){
+        return currentindex;
     }
 
     public interface ThumbnailsAdapterListener{
@@ -76,6 +103,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
             thumbnail = itemView.findViewById(R.id.filter_thumbnail);
             filterName = itemView.findViewById(R.id.filter_name);
+
         }
     }
 }

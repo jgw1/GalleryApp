@@ -3,6 +3,8 @@ package com.example.galleryapp.GalleryDay;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,7 +23,10 @@ import com.example.galleryapp.R;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.Thumbnail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHolder> {
@@ -46,8 +51,12 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
         GalleryModel galleryModel = itemModelArrayList.get(position);
         String FileName = galleryModel.getFilename();
         File outputFile = new File(GalleryAppCode.Path,FileName);
-        holder.thumbnail.setImageURI(Uri.fromFile(outputFile));
-        Log.d("GWGWGWGWGWGWGW", "OUTPUTFILE" + Uri.fromFile(outputFile));
+//        holder.thumbnail.setImageURI(Uri.fromFile(outputFile));
+        Bitmap bitmap = BitmapFactory.decodeFile(outputFile.getPath());
+        bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+        holder.thumbnail.setImageBitmap(bitmap);
+//        holder.thumbnail.setImageResource(R.drawable.bubble_mask);
+//        Log.d("GWGWGWGWGWGWGW", "OUTPUTFILE" + Uri.fromFile(outputFile));
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,6 +69,8 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
             }
         });
     }
+
+
     @Override
     public int getItemCount() {
         return itemModelArrayList.size();

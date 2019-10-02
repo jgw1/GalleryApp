@@ -4,10 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -32,6 +36,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     private ThumbnailAdapter thumbnailAdapter;
     private List<ThumbnailItem> thumbnailItemList;
     private FiltersListFragmentListener listener;
+    private int CurrentFilter;
 
     public void setListener(FiltersListFragmentListener listener){
         this.listener = listener;
@@ -54,7 +59,9 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
 
         thumbnailAdapter = new ThumbnailAdapter(getActivity(),thumbnailItemList,this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+
         recyclerView.setLayoutManager(layoutManager);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         int space =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
@@ -62,6 +69,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         File ImageFile = new File(GalleryAppCode.Path,CompareFilter.File_Name);
         Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
         prepareThumbnail(bitmap);
+
         return view;
     }
     public void prepareThumbnail(final Bitmap bitmap) {
@@ -118,4 +126,20 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     public interface FiltersListFragmentListener{
         void onFilterSelected(Filter filter);
     }
+
+    public void FilterChange(String Direction, TextView filtername){
+
+        thumbnailAdapter.Swipe(Direction);
+
+        CurrentFilter = thumbnailAdapter.getCurrentIndex();
+        recyclerView.smoothScrollToPosition(CurrentFilter);
+        filtername.setText(thumbnailItemList.get(CurrentFilter).filterName);
+
+        final Animation out = new AlphaAnimation(1.0f,0.0f);
+        out.setDuration(2000);
+
+        filtername.startAnimation(out);
+        filtername.setVisibility(View.INVISIBLE);
+    }
+
 }

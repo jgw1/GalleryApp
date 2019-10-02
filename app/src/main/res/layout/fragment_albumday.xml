@@ -6,12 +6,78 @@
     android:layout_height="match_parent"
     tools:context=".NewAlbum_Day.CardViewAlbum">
 
+    <LinearLayout
+        android:id="@+id/albumdaylayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <LinearLayout
+            android:id="@+id/top_fragment_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="0dp"
+
+            android:background="#ffffff"
+            android:gravity="top"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center">
+
+                <com.example.galleryapp.Util.ClearEditText
+                    android:id="@+id/HashtagSearchDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/CheckTotal"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                     />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/SearchDay"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+
+                    android:background="#00000000"
+                    app:srcCompat="@mipmap/search" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/SearchListDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cardviewalbum"
+        android:layout_below="@+id/albumdaylayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        android:layout_height="wrap_content" />
 </RelativeLayout>

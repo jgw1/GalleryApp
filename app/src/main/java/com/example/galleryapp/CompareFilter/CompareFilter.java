@@ -1,33 +1,32 @@
 package com.example.galleryapp.CompareFilter;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.tv.TvContentRating;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.galleryapp.DB.DatabaseAccess;
-import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
-import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.CustomDialog;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
@@ -49,6 +48,8 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
     private CustomDialog customDialog;
     private DatabaseAccess databaseAccess;
     private ImageButton IB_SaveFilterImage;
+    private TextView TV_FilterName;
+
     ArrayList<GalleryModel> ImageList;
     private int InitPosition;
     private FiltersListFragment filtersListFragment;
@@ -70,7 +71,6 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         ImageFile = new File(GalleryAppCode.Path+File_Name);
         initComponents();
         loadImage();
-
         setupViewPager(viewPager);
 
     }
@@ -141,7 +141,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
     @SuppressLint("ClickableViewAccessibility")
     private void initComponents() {
         this.databaseAccess = DatabaseAccess.getInstance(this);
-        IV_LeftImage = findViewById(R.id.leftImage);
+        IV_LeftImage = findViewById(R.id.SelectImage);
         File ImageFIle = new File(GalleryAppCode.Path+ImagePath);
 //        IV_LeftImage.setImageURI(Uri.fromFile(ImageFIle));
 
@@ -153,6 +153,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         IB_SaveFilterImage.bringToFront();
 
 
+        TV_FilterName = findViewById(R.id.selectfilterName);
         Hashtag1 = galleryModel.getHashtag1();
         Hashtag2 = galleryModel.getHashtag2();
         Hashtag3 = galleryModel.getHashtag3();
@@ -166,11 +167,13 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         IV_LeftImage.setOnTouchListener(new OnSwipeTouchListener(this) {
 
             //오른쪽방향 스와이프 - 필터변경
-            public void onSwipeRight() {
+            public void onSwipeLeft() {
+                filtersListFragment.FilterChange(GalleryAppCode.GoLeft,TV_FilterName);
             }
 
             //왼쪽방향 스와이프 - 필터변경
-            public void onSwipeLeft() {
+            public void onSwipeRight() {
+                filtersListFragment.FilterChange(GalleryAppCode.GoRight,TV_FilterName);
             }
 
         });
@@ -192,6 +195,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         filteredImage = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         // preview filtered image
         IV_LeftImage.setImageBitmap(filter.processFilter(filteredImage));
+
 
     }
 

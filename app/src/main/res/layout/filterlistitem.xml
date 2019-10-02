@@ -7,7 +7,7 @@
         android:id="@+id/filter_name"
         android:layout_width="@dimen/thumbnail_size"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         />

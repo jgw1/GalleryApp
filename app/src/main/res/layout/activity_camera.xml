@@ -24,7 +24,7 @@
             android:layout_marginBottom="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@mipmap/ic_analysis_white" />
+            app:srcCompat="@mipmap/gallery" />
 
         <ImageButton
             android:id="@+id/FlipCamera"
@@ -33,9 +33,10 @@
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/button_main_capture"
+
+
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@mipmap/redheart" />
+            app:srcCompat="@mipmap/changecamera" />
 
         <Button
             android:id="@+id/button_main_capture"
