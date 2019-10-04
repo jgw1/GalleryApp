@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Map.MapMarkerItem;
 import com.example.galleryapp.Map.MapRecyclerViewAdapter;
 import com.example.galleryapp.R;
@@ -54,7 +54,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private View marker_root_view;
     private TextView tv_marker,position;
     private Context mContext;
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private ArrayList<GalleryModel> mapClusterModel,mapModel;
     private LinearLayout linearLayout;
     private RecyclerView mapRecyclerView;
@@ -105,7 +105,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
         mapClusterItemModel = new ArrayList<>();
 
-        this.databaseAccess = DatabaseAccess.getInstance(mContext);
+        this.galleryDBAccess = GalleryDBAccess.getInstance(mContext);
     }
 
     @Override
@@ -152,9 +152,9 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         //선택 클러스터를 화면 중앙에 배치
         mMap.setOnCameraChangeListener(mClusterManager);
 
-        databaseAccess.open();
-        mapModel = databaseAccess.getDataForMap();
-        databaseAccess.close();
+        galleryDBAccess.open();
+        mapModel = galleryDBAccess.getDataForMap();
+        galleryDBAccess.close();
 
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 14));

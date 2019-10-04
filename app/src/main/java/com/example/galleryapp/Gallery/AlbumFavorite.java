@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.DB.DatabaseOpenHelper;
 import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.GalleryDay.DayMotherAdapter;
@@ -33,7 +33,7 @@ public class AlbumFavorite extends Fragment {
     private RecyclerView mRecyclerView;
     SQLiteDatabase database;
     private GetDataFromDB getDataFromDB;
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private Picture picture;
     DatabaseOpenHelper openHelper;
     ImageButton NewAlbumDay,NewAlbumTotal,NewAlbumMap,NewAlbumFavorite;

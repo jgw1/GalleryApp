@@ -3,7 +3,7 @@ package com.example.galleryapp.Util;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.GalleryDay.DayMotherModel;
 
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 
 public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherModel>> {
     
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private ArrayList<DayMotherModel> DataForAlbumDay;
     private ArrayList<GalleryModel> DataForAlbumTotal;
 
     public GetDataFromDB(Activity activity){
-        this.databaseAccess = DatabaseAccess.getInstance(activity);
+        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
     }
 
     @Override
@@ -26,15 +26,15 @@ public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherMode
 
     @Override
     protected ArrayList<DayMotherModel> doInBackground(Void... voids) {
-        databaseAccess.open();
-        DataForAlbumDay = databaseAccess.getDataForGallery();
+        galleryDBAccess.open();
+        DataForAlbumDay = galleryDBAccess.getDataForGallery();
         for(int i =0 ;i<DataForAlbumDay.size() ;i++){
             if(DataForAlbumDay.get(i).getHeaderTitle() == null){
                 DataForAlbumDay.remove(i);
             }
         }
 
-        databaseAccess.close();
+        galleryDBAccess.close();
         return DataForAlbumDay;
     }
 

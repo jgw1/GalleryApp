@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class DayChildModel implements Serializable {
     private int thumbnail, Favorite;
     private String Filename,Hashtag1,Hashtag2,Hashtag3;
-
+    private boolean checked = false;
 
     public DayChildModel(String Filename, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
         this.Filename = Filename;
@@ -54,4 +54,13 @@ public class DayChildModel implements Serializable {
     public void setHashtag3(String hashtag3) {
         Hashtag3 = hashtag3;
     }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public boolean getChecked() {
+        return this.checked;
+    }
+
 }

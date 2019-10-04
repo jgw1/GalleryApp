@@ -16,12 +16,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.GalleryTotal.GalleryTotalAdapter;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.ClearEditText;
+import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.HashTagAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class AlbumTotal extends Fragment {
@@ -30,10 +32,10 @@ public class AlbumTotal extends Fragment {
     private Activity activity;
     private HashTagAdapter hashTagAdapter;
     private ClearEditText ET_SearchHashTag;
-    private DatabaseAccess databaseAccess;
-    private ImageButton IB_Search;
+    private GalleryDBAccess galleryDBAccess;
+    private ImageButton IB_Search,IB_DELETE;
     private GalleryTotalAdapter galleryTotalAdapter;
-    private Boolean search = false;
+    private Boolean search,delete = false;
     private InputMethodManager inputMethodManager;
 
     ArrayList<String> AL_HashtagList = new ArrayList<>();
@@ -55,10 +57,10 @@ public class AlbumTotal extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         List_GalleryTotal = new ArrayList<>();
-        this.databaseAccess = DatabaseAccess.getInstance(activity);
-        databaseAccess.open();
-        List_GalleryTotal = databaseAccess.getDataForMap();
-        databaseAccess.close();
+        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
+        galleryDBAccess.open();
+        List_GalleryTotal = galleryDBAccess.getDataForMap();
+        galleryDBAccess.close();
 
     }
 
@@ -75,6 +77,8 @@ public class AlbumTotal extends Fragment {
         RV_HashtagSearchList = layout.findViewById(R.id.SearchListTotal);
         IB_Search = layout.findViewById(R.id.SearchTotal);
         ET_SearchHashTag =layout.findViewById(R.id.HashtagSearchTotal);
+        IB_DELETE = layout.findViewById(R.id.DeleteTotal);
+        IB_DELETE.setOnClickListener(this::onClick);
         galleryTotalAdapter = new GalleryTotalAdapter(getContext(),List_GalleryTotal);
         RV_GalleryTotalView.setHasFixedSize(true);
         RV_GalleryTotalView.setAdapter(galleryTotalAdapter);
@@ -118,5 +122,37 @@ public class AlbumTotal extends Fragment {
 
 
 
+
     }
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.DeleteTotal:
+                delete = !delete;
+                if( delete) {
+                    galleryTotalAdapter.setSelectable(true);
+                }else{
+                    int size = List_GalleryTotal.size();
+                    for (int i=0;i<size;i++){
+                        GalleryModel galleryModel = List_GalleryTotal.get(i);
+                        if(galleryModel.getChecked())
+                        {
+                            File file = new File(GalleryAppCode.Path,galleryModel.getFilename());
+                            file.delete();
+
+                            galleryDBAccess.open();
+                            galleryDBAccess.delete(galleryModel);
+                            galleryDBAccess.close();
+
+                            List_GalleryTotal.remove(i);
+                            i--;
+                            size=List_GalleryTotal.size();
+                        }
+                    }
+
+                    galleryTotalAdapter.setSelectable(false);
+                }
+                break;
+        }
+    }
+
 }

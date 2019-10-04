@@ -3,14 +3,12 @@ package com.example.galleryapp.CompareFilter;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.tv.TvContentRating;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,7 +21,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
@@ -46,7 +44,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
     private File ImageFile;
     private Filter Selectedfilter;
     private CustomDialog customDialog;
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private ImageButton IB_SaveFilterImage;
     private TextView TV_FilterName;
 
@@ -72,6 +70,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         initComponents();
         loadImage();
         setupViewPager(viewPager);
+
 
     }
 
@@ -140,7 +139,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
 
     @SuppressLint("ClickableViewAccessibility")
     private void initComponents() {
-        this.databaseAccess = DatabaseAccess.getInstance(this);
+        this.galleryDBAccess = GalleryDBAccess.getInstance(this);
         IV_LeftImage = findViewById(R.id.SelectImage);
         File ImageFIle = new File(GalleryAppCode.Path+ImagePath);
 //        IV_LeftImage.setImageURI(Uri.fromFile(ImageFIle));
@@ -161,7 +160,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
 
         viewPager = findViewById(R.id.filterViewPager);
         customDialog = new CustomDialog(this,positiveListener,negativeListener);
-
+        viewPager.setVisibility(View.INVISIBLE);
 
 
         IV_LeftImage.setOnTouchListener(new OnSwipeTouchListener(this) {
@@ -175,7 +174,12 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
             public void onSwipeRight() {
                 filtersListFragment.FilterChange(GalleryAppCode.GoRight,TV_FilterName);
             }
-
+            public void onSwipeTop() {
+                slideUp(viewPager);
+            }
+            public void onSwipeBottom(){
+                slideDown(viewPager);
+            }
         });
 
     }
@@ -222,9 +226,9 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.open();
-            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-            databaseAccess.close();
+            galleryDBAccess.open();
+            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+            galleryDBAccess.close();
             customDialog.dismiss();
         }
     };
@@ -235,11 +239,35 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.open();
-            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
-            databaseAccess.close();
+            galleryDBAccess.open();
+            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
+            galleryDBAccess.close();
             customDialog.dismiss();
         }
     };
+    // slide the view from below itself to the current position
+    public void slideUp(ViewPager view){
+        view.setVisibility(View.VISIBLE);
+        TranslateAnimation animate = new TranslateAnimation(
+                0,                 // fromXDelta
+                0,                 // toXDelta
+                view.getHeight(),  // fromYDelta
+                0);                // toYDelta
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    public void slideDown(ViewPager view){
+        view.setVisibility(View.VISIBLE);
+        TranslateAnimation animate = new TranslateAnimation(
+                0,                 // fromXDelta
+                0,                 // toXDelta
+                0,  // fromYDelta
+                view.getHeight());                // toYDelta
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
 
 }

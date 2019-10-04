@@ -6,7 +6,7 @@ public class GalleryModel implements Serializable {
     private int thumbnail, Favorite;
     private String Filename,Hashtag1,Hashtag2,Hashtag3;
     private Double Longitude,Latitude;
-
+    private boolean checked = false;
 
     public GalleryModel(String Filename,Double Longitude,Double Latitude, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
         this.Filename = Filename;
@@ -18,6 +18,10 @@ public class GalleryModel implements Serializable {
         this.Favorite = Favorite;
 
     }
+    public GalleryModel() {
+        this.Filename = new String();
+    }
+
     public int getFavorite() {
         return Favorite;
     }
@@ -72,4 +76,13 @@ public class GalleryModel implements Serializable {
     public void setHashtag3(String hashtag3) {
         Hashtag3 = hashtag3;
     }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public boolean getChecked() {
+        return this.checked;
+    }
+
 }

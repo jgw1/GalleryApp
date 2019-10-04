@@ -1,13 +1,10 @@
 package com.example.galleryapp.Map;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.util.Log;
-
-import com.example.galleryapp.DB.DatabaseAccess;
 
 import java.util.ArrayList;
 

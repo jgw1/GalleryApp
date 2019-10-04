@@ -12,17 +12,14 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
@@ -37,7 +34,7 @@ import static android.view.View.GONE;
 
 public class CameraActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback,View.OnClickListener{
     private CustomDialog customDialog;
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private static final String TAG = "android_camera_example";
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.CAMERA,
@@ -78,7 +75,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private void initComponents(){
         mLayout = findViewById(R.id.layout_main);
         surfaceView = findViewById(R.id.camera_preview_main);
-        databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
+        galleryDBAccess = GalleryDBAccess.getInstance(getApplicationContext());
         customDialog = new CustomDialog(this,positiveListener,negativeListener);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
 
@@ -214,10 +211,13 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.open();
-            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-            databaseAccess.close();
+            galleryDBAccess.open();
+            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+            galleryDBAccess.close();
             customDialog.dismiss();
+            hashtag1.setText(null);
+            hashtag2.setText(null);
+            hashtag3.setText(null);
         }
     };
     private View.OnClickListener negativeListener = new View.OnClickListener() {
@@ -227,9 +227,9 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            databaseAccess.open();
-            databaseAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
-            databaseAccess.close();
+            galleryDBAccess.open();
+            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
+            galleryDBAccess.close();
             customDialog.dismiss();
         }
     };

@@ -4,21 +4,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 
@@ -29,7 +23,7 @@ public class CustomDialog extends Dialog {
     private Button mPositiveButton;
     private Button mNegativeButton;
     private EditText hashtag1,hashtag2,hashtag3;
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private CustomDialog customDialog;
     private Context mContext;
     private View.OnClickListener mPositiveListener,mNegativeListener;
@@ -44,7 +38,7 @@ public class CustomDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseAccess = DatabaseAccess.getInstance(activity);
+        galleryDBAccess = GalleryDBAccess.getInstance(activity);
         //다이얼로그 밖의 화면은 흐리게 만들어줌
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
@@ -77,7 +71,7 @@ public class CustomDialog extends Dialog {
 //                String Hashtag3 = hashtag3.getText().toString();
 //
 //                ArrayList<Double> LatLng = Location.GetCurrentLocation(activity.getApplicationContext());
-//                databaseAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+//                galleryDBAccess.InsertData(LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
 //
 //                return true;
 //            }

@@ -11,7 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.galleryapp.DB.DatabaseAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.R;
 
@@ -21,7 +21,7 @@ public class SearchEngine extends AppCompatActivity {
     private RecyclerView RV_HashTagList;
     private HashTagAdapter hashTagAdapter;
     private ClearEditText ET_SearchHashTag;
-    private DatabaseAccess databaseAccess;
+    private GalleryDBAccess galleryDBAccess;
     private CustomDialog customDialog;
     private Button BT_Album;
 

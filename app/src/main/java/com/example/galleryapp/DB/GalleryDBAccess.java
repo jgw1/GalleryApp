@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.galleryapp.Gallery.GalleryModel;
-import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.GalleryDay.DayMotherModel;
 import com.example.galleryapp.GalleryDay.Picture;
 import com.example.galleryapp.Map.MapRecyclerViewModel;
@@ -17,10 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class DatabaseAccess {
+public class GalleryDBAccess {
     private SQLiteDatabase database;
-    private DatabaseOpenHelper openHelper;
-    private static volatile DatabaseAccess instance;
+    private GalleryDBOpenHelper openHelper;
+    private static volatile GalleryDBAccess instance;
     private Picture picture;
     private static DateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
     private String hashtag1,hashtag2,hashtag3;
@@ -33,13 +32,13 @@ public class DatabaseAccess {
     ArrayList<MapRecyclerViewModel> mapRecyclerViewModels = new ArrayList<>();
     Long prevtime = Long.valueOf(0);
 
-    private DatabaseAccess(Context context) {
-        this.openHelper = new DatabaseOpenHelper(context);
+    private GalleryDBAccess(Context context) {
+        this.openHelper = new GalleryDBOpenHelper(context);
     }
 
-    public static synchronized DatabaseAccess getInstance(Context context) {
+    public static synchronized GalleryDBAccess getInstance(Context context) {
         if (instance == null) {
-            instance = new DatabaseAccess(context);
+            instance = new GalleryDBAccess(context);
         }
         return instance;
     }
@@ -54,63 +53,63 @@ public class DatabaseAccess {
         }
     }
 
-    public void save(Picture picture) {
+    public void save(GalleryModel galleryModel) {
         ContentValues values = new ContentValues();
         //db.execSQL("CREATE TABLE picture(date INTEGER PRIMARY KEY, longitude DOUBLE, latitude DOUBLE,Favorite integer,HASHTAG1 String,HASHTAG2 String,HASHTAG3 String)");
-        values.put("date", picture.getTime());
-        values.put("longitude", picture.getLongitude());
-        values.put("latitude", picture.getLatitude());
-        values.put("HASHTAG1",picture.getHashTag1());
-        values.put("HASHTAG2",picture.getHashTag2());
-        values.put("HASHTAG3",picture.getHashTag3());
-        values.put("favorite",picture.getFavorite());
-        database.insert(DatabaseOpenHelper.TABLE, null, values);
+        values.put("date", galleryModel.getFilename());
+        values.put("longitude", galleryModel.getLongitude());
+        values.put("latitude", galleryModel.getLatitude());
+        values.put("HASHTAG1",galleryModel.getHashtag1());
+        values.put("HASHTAG2",galleryModel.getHashtag2());
+        values.put("HASHTAG3",galleryModel.getHashtag3());
+        values.put("favorite",galleryModel.getFavorite());
+        database.insert(GalleryDBOpenHelper.TABLE, null, values);
     }
 
-    public void update(Picture picture) {
+    public void update(GalleryModel galleryModel) {
         ContentValues values = new ContentValues();
-        values.put("date", picture.getTime());
-        values.put("longitude", picture.getLongitude());
-        values.put("latitude", picture.getLatitude());
-        values.put("HASHTAG1",picture.getHashTag1());
-        values.put("HASHTAG2",picture.getHashTag2());
-        values.put("HASHTAG3",picture.getHashTag3());
-        values.put("favorite",picture.getFavorite());
+        values.put("date", galleryModel.getFilename());
+        values.put("longitude", galleryModel.getLongitude());
+        values.put("latitude", galleryModel.getLatitude());
+        values.put("HASHTAG1",galleryModel.getHashtag1());
+        values.put("HASHTAG2",galleryModel.getHashtag2());
+        values.put("HASHTAG3",galleryModel.getHashtag3());
+        values.put("favorite",galleryModel.getFavorite());
 
-        String date = picture.getTime();
-        database.update(DatabaseOpenHelper.TABLE, values, "date = ?", new String[]{date});
+        String date = galleryModel.getFilename();
+        database.update(GalleryDBOpenHelper.TABLE, values, "date = ?", new String[]{date});
     }
 
-    public void delete(Picture picture) {
-        String date = picture.getTime();
-        database.delete(DatabaseOpenHelper.TABLE, "date = ?", new String[]{date});
+    public void delete(GalleryModel galleryModel) {
+        String date = galleryModel.getFilename();
+        database.delete(GalleryDBOpenHelper.TABLE, "date = ?", new String[]{date});
     }
 
     public void FavoriteChange(String PictureName,Integer Favorite){
         ContentValues values = new ContentValues();
         values.put("favorite",Favorite);
-        database.update(DatabaseOpenHelper.TABLE, values, "date = ?", new String[]{PictureName});
+        database.update(GalleryDBOpenHelper.TABLE, values, "date = ?", new String[]{PictureName});
     }
     public void InsertData(String file_name,Double longitude, Double latitude,String hashtag1,String hashtag2,String hashtag3){
         instance.open();
-        Picture temp = new Picture();
+        GalleryModel temp = new GalleryModel();
         if(picture == null) {
-            temp.setTime(file_name);
+            temp.setFilename(file_name);
             temp.setLatitude(latitude);
             temp.setLongitude(longitude);
-            temp.setHashTag1(hashtag1);
-            temp.setHashTag2(hashtag2);
-            temp.setHashTag3(hashtag3);
+            temp.setHashtag1(hashtag1);
+            temp.setHashtag2(hashtag2);
+            temp.setHashtag3(hashtag3);
           instance.save(temp);
         } else {
             // Update the memo
-            temp.setTime(file_name);
+            temp.setFilename(file_name);
             temp.setLatitude(latitude);
             temp.setLongitude(longitude);
-            temp.setHashTag1(hashtag1);
-            temp.setHashTag2(hashtag2);
-            temp.setHashTag3(hashtag3);
-            instance.update(picture);
+            temp.setHashtag1(hashtag1);
+            temp.setHashtag2(hashtag2);
+            temp.setHashtag3(hashtag3);
+            instance.update(temp);
         }
         instance.close();
     }

@@ -51,6 +51,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
             currentindex = position;
             notifyDataSetChanged();
         });
+
         holder.filterName.setText(thumbnailItem.filterName);
 
         if (position == currentindex) {

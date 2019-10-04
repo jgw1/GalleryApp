@@ -41,6 +41,9 @@ public class DayMotherAdapter extends RecyclerView.Adapter<DayMotherAdapter.Item
 
         holder.itemTitle.setText(sectionName);
         holder.shotaddress.setText(shotaddress);
+        holder.itemTitle.setOnClickListener(view -> {
+
+        });
 
         DayChildAdapter itemListDataAdapter = new DayChildAdapter(mContext, singleSectionItems);
 

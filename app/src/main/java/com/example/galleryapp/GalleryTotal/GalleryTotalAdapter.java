@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapter.ViewHolder>{
     private ArrayList<GalleryModel> mDataset;
     private Context context;
+    private boolean isSelectable = false;
 
     public GalleryTotalAdapter(Context context, ArrayList<GalleryModel> list_galleryTotal) {
         this.context = context;
@@ -44,18 +46,25 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-
-       String FileName =  mDataset.get(position).getFilename();
+    public void onBindViewHolder(ViewHolder holder, int position){
+        final GalleryModel galleryModel = mDataset.get(position);
+       String FileName =  galleryModel.getFilename();
        File outputFile = new File(GalleryAppCode.Path,FileName);
        Bitmap bitmap = BitmapFactory.decodeFile(outputFile.getPath());
        bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+
+
+        holder.checkBox.setVisibility(isSelectable?View.VISIBLE:View.INVISIBLE);
+        if( isSelectable ){
+            holder.checkBox.setImageResource(galleryModel.getChecked()?R.mipmap.checked:R.mipmap.uncheck);
+        }else{
+            galleryModel.setChecked(false);
+        }
        holder.imageView.setImageBitmap(bitmap);
-       holder.imageView.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-
-
+       holder.imageView.setOnClickListener(view -> {
+           if(getSelectable()){
+                setCheckedToggle(position);
+           }else{
                Intent intent = new Intent(context, OneImage.class);
                intent.putExtra(GalleryAppCode.Position,position);
                Bundle bundle = new Bundle();
@@ -65,8 +74,22 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
            }
        });
 
+
+    }
+    public void setSelectable(boolean isSelectable){
+        this.isSelectable = isSelectable;
+        notifyDataSetChanged();
+    }
+    public boolean getSelectable(){
+        return isSelectable;
     }
 
+    public void setCheckedToggle(int i) {
+        if( isSelectable ) {
+            mDataset.get(i).setChecked(!mDataset.get(i).getChecked());
+            notifyDataSetChanged();
+        }
+    }
     @Override
     public int getItemCount() {
         return mDataset.size();
@@ -75,12 +98,18 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         protected ImageView imageView;
-
+        protected ImageView checkBox;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.imageView = itemView.findViewById(R.id.GalleryTotalItem);
+            this.checkBox = itemView.findViewById(R.id.check_total);
+
+            imageView.setOnLongClickListener(view -> {
+                setSelectable(true);
+                return false;
+            });
         }
     }
 }

@@ -57,6 +57,7 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
         holder.thumbnail.setImageBitmap(bitmap);
 //        holder.thumbnail.setImageResource(R.drawable.bubble_mask);
 //        Log.d("GWGWGWGWGWGWGW", "OUTPUTFILE" + Uri.fromFile(outputFile));
+
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

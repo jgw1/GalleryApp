@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,7 @@ import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.SpacesItemDecoration;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
+import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 import com.zomato.photofilters.utils.ThumbnailItem;
 import com.zomato.photofilters.utils.ThumbnailsManager;
 
@@ -102,6 +104,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
                 tI.image = thumbImage;
                 tI.filter = filter;
                 tI.filterName = filter.getName();
+                filter.addSubFilter(new BrightnessSubFilter(0));
                 ThumbnailsManager.addThumb(tI);
             }
 
@@ -137,6 +140,10 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
 
         final Animation out = new AlphaAnimation(1.0f,0.0f);
         out.setDuration(2000);
+
+
+
+
 
         filtername.startAnimation(out);
         filtername.setVisibility(View.INVISIBLE);
