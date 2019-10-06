@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".CompareFilter.TwoFilter"></activity>
         <activity android:name=".CompareFilter.CompareFilter" />
         <activity android:name=".Gallery.OneImage" />
 

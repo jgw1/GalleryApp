@@ -85,7 +85,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         ll_BottomGalleryLayout.setVisibility(View.INVISIBLE);
         IV_Filter = findViewById(R.id.CompareButton);
         IV_Filter.setOnClickListener(this);
-        TV_GalleryHashtag = findViewById(R.id.Gallery_Hashtag);
+        TV_GalleryHashtag = findViewById(R.id.TotalHashtag);
         TB_SetFavorite = findViewById(R.id.SetFavorite);
 
         viewPagerAdapter = new ViewPagerAdapter(this, ImageList);

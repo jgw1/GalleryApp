@@ -68,7 +68,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         int space =(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
         recyclerView.setAdapter(thumbnailAdapter);
-        File ImageFile = new File(GalleryAppCode.Path,CompareFilter.File_Name);
+        File ImageFile = new File(GalleryAppCode.Path,FilterChange.File_Name);
         Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
         prepareThumbnail(bitmap);
 
@@ -79,7 +79,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
             Bitmap thumbImage;
 
             if (bitmap == null) {
-                File ImageFile = new File(GalleryAppCode.Path,CompareFilter.File_Name);
+                File ImageFile = new File(GalleryAppCode.Path,FilterChange.File_Name);
                 thumbImage = BitmapUtils.getBitmapFromGallery(getActivity(), Uri.fromFile(ImageFile), 100, 100);
             } else {
                 thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);

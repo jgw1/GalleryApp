@@ -35,7 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompareFilter extends AppCompatActivity implements  FiltersListFragment.FiltersListFragmentListener,View.OnClickListener{
+public class OneFilter extends AppCompatActivity implements  FiltersListFragment.FiltersListFragmentListener,View.OnClickListener{
 
     private Bitmap originalImage, filteredImage,finalImage;
     private ImageView IV_LeftImage;
@@ -56,7 +56,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
     }
     public static String File_Name;
 
-    public CompareFilter() {
+    public OneFilter() {
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
     @Override
     public void onClick(View view) {
             switch(view.getId()){
-                case R.id.SaveFilterImage:
+                case R.id.SaveImage:
                     customDialog.show();
                     EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
                     hashtag1.setText(Hashtag1);
@@ -147,7 +147,7 @@ public class CompareFilter extends AppCompatActivity implements  FiltersListFrag
         InitPosition = getIntent().getIntExtra(GalleryAppCode.Position, InitPosition);
         ImageList = (ArrayList<GalleryModel>) getIntent().getSerializableExtra(GalleryAppCode.GalleryList);
         GalleryModel galleryModel = ImageList.get(InitPosition);
-        IB_SaveFilterImage = findViewById(R.id.SaveFilterImage);
+        IB_SaveFilterImage = findViewById(R.id.SaveImage);
         IB_SaveFilterImage.setOnClickListener(this::onClick);
         IB_SaveFilterImage.bringToFront();
 
