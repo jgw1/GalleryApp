@@ -7,7 +7,6 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,10 +15,14 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.galleryapp.CompareFilter.CompareFilter;
+import com.example.galleryapp.CompareFilter.OneFilter;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.ViewPagerAdapter;
+import com.kakao.kakaolink.KakaoLink;
+import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+import com.kakao.util.KakaoParameterException;
 
 import java.util.ArrayList;
 
@@ -30,9 +33,11 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
     private LinearLayout ll_TopGalleryLayout,ll_BottomGalleryLayout;
     private ToggleButton TB_SetFavorite;
     private TextView TV_GalleryHashtag;
-    private ImageView IV_Filter;
+    private ImageView IV_Filter,IV_KAKAOTALK;
     private int InitPosition, CurrentPosition;
     private String hashtag1, hashtag2,hashtag3,total_hashtag;
+    private GalleryDBAccess galleryDBAccess;
+    private GalleryModel galleryModel;
     ViewPagerAdapter viewPagerAdapter;
     ViewPager viewPager;
     ArrayList<GalleryModel> ImageList;
@@ -41,9 +46,10 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_image);
-
+        this.galleryDBAccess = GalleryDBAccess.getInstance(getApplicationContext());
         InitPosition = getIntent().getIntExtra(GalleryAppCode.Position, InitPosition);
         ImageList = (ArrayList<GalleryModel>) getIntent().getSerializableExtra(GalleryAppCode.GalleryList);
+        galleryModel = ImageList.get(InitPosition);
 
         InitComponents();
 
@@ -51,19 +57,26 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-                GalleryModel galleryModel = ImageList.get(position);
-                hashtag1 = galleryModel.getHashtag1();
-                hashtag2 = galleryModel.getHashtag2();
-                hashtag3 = galleryModel.getHashtag3();
-
+                GalleryModel GModel = ImageList.get(position);
+                Log.d("OneImage","Position : "  + position);
+                Log.d("OneImage","Favorite : "  + GModel.getFavorite());
+                hashtag1 = GModel.getHashtag1();
+                hashtag2 = GModel.getHashtag2();
+                hashtag3 = GModel.getHashtag3();
+                Log.d("GWGWGW","PageChange" + GModel.getFavorite());
                 total_hashtag = hashtag1+","+hashtag2+","+hashtag3;
+                if(GModel.getFavorite() == 1){
+                    TB_SetFavorite.setChecked(true);
 
+                }else{
+                    TB_SetFavorite.setChecked(false);
+                }
                 TV_GalleryHashtag.setText(total_hashtag);
+                TB_SetFavorite.setOnCheckedChangeListener(checkedChangeListener);
                 Log.d("GWGWGW","Position" + position);
 
             }
@@ -85,9 +98,18 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         ll_BottomGalleryLayout.setVisibility(View.INVISIBLE);
         IV_Filter = findViewById(R.id.CompareButton);
         IV_Filter.setOnClickListener(this);
+
+        IV_KAKAOTALK = findViewById(R.id.KAKAOTALK);
+        IV_KAKAOTALK.setOnClickListener(this);
+
         TV_GalleryHashtag = findViewById(R.id.TotalHashtag);
         TB_SetFavorite = findViewById(R.id.SetFavorite);
-
+        if(galleryModel.getFavorite() == 1){
+            TB_SetFavorite.setChecked(true);
+        }else{
+            TB_SetFavorite.setChecked(false);
+        }
+        TB_SetFavorite.setOnCheckedChangeListener(checkedChangeListener);
         viewPagerAdapter = new ViewPagerAdapter(this, ImageList);
         viewPager.setOnTouchListener((view, motionEvent) -> {
             switch(motionEvent.getAction()){
@@ -134,7 +156,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                 Log.d("GWGWGW","Success");
                 CurrentPosition = viewPager.getCurrentItem();
                 String CurrentFile = ImageList.get(CurrentPosition).getFilename();
-                Intent intent = new Intent(this, CompareFilter.class);
+                Intent intent = new Intent(this, OneFilter.class);
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
@@ -144,8 +166,50 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                 intent.putExtra(GalleryAppCode.Position,CurrentPosition);
                 startActivity(intent);
                 break;
+            case R.id.KAKAOTALK:
+                shareKAKAO();
+                break;
+        }
+    }
 
+    private ToggleButton.OnCheckedChangeListener checkedChangeListener = (compoundButton, isfavorite) -> {
+        if(isfavorite){
+            GalleryModel GalleryModel = ImageList.get(viewPager.getCurrentItem());
+            TB_SetFavorite.setChecked(true);
+            GalleryModel.setFavorite(1);
+            galleryDBAccess.open();
+            galleryDBAccess.FavoriteChange(GalleryModel,1);
+            galleryDBAccess.close();
+            Log.d("GWGWGW","Favorite" + GalleryModel.getFavorite());
+
+        }else{
+            GalleryModel GalleryModel = ImageList.get(viewPager.getCurrentItem());
+            TB_SetFavorite.setChecked(false);
+            GalleryModel.setFavorite(0);
+            galleryDBAccess.open();
+            galleryDBAccess.FavoriteChange(GalleryModel,0);
+            galleryDBAccess.close();
+            Log.d("GWGWGW","Favorite" + GalleryModel.getFavorite());
+        }
+
+    };
+    public void shareKAKAO(){
+        try{
+            Log.d("KAKAO","KAKAO");
+            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
+            final KakaoTalkLinkMessageBuilder kakaobuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+
+            kakaobuilder.addText("카카오링크 테스트");
+            String url = "http://upload2.inven.co.kr/upload/2015/09/27/bbs/i12820605286.jpg";
+            kakaobuilder.addImage(url,1080,1920);
+
+            kakaoLink.sendMessage(kakaobuilder, this);
+
+        }
+        catch (KakaoParameterException e) {
+            e.printStackTrace();
         }
     }
 }
+
 

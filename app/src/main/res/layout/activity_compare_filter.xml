@@ -4,18 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CompareFilter.CompareFilter">
+    tools:context=".CompareFilter.OneFilter">
+    <LinearLayout
+        android:id="@+id/Filter_Topnavigation"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
 
-    <ImageButton
-        android:id="@+id/SaveImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
+        android:background="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/download"
-        >
+        android:orientation="horizontal"
+        android:weightSum="10">
 
-    </ImageButton>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:gravity="center">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/filterKakao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/kakaotalk" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/SaveImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@mipmap/download"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/SelectImage"

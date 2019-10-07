@@ -85,10 +85,11 @@ public class GalleryDBAccess {
         database.delete(GalleryDBOpenHelper.TABLE, "date = ?", new String[]{date});
     }
 
-    public void FavoriteChange(String PictureName,Integer Favorite){
+    public void FavoriteChange(GalleryModel galleryModel,int Favorite){
         ContentValues values = new ContentValues();
         values.put("favorite",Favorite);
-        database.update(GalleryDBOpenHelper.TABLE, values, "date = ?", new String[]{PictureName});
+        String date = galleryModel.getFilename();
+        database.update(GalleryDBOpenHelper.TABLE, values, "date = ?", new String[]{date});
     }
     public void InsertData(String file_name,Double longitude, Double latitude,String hashtag1,String hashtag2,String hashtag3){
         instance.open();
