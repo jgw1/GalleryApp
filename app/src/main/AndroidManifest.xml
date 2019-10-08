@@ -16,10 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".CompareFilter.ImageEdit"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CompareFilter.practiceseekbar" />
         <activity android:name=".CompareFilter.OneFilter">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
@@ -27,11 +32,11 @@
                     android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Gallery.OneImage" />
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="@string/kakao_app_key"/>
+            android:value="@string/kakao_app_key" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

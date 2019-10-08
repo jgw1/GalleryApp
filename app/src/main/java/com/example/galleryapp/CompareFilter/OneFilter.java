@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -77,7 +76,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        setContentView(R.layout.activity_compare_filter);
+        setContentView(R.layout.activity_one_filter);
         this.galleryDBAccess = GalleryDBAccess.getInstance(getApplicationContext());
         File_Name = getIntent().getStringExtra(GalleryAppCode.GoToFilterPath);
         ImageFile = new File(GalleryAppCode.Path+File_Name);
@@ -182,12 +181,12 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
 
             //오른쪽방향 스와이프 - 필터변경
             public void onSwipeLeft() {
-                filtersListFragment.FilterChange(GalleryAppCode.GoLeft,TV_FilterName);
+//                filtersListFragment.FilterChange(GalleryAppCode.GoLeft,TV_FilterName);
             }
 
             //왼쪽방향 스와이프 - 필터변경
             public void onSwipeRight() {
-                filtersListFragment.FilterChange(GalleryAppCode.GoRight,TV_FilterName);
+//                filtersListFragment.FilterChange(GalleryAppCode.GoRight,TV_FilterName);
             }
             public void onSwipeTop() {
                 slideUp(viewPager);

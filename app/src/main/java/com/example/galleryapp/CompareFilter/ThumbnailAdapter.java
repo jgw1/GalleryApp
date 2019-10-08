@@ -24,7 +24,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     private Context mContext;
     private ThumbnailsAdapterListener listener;
     private List<ThumbnailItem> thumbnailItemList;
-    private int a=0;
+    private int LeftFilterIndex,RightFilterIndex;
     private int currentindex;
     private ViewHolder viewHolder;
     public ThumbnailAdapter(Context context,List<ThumbnailItem> thumbnailItemList,ThumbnailsAdapterListener listener){
@@ -67,29 +67,57 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         return thumbnailItemList.size();
     }
 
-    public void Swipe(String Direction){
+    public void Swipe(String ChangeImage,String Direction){
+
+        currentindex =getCurrentIndex(ChangeImage);
         if(Direction == GalleryAppCode.GoLeft){
             if(currentindex-1<0){
-                currentindex = getItemCount();
+                currentindex = getItemCount()-1;
             }else{
                 currentindex -= 1;
             }
         }else if(Direction == GalleryAppCode.GoRight){
-            if(currentindex+1>getItemCount()){
+            if(currentindex+1>getItemCount()-1){
                 currentindex = 0;
             }else{
                 currentindex += 1;
             }
         }
-
+        setCurrentindex(currentindex,ChangeImage);
         ThumbnailItem item =  thumbnailItemList.get(currentindex);
         listener.onFilterSelected(item.filter);
         notifyDataSetChanged();
     }
 
-    public int getCurrentIndex(){
+    public int getCurrentIndex(String ChangeImage){
+        if(ChangeImage=="LEFT"){
+            currentindex =LeftFilterIndex;
+        }else if(ChangeImage=="RIGHT"){
+            currentindex=RightFilterIndex;
+        }
         return currentindex;
     }
+
+    public void setCurrentindex(int index,String changeImage){
+        if(changeImage=="LEFT"){
+            LeftFilterIndex =index;
+        }else if(changeImage=="RIGHT"){
+            RightFilterIndex=index;
+        }
+    }
+    public void setIndex(String ChangeImage){
+        if(ChangeImage=="LEFT"){
+             currentindex=LeftFilterIndex;
+        }else if(ChangeImage=="RIGHT"){
+            currentindex=RightFilterIndex;
+        }
+        notifyDataSetChanged();
+    }
+
+
+
+
+
 
     public interface ThumbnailsAdapterListener{
         void onFilterSelected(Filter filter);

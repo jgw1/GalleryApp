@@ -132,23 +132,25 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         void onFilterSelected(Filter filter);
     }
 
-    public void FilterChange(String Direction, TextView filtername){
+    public void FilterSwipe(String ChangePicture,String Direction, TextView filtername){
 
-        thumbnailAdapter.Swipe(Direction);
+        thumbnailAdapter.Swipe(ChangePicture,Direction);
 
-        CurrentFilter = thumbnailAdapter.getCurrentIndex();
+        CurrentFilter = thumbnailAdapter.getCurrentIndex(ChangePicture);
         recyclerView.smoothScrollToPosition(CurrentFilter);
         filtername.setText(thumbnailItemList.get(CurrentFilter).filterName);
 
         final Animation out = new AlphaAnimation(1.0f,0.0f);
         out.setDuration(2000);
 
-
-
-
-
         filtername.startAnimation(out);
         filtername.setVisibility(View.INVISIBLE);
+    }
+    public void FilterPositionChange(String ChangePicture){
+        thumbnailAdapter.setIndex(ChangePicture);
+        CurrentFilter = thumbnailAdapter.getCurrentIndex(ChangePicture);
+        recyclerView.smoothScrollToPosition(CurrentFilter);
+
     }
 
 }

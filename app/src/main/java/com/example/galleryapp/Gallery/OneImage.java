@@ -15,7 +15,9 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.galleryapp.CompareFilter.ImageEdit;
 import com.example.galleryapp.CompareFilter.OneFilter;
+import com.example.galleryapp.CompareFilter.practiceseekbar;
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.GalleryAppCode;
@@ -156,7 +158,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                 Log.d("GWGWGW","Success");
                 CurrentPosition = viewPager.getCurrentItem();
                 String CurrentFile = ImageList.get(CurrentPosition).getFilename();
-                Intent intent = new Intent(this, OneFilter.class);
+                Intent intent = new Intent(this, ImageEdit.class);
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
