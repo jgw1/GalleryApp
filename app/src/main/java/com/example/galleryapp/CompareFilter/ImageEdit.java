@@ -50,9 +50,9 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
 
-   static{
-       System.loadLibrary("NativeImageProcessor");
-   }
+    static{
+        System.loadLibrary("NativeImageProcessor");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,34 +94,34 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
     @SuppressLint("ClickableViewAccessibility")
     private void initComponents() {
-       leftImage = findViewById(R.id.image_preview);
-       rightImage = findViewById(R.id.RightImage);
-       tabLayout = findViewById(R.id.tabs);
-       viewPager = findViewById(R.id.nonviewpager);
+        leftImage = findViewById(R.id.image_preview);
+        rightImage = findViewById(R.id.RightImage);
+        tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.nonviewpager);
 
 
-       leftImage.bringToFront();
-       rightImage.bringToFront();
+        leftImage.bringToFront();
+        rightImage.bringToFront();
 
-       coordinatorLayout = findViewById(R.id.coordinator_layout);
-       relativeLayout = findViewById(R.id.filterlayout);
-       relativeLayout.setVisibility(View.INVISIBLE);
+        coordinatorLayout = findViewById(R.id.coordinator_layout);
+        relativeLayout = findViewById(R.id.filterlayout);
+        relativeLayout.setVisibility(View.INVISIBLE);
 
-       tv_leftFiltername=findViewById(R.id.leftFilterName);
-       tv_rightFilterName=findViewById(R.id.rightFilterName);
-       leftImage.setOnTouchListener(new OnSwipeTouchListener(this) {
+        tv_leftFiltername=findViewById(R.id.leftFilterName);
+        tv_rightFilterName=findViewById(R.id.rightFilterName);
+        leftImage.setOnTouchListener(new OnSwipeTouchListener(this) {
 
             //왼쪽방향 스와이프 - 필터변경
             public void onSwipeLeft() {
                 CurrentChangePicture(GalleryAppCode.GoLeft);
-               filtersListFragment.FilterSwipe(GalleryAppCode.GoLeft,GalleryAppCode.GoLeft,tv_leftFiltername);
-           }
+                filtersListFragment.FilterSwipe(GalleryAppCode.GoLeft,GalleryAppCode.GoLeft,tv_leftFiltername);
+            }
 
             //오른쪽방향 스와이프 - 필터변경
-           public void onSwipeRight() {
-               CurrentChangePicture(GalleryAppCode.GoLeft);
+            public void onSwipeRight() {
+                CurrentChangePicture(GalleryAppCode.GoLeft);
                 filtersListFragment.FilterSwipe(GalleryAppCode.GoLeft,GalleryAppCode.GoRight,tv_leftFiltername);
-           }
+            }
 
             //변경할 이미지 선택
             public void onDoubleTouch(){
@@ -175,15 +175,15 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     }
 
     public void CurrentChangePicture(String Direction){
-       if(Direction == GalleryAppCode.GoLeft){
-           Current_LeftImage = true;
-           Current_RightImage = false;
+        if(Direction == GalleryAppCode.GoLeft){
+            Current_LeftImage = true;
+            Current_RightImage = false;
 //           rightImage.setAlpha(0.1f);
 //           leftImage.setAlpha(1f);
 
-       }else if(Direction == GalleryAppCode.GoRight){
-           Current_LeftImage = false;
-           Current_RightImage = true;
+        }else if(Direction == GalleryAppCode.GoRight){
+            Current_LeftImage = false;
+            Current_RightImage = true;
 //           leftImage.setAlpha(0.1f);
 //           rightImage.setAlpha(1f);
         }
@@ -253,7 +253,12 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     }
     private void loadImage() {
         originalImage = BitmapFactory.decodeFile(ImageFile.getPath());
-        scaleDownImage = Bitmap.createScaledBitmap(originalImage,300 , 300, false);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 10;
+        originalImage = BitmapFactory.decodeFile(ImageFile.getPath());
+        scaleDownImage  =  BitmapFactory.decodeFile(ImageFile.getPath(),options);
+
+
 //        originalImage = BitmapUtils.getBitmapFromGallery(this,Uri.fromFile(ImageFile),300,300);
 
         filteredImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
@@ -268,9 +273,9 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     @Override
     public void onFilterSelected(Filter filter) {
         resetControls();
-        Bitmap bitmap  =  BitmapFactory.decodeFile(ImageFile.getPath());
-        bitmap =  Bitmap.createScaledBitmap(bitmap,300 , 300, false);
-        filteredImage = bitmap.copy(Bitmap.Config.ARGB_8888,true);
+
+//        bitmap =  Bitmap.createScaledBitmap(bitmap,300 , 300, false);
+        filteredImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
         if(Current_LeftImage){
             leftImage.setImageBitmap(filter.processFilter(filteredImage));
             Left_finalImage = filter.processFilter(filteredImage);

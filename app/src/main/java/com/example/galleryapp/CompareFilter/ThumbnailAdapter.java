@@ -114,8 +114,13 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         notifyDataSetChanged();
     }
 
+    public String getLeftFiter(){
+        return thumbnailItemList.get(LeftFilterIndex).filterName;
+    }
 
-
+    public String getRightFiter(){
+        return thumbnailItemList.get(RightFilterIndex).filterName;
+    }
 
 
 

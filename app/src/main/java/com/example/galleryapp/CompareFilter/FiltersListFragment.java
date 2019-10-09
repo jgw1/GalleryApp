@@ -150,7 +150,14 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         thumbnailAdapter.setIndex(ChangePicture);
         CurrentFilter = thumbnailAdapter.getCurrentIndex(ChangePicture);
         recyclerView.smoothScrollToPosition(CurrentFilter);
+    }
 
+    public String CurrentLeftFilter(){
+        return thumbnailAdapter.getLeftFiter();
+    }
+
+    public String CurrentRightFilter(){
+        return thumbnailAdapter.getRightFiter();
     }
 
 }

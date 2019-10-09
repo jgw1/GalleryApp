@@ -35,17 +35,24 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
         public boolean onDoubleTap(MotionEvent event) {
             onDoubleTouch();
             return true;
-
         }
 
-
+        @Override
+        public void onLongPress(MotionEvent e) {
+            onLongPressed();
+            super.onLongPress(e);
+            ;
+        }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             boolean result = false;
             try {
+
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
+
+
                 if (Math.abs(diffX) > Math.abs(diffY)) {
                     if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffX > 0) {
@@ -83,5 +90,7 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     public void onSwipeTop() {
     }
     public void onSingleTap(){
+    }
+    public void onLongPressed(){
     }
 }

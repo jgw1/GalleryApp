@@ -34,9 +34,9 @@ import com.example.galleryapp.Util.CustomDialog;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
 import com.example.galleryapp.Util.Thumbnail;
-import com.kakao.kakaolink.KakaoLink;
-import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
-import com.kakao.util.KakaoParameterException;
+//import com.kakao.kakaolink.KakaoLink;
+//import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+//import com.kakao.util.KakaoParameterException;
 import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.io.ByteArrayOutputStream;
@@ -331,22 +331,22 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
         view.startAnimation(animate);
     }
 
-    public void shareKAKAO(){
-        try{
-            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
-            final KakaoTalkLinkMessageBuilder kakaobuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
-
-            kakaobuilder.addText("카카오링크 테스트");
-            String url = "http://upload2.inven.co.kr/upload/2015/09/27/bbs/i12820605286.jpg";
-            kakaobuilder.addImage(url,1080,1920);
-
-            kakaoLink.sendMessage(kakaobuilder, this);
-
-        }
-        catch (KakaoParameterException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void shareKAKAO(){
+//        try{
+//            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
+//            final KakaoTalkLinkMessageBuilder kakaobuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+//
+//            kakaobuilder.addText("카카오링크 테스트");
+//            String url = "http://upload2.inven.co.kr/upload/2015/09/27/bbs/i12820605286.jpg";
+//            kakaobuilder.addImage(url,1080,1920);
+//
+//            kakaoLink.sendMessage(kakaobuilder, this);
+//
+//        }
+//        catch (KakaoParameterException e) {
+//            e.printStackTrace();
+//        }
+//    }
     private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
         @Override
