@@ -65,6 +65,8 @@ public class GalleryAppCode {
 //messageBuilder.addText("카카오톡으로 공유해요."); -- 메세지 전달
 //kakaoLink.sendMessage(messageBuilder,getApplicationContext());
 
+    //https://ringsterz.wordpress.com/2014/12/10/kakaolink%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-%EC%95%B1%EC%97%90%EC%84%9C-%EC%B9%B4%EC%B9%B4%EC%98%A4%ED%86%A1-%ED%86%B5%ED%95%B4-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%A0%84%EC%86%A1%ED%95%98/
+
 
 
 }
