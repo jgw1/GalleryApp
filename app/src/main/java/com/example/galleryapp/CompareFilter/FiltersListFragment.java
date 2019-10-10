@@ -41,6 +41,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     private List<ThumbnailItem> thumbnailItemList;
     private FiltersListFragmentListener listener;
     private int CurrentFilter;
+    private Filter left_initfilter;
 
     public void setListener(FiltersListFragmentListener listener){
         this.listener = listener;
@@ -82,9 +83,12 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
 
             if (bitmap == null) {
                 File ImageFile = new File(GalleryAppCode.Path, File_Name);
-                thumbImage = BitmapUtils.getBitmapFromGallery(getActivity(), Uri.fromFile(ImageFile), 100, 100);
+
+                thumbImage = BitmapUtils.resize(getActivity(), Uri.fromFile(ImageFile),100);
             } else {
-                thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+                File ImageFile = new File(GalleryAppCode.Path, File_Name);
+                thumbImage = BitmapUtils.resize(getActivity(), Uri.fromFile(ImageFile),100);
+//                thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
             }
 
             if (thumbImage == null)
@@ -111,6 +115,8 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
             }
 
             thumbnailItemList.addAll(ThumbnailsManager.processThumbs(getActivity()));
+
+            left_initfilter = thumbnailItemList.get(0).filter;
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -152,12 +158,9 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         recyclerView.smoothScrollToPosition(CurrentFilter);
     }
 
-    public String CurrentLeftFilter(){
-        return thumbnailAdapter.getLeftFiter();
+    public int getCurrentFilter(){
+        return thumbnailAdapter.getCurrentIndex("LEFT");
     }
 
-    public String CurrentRightFilter(){
-        return thumbnailAdapter.getRightFiter();
-    }
 
 }

@@ -377,7 +377,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
         return time;
 
     }
-    private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
+    public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
         @Override
         protected Void doInBackground(byte[]... data) {

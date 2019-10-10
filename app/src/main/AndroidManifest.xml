@@ -49,7 +49,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Gallery.GalleryFragment" />
-        <activity android:name=".Util.SearchEngine" />
     </application>
 
 </manifest>

@@ -24,7 +24,8 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     private Context mContext;
     private ThumbnailsAdapterListener listener;
     private List<ThumbnailItem> thumbnailItemList;
-    private int LeftFilterIndex,RightFilterIndex;
+    private int LeftFilterIndex = 0;
+    private int RightFilterIndex = 0;
     private int currentindex;
     private ViewHolder viewHolder;
     public ThumbnailAdapter(Context context,List<ThumbnailItem> thumbnailItemList,ThumbnailsAdapterListener listener){
@@ -91,11 +92,12 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     public int getCurrentIndex(String ChangeImage){
         if(ChangeImage=="LEFT"){
-            currentindex =LeftFilterIndex;
+            return LeftFilterIndex;
         }else if(ChangeImage=="RIGHT"){
-            currentindex=RightFilterIndex;
+            return RightFilterIndex;
+        }else{
+            return Integer.parseInt(null);
         }
-        return currentindex;
     }
 
     public void setCurrentindex(int index,String changeImage){
@@ -114,12 +116,14 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         notifyDataSetChanged();
     }
 
-    public String getLeftFiter(){
-        return thumbnailItemList.get(LeftFilterIndex).filterName;
+
+    public Filter getLeftFiter(){
+        return thumbnailItemList.get(LeftFilterIndex).filter;
+
     }
 
-    public String getRightFiter(){
-        return thumbnailItemList.get(RightFilterIndex).filterName;
+    public Filter getRightFiter(){
+        return thumbnailItemList.get(RightFilterIndex).filter;
     }
 
 

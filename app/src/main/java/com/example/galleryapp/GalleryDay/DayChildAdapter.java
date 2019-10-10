@@ -20,8 +20,8 @@ import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.GalleryAppCode;
-import com.example.galleryapp.Util.Thumbnail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,8 +52,8 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
         String FileName = galleryModel.getFilename();
         File outputFile = new File(GalleryAppCode.Path,FileName);
 //        holder.thumbnail.setImageURI(Uri.fromFile(outputFile));
-        Bitmap bitmap = BitmapFactory.decodeFile(outputFile.getPath());
-        bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+        Bitmap bitmap  = BitmapUtils.resize(mContext, Uri.fromFile(outputFile),100);
+
         holder.thumbnail.setImageBitmap(bitmap);
 //        holder.thumbnail.setImageResource(R.drawable.bubble_mask);
 //        Log.d("GWGWGWGWGWGWGW", "OUTPUTFILE" + Uri.fromFile(outputFile));

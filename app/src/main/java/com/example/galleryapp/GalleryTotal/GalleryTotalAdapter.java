@@ -21,6 +21,7 @@ import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.GalleryDay.DayChildAdapter;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.GalleryAppCode;
 
 import java.io.ByteArrayOutputStream;
@@ -50,8 +51,7 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
         final GalleryModel galleryModel = mDataset.get(position);
        String FileName =  galleryModel.getFilename();
        File outputFile = new File(GalleryAppCode.Path,FileName);
-       Bitmap bitmap = BitmapFactory.decodeFile(outputFile.getPath());
-       bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+        Bitmap bitmap  = BitmapUtils.resize(context, Uri.fromFile(outputFile),100);
 
 
         holder.checkBox.setVisibility(isSelectable?View.VISIBLE:View.INVISIBLE);

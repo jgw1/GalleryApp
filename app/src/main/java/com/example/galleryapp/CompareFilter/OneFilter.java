@@ -30,10 +30,11 @@ import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.CustomDialog;
+import com.example.galleryapp.Util.FileModule;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
-import com.example.galleryapp.Util.Thumbnail;
 //import com.kakao.kakaolink.KakaoLink;
 //import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
 //import com.kakao.util.KakaoParameterException;
@@ -44,6 +45,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.galleryapp.Util.Animation.slideDown;
+import static com.example.galleryapp.Util.Animation.slideUp;
+import static com.example.galleryapp.Util.Animation.topslidedown;
+import static com.example.galleryapp.Util.Animation.topslideup;
 
 public class OneFilter extends AppCompatActivity implements  FiltersListFragment.FiltersListFragmentListener,View.OnClickListener{
 
@@ -58,6 +64,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
     private ImageButton IB_SaveFilterImage;
     private TextView TV_FilterName;
     private LinearLayout top_navigation;
+    private FileModule.SaveImage saveImage;
 
     ArrayList<GalleryModel> ImageList;
     private int InitPosition;
@@ -201,6 +208,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
     }
 
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -209,10 +217,10 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
     @Override
     public void onFilterSelected(Filter filter) {
         // reset image controls
-        Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
+
 //        originalImage = BitmapUtils.getBitmapFromAssets(this, File_Name, 300, 300);
         // applying the selected filter
-        filteredImage = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888, true);
         // preview filtered image
         finalImage = filter.processFilter(filteredImage);
         IV_LeftImage.setImageBitmap(filter.processFilter(filteredImage));
@@ -221,11 +229,11 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
     }
 
     private void loadImage(){
-        Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
+        originalImage = BitmapUtils.resize(getApplicationContext(), Uri.fromFile(ImageFile),300);
 //        originalImage = BitmapUtils.getBitmapFromGallery(this,Uri.fromFile(ImageFile),300,300);
-        filteredImage = bitmap.copy(Bitmap.Config.ARGB_8888,true);
-        finalImage = bitmap.copy(Bitmap.Config.ARGB_8888,true);
-        IV_LeftImage.setImageBitmap(bitmap);
+        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888,true);
+        finalImage = originalImage.copy(Bitmap.Config.ARGB_8888,true);
+        IV_LeftImage.setImageBitmap(filteredImage);
     }
 
     private View.OnClickListener positiveListener = new View.OnClickListener() {
@@ -237,7 +245,9 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
             byte[] currentData = stream.toByteArray();
 
             //파일로 저장
-            new SaveImageTask().execute(currentData);
+
+            saveImage = new FileModule.SaveImage(OneFilter.this);
+            saveImage.execute(currentData);
 
             EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
             EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
@@ -248,7 +258,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
             String Hashtag3 = "#" + hashtag3.getText().toString();
 
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
-            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
             galleryDBAccess.open();
@@ -268,10 +278,11 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
             byte[] currentData = stream.toByteArray();
 
             //파일로 저장
-            new SaveImageTask().execute(currentData);
+            saveImage = new FileModule.SaveImage(OneFilter.this);
+            saveImage.execute(currentData);
 
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
-            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
             galleryDBAccess.open();
@@ -284,52 +295,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
         }
     };
     // slide the view from below itself to the current position
-    public void slideUp(ViewPager view){
-        view.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                view.getHeight(),  // fromYDelta
-                0);                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        view.startAnimation(animate);
-    }
-    public void topslideup(LinearLayout linearLayout){
-        linearLayout.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                -linearLayout.getHeight(),  // fromYDelta
-                0);                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        linearLayout.startAnimation(animate);
-    }
 
-    public void topslidedown(LinearLayout linearLayout){
-        linearLayout.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                0,  // fromYDelta
-                -linearLayout.getHeight());                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        linearLayout.startAnimation(animate);
-    }
-
-    public void slideDown(ViewPager view){
-        view.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                0,  // fromYDelta
-                view.getHeight());                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        view.startAnimation(animate);
-    }
 
 //    public void shareKAKAO(){
 //        try{
@@ -347,39 +313,5 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
 //            e.printStackTrace();
 //        }
 //    }
-    private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
-
-        @Override
-        protected Void doInBackground(byte[]... data) {
-            FileOutputStream outStream = null;
-
-
-            try {
-
-                File path = new File (GalleryAppCode.Path);
-                String time = String.valueOf(System.currentTimeMillis());
-                String fileName = time + ".jpg";
-//                String fileName = String.format("%d.jpg", System.currentTimeMillis());
-                Log.d("time","Preview TIME = " + time);
-                File outputFile = new File(path, fileName);
-
-                outStream = new FileOutputStream(outputFile);
-                outStream.write(data[0]);
-                outStream.flush();
-                outStream.close();
-
-                // 갤러리에 반영
-                Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                mediaScanIntent.setData(Uri.fromFile(outputFile));
-                getApplicationContext().sendBroadcast(mediaScanIntent);
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-    }
 
 }

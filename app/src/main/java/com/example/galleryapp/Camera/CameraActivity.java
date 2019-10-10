@@ -1,10 +1,5 @@
 package com.example.galleryapp.Camera;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +14,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.CustomDialog;
-import com.example.galleryapp.Util.Thumbnail;
+import com.example.galleryapp.Util.FileModule;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -208,7 +208,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             String Hashtag2 = "#" + hashtag2.getText().toString();
             String Hashtag3 = "#" + hashtag3.getText().toString();
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
-            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
             galleryDBAccess.open();
@@ -224,7 +224,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         @Override
         public void onClick(View view) {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
-            File file = new File(String.valueOf(Thumbnail.latestFileModified(path)));
+            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
             String file_name = file.getName();
             ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
             galleryDBAccess.open();

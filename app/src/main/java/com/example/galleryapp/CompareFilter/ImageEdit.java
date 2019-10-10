@@ -1,5 +1,17 @@
 package com.example.galleryapp.CompareFilter;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -8,18 +20,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.BitmapUtils;
+import com.example.galleryapp.Util.FileModule;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
 import com.google.android.material.tabs.TabLayout;
@@ -28,22 +31,27 @@ import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.galleryapp.CompareFilter.OneFilter.File_Name;
+import static com.example.galleryapp.Util.Animation.slideDown;
+import static com.example.galleryapp.Util.Animation.slideUp;
 
 public class ImageEdit extends AppCompatActivity implements FiltersListFragment.FiltersListFragmentListener, EditImageFragment.EditImageFragmentListener {
     private ImageView leftImage, rightImage;
-    private int  brightnessFinal = 0;
-    private float saturationFinal = 1.0f;
-    private float contrastFinal = 1.0f;
+    private int  leftbrightnessFinal,rightbrightnessFinal,initbrightness = 0;
+    private float leftsaturationFinal,rightsaturationFinal,initsaturation = 1.0f;
+    private float leftcontrastFinal,rightcontrastFinal,initconstrast = 1.0f;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private CoordinatorLayout coordinatorLayout;
-    private Bitmap  originalImage,filteredImage,Left_finalImage,scaleDownImage,Right_finalImage;
+    private Bitmap  originalImage,filteredImage, Left_previewImage,scaleDownImage, Right_previewImage,Left_finalImage,Right_finalImage;
+    private Filter left_filter,right_filter;
     private File ImageFile;
+    private FileModule.SaveImage saveImage;
     private boolean Current_LeftImage, Current_RightImage = false;
     private TextView tv_leftFiltername,tv_rightFilterName;
     private RelativeLayout relativeLayout;
@@ -73,6 +81,9 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
+
+        Log.d("LeftFilter", "LeftFilter : " + left_filter);
+
     }
     private void setupViewPager(ViewPager viewPager) {
         FilterPagerAdapter adapter = new FilterPagerAdapter(getSupportFragmentManager());
@@ -80,6 +91,8 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         // adding filter list fragment
         filtersListFragment = new FiltersListFragment();
         filtersListFragment.setListener(this);
+
+
 
         // adding edit image fragment
         editImageFragment = new EditImageFragment();
@@ -89,6 +102,8 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         adapter.addFragment(editImageFragment, getString(R.string.tab_edit));
 
         viewPager.setAdapter(adapter);
+
+
     }
 
 
@@ -102,6 +117,9 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
         leftImage.bringToFront();
         rightImage.bringToFront();
+
+        left_filter = new Filter();
+        right_filter = new Filter();
 
         coordinatorLayout = findViewById(R.id.coordinator_layout);
         relativeLayout = findViewById(R.id.filterlayout);
@@ -141,11 +159,18 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
                 slideDown(relativeLayout);
 
             }
+
+            public void onLongPressed(){
+                TotalImage(originalImage,left_filter);
+                Log.d("AAFSS","AAF");
+            }
         });
+
         rightImage.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeLeft() {
                 CurrentChangePicture(GalleryAppCode.GoRight);
                 filtersListFragment.FilterSwipe(GalleryAppCode.GoRight,GalleryAppCode.GoLeft,tv_leftFiltername);
+                Log.d("FILTERCHECK","CURRENTFILTER INDEX " + filtersListFragment.getCurrentFilter());
             }
 
             //왼쪽방향 스와이프 - 필터변경
@@ -191,49 +216,47 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     }
     @Override
     public void onBrightnessChanged(int brightness) {
-        brightnessFinal = brightness;
+
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new BrightnessSubFilter(brightness));
         if(Current_LeftImage){
-            leftImage.setImageBitmap(myFilter.processFilter(Left_finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+            leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
+            leftbrightnessFinal = brightness;
         }else if(Current_RightImage){
-            rightImage.setImageBitmap(myFilter.processFilter(Right_finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+            rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
+            rightbrightnessFinal = brightness;
         }
 
-        Log.d("Filter", "Brightness : " + brightnessFinal);
-        Log.d("Filter", "saturation : " + saturationFinal);
-        Log.d("Filter", "contrast : " + contrastFinal);
     }
 
     @Override
     public void onSaturationChanged(float saturation) {
-        saturationFinal = saturation;
+
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new SaturationSubfilter(saturation));
         if(Current_LeftImage){
-            leftImage.setImageBitmap(myFilter.processFilter(Left_finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+            leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
+            leftsaturationFinal=saturation;
         }else if(Current_RightImage){
-            rightImage.setImageBitmap(myFilter.processFilter(Right_finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+            rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
+            rightsaturationFinal=saturation;
         }
-        Log.d("Filter", "Brightness : " + brightnessFinal);
-        Log.d("Filter", "saturation : " + saturationFinal);
-        Log.d("Filter", "contrast : " + contrastFinal);
+
     }
 
     @Override
     public void onContrastChanged(float contrast) {
-        contrastFinal = contrast;
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new ContrastSubFilter(contrast));
 
         if(Current_LeftImage){
-            leftImage.setImageBitmap(myFilter.processFilter(Left_finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+            leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
+            leftcontrastFinal = contrast;
         }else if(Current_RightImage){
-            rightImage.setImageBitmap(myFilter.processFilter(Right_finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+            rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
+            rightcontrastFinal = contrast;
         }
-        Log.d("Filter", "Brightness : " + brightnessFinal);
-        Log.d("Filter", "saturation : " + saturationFinal);
-        Log.d("Filter", "contrast : " + contrastFinal);
+
     }
 
     @Override
@@ -243,31 +266,24 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
     @Override
     public void onEditCompleted() {
-        final Bitmap bitmap = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
-
-        Filter myFilter = new Filter();
-        myFilter.addSubFilter(new BrightnessSubFilter(brightnessFinal));
-        myFilter.addSubFilter(new ContrastSubFilter(contrastFinal));
-        myFilter.addSubFilter(new SaturationSubfilter(saturationFinal));
-        scaleDownImage = myFilter.processFilter(bitmap);
     }
+
     private void loadImage() {
+        left_filter = new Filter();
+
+
         originalImage = BitmapFactory.decodeFile(ImageFile.getPath());
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 10;
-        originalImage = BitmapFactory.decodeFile(ImageFile.getPath());
-        scaleDownImage  =  BitmapFactory.decodeFile(ImageFile.getPath(),options);
+        originalImage = originalImage.copy(Bitmap.Config.ARGB_8888,true);
 
 
-//        originalImage = BitmapUtils.getBitmapFromGallery(this,Uri.fromFile(ImageFile),300,300);
-
+        scaleDownImage = BitmapUtils.resize(getApplicationContext(), Uri.fromFile(ImageFile),300);
         filteredImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
 
-        Left_finalImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
-        Right_finalImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
+        Left_previewImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
+        Right_previewImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
 
-        leftImage.setImageBitmap(scaleDownImage);
-        rightImage.setImageBitmap(scaleDownImage);
+        leftImage.setImageBitmap(Left_previewImage);
+        rightImage.setImageBitmap(Right_previewImage);
     }
 
     @Override
@@ -277,25 +293,22 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 //        bitmap =  Bitmap.createScaledBitmap(bitmap,300 , 300, false);
         filteredImage = scaleDownImage.copy(Bitmap.Config.ARGB_8888,true);
         if(Current_LeftImage){
-            leftImage.setImageBitmap(filter.processFilter(filteredImage));
-            Left_finalImage = filter.processFilter(filteredImage);
+            Left_previewImage = filter.processFilter(filteredImage);
+            leftImage.setImageBitmap(Left_previewImage);
+            left_filter = filter;
+
         }else if(Current_RightImage){
-            rightImage.setImageBitmap(filter.processFilter(filteredImage));
-            Right_finalImage = filter.processFilter(filteredImage);
+            Right_previewImage = filter.processFilter(filteredImage);
+            rightImage.setImageBitmap(Right_previewImage);
+            right_filter = filter;
         }
-
-
-
-
 
     }
     private void resetControls() {
         if (editImageFragment != null) {
             editImageFragment.resetControls();
         }
-        brightnessFinal = 0;
-        saturationFinal = 1.0f;
-        contrastFinal = 1.0f;
+
     }
     class FilterPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -325,28 +338,26 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
             return mFragmentTitleList.get(position);
         }
     }
-    public void slideUp(RelativeLayout relativeLayout){
-        relativeLayout.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                relativeLayout.getHeight(),  // fromYDelta
-                0);                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        relativeLayout.startAnimation(animate);
-        relativeLayout.bringToFront();
 
+    private void TotalImage(Bitmap Image, Filter filter){
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Bitmap bitmap  = filter.processFilter(Image);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] currentData = stream.toByteArray();
+
+                //파일로 저장
+                saveImage = new FileModule.SaveImage(ImageEdit.this);
+                saveImage.execute(currentData);
+            }
+        }).start();
+        Toast.makeText(getApplicationContext(),"CHECK THE FILE",Toast.LENGTH_LONG).show();
     }
-    public void slideDown(RelativeLayout relativeLayout){
-        relativeLayout.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                0,  // fromYDelta
-                relativeLayout.getHeight());                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        relativeLayout.startAnimation(animate);
-    }
+
+
+
+
 }
