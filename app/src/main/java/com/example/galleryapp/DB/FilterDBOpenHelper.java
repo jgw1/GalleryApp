@@ -15,7 +15,7 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Filter(name String PRIMARY KEY, filter Filter)");
+        db.execSQL("CREATE TABLE Filter(FilterName String PRIMARY KEY,SampleFilter int, Brightness int,Contrast float,Saturation float)");
     }
 
     @Override

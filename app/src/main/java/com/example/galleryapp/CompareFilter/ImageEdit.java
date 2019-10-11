@@ -1,6 +1,8 @@
 package com.example.galleryapp.CompareFilter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -12,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -20,6 +23,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.galleryapp.DB.FilterDBAccess;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.FileModule;
@@ -42,6 +46,7 @@ import static com.example.galleryapp.Util.Animation.slideUp;
 
 public class ImageEdit extends AppCompatActivity implements FiltersListFragment.FiltersListFragmentListener, EditImageFragment.EditImageFragmentListener {
     private ImageView leftImage, rightImage;
+    private FilterDBAccess filterDBAccess;
     private int  leftbrightnessFinal,rightbrightnessFinal,initbrightness = 0;
     private float leftsaturationFinal,rightsaturationFinal,initsaturation = 1.0f;
     private float leftcontrastFinal,rightcontrastFinal,initconstrast = 1.0f;
@@ -55,8 +60,10 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     private boolean Current_LeftImage, Current_RightImage = false;
     private TextView tv_leftFiltername,tv_rightFilterName;
     private RelativeLayout relativeLayout;
+    private ArrayList<FilterModel> leftcustomfilter,rightcustomfilter;
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
+
 
     static{
         System.loadLibrary("NativeImageProcessor");
@@ -73,12 +80,14 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Filters");
+        viewPager = findViewById(R.id.nonviewpager);
+        setupViewPager(viewPager);
+
 
         initComponents();
 
         loadImage();
 
-        setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
 
@@ -104,6 +113,7 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         viewPager.setAdapter(adapter);
 
 
+
     }
 
 
@@ -112,14 +122,16 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         leftImage = findViewById(R.id.image_preview);
         rightImage = findViewById(R.id.RightImage);
         tabLayout = findViewById(R.id.tabs);
-        viewPager = findViewById(R.id.nonviewpager);
-
 
         leftImage.bringToFront();
         rightImage.bringToFront();
+        filterDBAccess = FilterDBAccess.getInstance(getApplicationContext());
 
         left_filter = new Filter();
         right_filter = new Filter();
+
+        leftcustomfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
+        rightcustomfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
 
         coordinatorLayout = findViewById(R.id.coordinator_layout);
         relativeLayout = findViewById(R.id.filterlayout);
@@ -127,78 +139,20 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
         tv_leftFiltername=findViewById(R.id.leftFilterName);
         tv_rightFilterName=findViewById(R.id.rightFilterName);
-        leftImage.setOnTouchListener(new OnSwipeTouchListener(this) {
 
-            //왼쪽방향 스와이프 - 필터변경
-            public void onSwipeLeft() {
-                CurrentChangePicture(GalleryAppCode.GoLeft);
-                filtersListFragment.FilterSwipe(GalleryAppCode.GoLeft,GalleryAppCode.GoLeft,tv_leftFiltername);
-            }
+        SwipeListener Left_swipeListener = new SwipeListener(getApplicationContext(),GalleryAppCode.GoLeft,tv_leftFiltername,filtersListFragment,relativeLayout);
+        SwipeListener Right_swipeListener = new SwipeListener(getApplicationContext(),GalleryAppCode.GoRight,tv_rightFilterName,filtersListFragment,relativeLayout);
 
-            //오른쪽방향 스와이프 - 필터변경
-            public void onSwipeRight() {
-                CurrentChangePicture(GalleryAppCode.GoLeft);
-                filtersListFragment.FilterSwipe(GalleryAppCode.GoLeft,GalleryAppCode.GoRight,tv_leftFiltername);
-            }
+        leftImage.setOnTouchListener(Left_swipeListener);
+        rightImage.setOnTouchListener(Right_swipeListener);
 
-            //변경할 이미지 선택
-            public void onDoubleTouch(){
-                CurrentChangePicture(GalleryAppCode.GoLeft);
-                resetControls();
-                filtersListFragment.FilterPositionChange(GalleryAppCode.GoLeft);
-                Log.d("Boolean check","LEFTIMAGE : " + Current_LeftImage);
-                Log.d("Boolean check","RIGHTIMAGE : " + Current_RightImage);
-
-            }
-            public void onSwipeTop() {
-                CurrentChangePicture(GalleryAppCode.GoLeft);
-                slideUp(relativeLayout);
-            }
-            public void onSwipeBottom(){
-                CurrentChangePicture(GalleryAppCode.GoLeft);
-                slideDown(relativeLayout);
-
-            }
-
-            public void onLongPressed(){
-                TotalImage(originalImage,left_filter);
-                Log.d("AAFSS","AAF");
-            }
-        });
-
-        rightImage.setOnTouchListener(new OnSwipeTouchListener(this) {
-            public void onSwipeLeft() {
-                CurrentChangePicture(GalleryAppCode.GoRight);
-                filtersListFragment.FilterSwipe(GalleryAppCode.GoRight,GalleryAppCode.GoLeft,tv_leftFiltername);
-                Log.d("FILTERCHECK","CURRENTFILTER INDEX " + filtersListFragment.getCurrentFilter());
-            }
-
-            //왼쪽방향 스와이프 - 필터변경
-            public void onSwipeRight() {
-                CurrentChangePicture(GalleryAppCode.GoRight);
-                filtersListFragment.FilterSwipe(GalleryAppCode.GoRight,GalleryAppCode.GoRight,tv_leftFiltername);
-            }
-            //오른쪽방향 스와이프 - 필터변경
-            public void onDoubleTouch(){
-                CurrentChangePicture(GalleryAppCode.GoRight);
-                resetControls();
-                filtersListFragment.FilterPositionChange(GalleryAppCode.GoRight);
-                Log.d("Boolean check","LEFTIMAGE : " + Current_LeftImage);
-                Log.d("Boolean check","RIGHTIMAGE : " + Current_RightImage);
-
-            }
-            public void onSwipeTop() {
-                CurrentChangePicture(GalleryAppCode.GoRight);
-                slideUp(relativeLayout);
-            }
-            public void onSwipeBottom(){
-                CurrentChangePicture(GalleryAppCode.GoRight);
-                slideDown(relativeLayout);
-            }
-        });
 
     }
-
+    private ArrayList<FilterModel> initfilterModel(String FilterName,int SampleFilter,int Brightness, float Contrast,float Saturation){
+        ArrayList<FilterModel> filterModel = new ArrayList<>();
+        filterModel.add(new FilterModel(FilterName,SampleFilter,Brightness,Contrast,Saturation));
+        return filterModel;
+    }
     public void CurrentChangePicture(String Direction){
         if(Direction == GalleryAppCode.GoLeft){
             Current_LeftImage = true;
@@ -221,10 +175,11 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         myFilter.addSubFilter(new BrightnessSubFilter(brightness));
         if(Current_LeftImage){
             leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            leftbrightnessFinal = brightness;
+
+            leftcustomfilter.get(0).setBrightness(brightness);
         }else if(Current_RightImage){
             rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            rightbrightnessFinal = brightness;
+            rightcustomfilter.get(0).setBrightness(brightness);
         }
 
     }
@@ -236,10 +191,10 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         myFilter.addSubFilter(new SaturationSubfilter(saturation));
         if(Current_LeftImage){
             leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            leftsaturationFinal=saturation;
+            leftcustomfilter.get(0).setSaturation(saturation);
         }else if(Current_RightImage){
             rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            rightsaturationFinal=saturation;
+            rightcustomfilter.get(0).setSaturation(saturation);
         }
 
     }
@@ -251,10 +206,10 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
         if(Current_LeftImage){
             leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            leftcontrastFinal = contrast;
+            leftcustomfilter.get(0).setContrast(contrast);
         }else if(Current_RightImage){
             rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            rightcontrastFinal = contrast;
+            rightcustomfilter.get(0).setContrast(contrast);
         }
 
     }
@@ -295,15 +250,16 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         if(Current_LeftImage){
             Left_previewImage = filter.processFilter(filteredImage);
             leftImage.setImageBitmap(Left_previewImage);
-            left_filter = filter;
+            leftcustomfilter.get(0).setSampleFilter(filtersListFragment.getCurrentFilter(GalleryAppCode.GoLeft));
 
         }else if(Current_RightImage){
             Right_previewImage = filter.processFilter(filteredImage);
             rightImage.setImageBitmap(Right_previewImage);
-            right_filter = filter;
+            rightcustomfilter.get(0).setSampleFilter(filtersListFragment.getCurrentFilter(GalleryAppCode.GoRight));
         }
 
     }
+
     private void resetControls() {
         if (editImageFragment != null) {
             editImageFragment.resetControls();
@@ -340,24 +296,71 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     }
 
     private void TotalImage(Bitmap Image, Filter filter){
-        new Thread(new Runnable() {
+        new Thread(() -> {
+            Bitmap bitmap  = filter.processFilter(Image);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] currentData = stream.toByteArray();
 
-            @Override
-            public void run() {
-                Bitmap bitmap  = filter.processFilter(Image);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] currentData = stream.toByteArray();
-
-                //파일로 저장
-                saveImage = new FileModule.SaveImage(ImageEdit.this);
-                saveImage.execute(currentData);
-            }
+            //파일로 저장
+            saveImage = new FileModule.SaveImage(ImageEdit.this);
+            saveImage.execute(currentData);
         }).start();
         Toast.makeText(getApplicationContext(),"CHECK THE FILE",Toast.LENGTH_LONG).show();
     }
 
 
+   public class SwipeListener extends OnSwipeTouchListener{
+        private String Direction;
+        private TextView textView;
+        private FiltersListFragment filtersFragment;
+        private Context context;
+        private View view;
+       public SwipeListener(Context ctx, String Direction, TextView textView, FiltersListFragment filtersListFragment,View view) {
+           super(ctx);
+           this.context = ctx;
+           this.Direction = Direction;
+           this.textView = textView;
+           this.filtersFragment = filtersListFragment;
+           this.view = view;
+
+       }
+       public void onSwipeLeft() {
+           CurrentChangePicture(Direction);
+           filtersFragment.FilterSwipe(Direction,GalleryAppCode.GoLeft,textView);
+       }
+
+       //왼쪽방향 스와이프 - 필터변경
+       public void onSwipeRight() {
+           CurrentChangePicture(Direction);
+           filtersFragment.FilterSwipe(Direction,GalleryAppCode.GoRight,textView);
+       }
+       //오른쪽방향 스와이프 - 필터변경
+       public void onDoubleTouch(){
+           CurrentChangePicture(Direction);
+           resetControls();
+           filtersFragment.FilterPositionChange(Direction);
+           Log.d("Boolean check","LEFTIMAGE : " + Current_LeftImage);
+           Log.d("Boolean check","RIGHTIMAGE : " + Current_RightImage);
+
+       }
+       public void onSwipeTop() {
+           CurrentChangePicture(Direction);
+           slideUp(view);
+       }
+       public void onSwipeBottom(){
+           CurrentChangePicture(Direction);
+           slideDown(view);
+       }
+       public void onLongPressed(){
+//           TotalImage(originalImage,left_filter);
+
+//           filterDBAccess.open();
+//           filterDBAccess.InsertData(leftcustomfilter);
+//           filterDBAccess.close();
+           Log.d("AAFSS","AAF");
+       }
+   }
 
 
 }

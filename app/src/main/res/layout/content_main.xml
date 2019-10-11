@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_main">
+   >
 
     <ImageView
         android:id="@+id/image_preview"
@@ -22,9 +22,11 @@
         android:id="@+id/leftFilterName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/image_preview"
+        android:textColor = "#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@+id/image_preview"
-        app:layout_constraintTop_toTopOf="@+id/image_preview"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/image_preview"/>
     <ImageView
         android:id="@+id/RightImage"
@@ -39,6 +41,8 @@
         android:id="@+id/rightFilterName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor = "#FFFFFF"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="@+id/RightImage"
         app:layout_constraintRight_toRightOf="@+id/RightImage"
         app:layout_constraintTop_toTopOf="@+id/RightImage"

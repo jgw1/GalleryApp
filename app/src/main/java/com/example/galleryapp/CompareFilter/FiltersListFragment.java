@@ -1,5 +1,7 @@
 package com.example.galleryapp.CompareFilter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -19,6 +21,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.galleryapp.DB.FilterDBAccess;
+import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.GalleryAppCode;
@@ -26,6 +30,8 @@ import com.example.galleryapp.Util.SpacesItemDecoration;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
+import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
+import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 import com.zomato.photofilters.utils.ThumbnailItem;
 import com.zomato.photofilters.utils.ThumbnailsManager;
 
@@ -42,7 +48,9 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     private FiltersListFragmentListener listener;
     private int CurrentFilter;
     private Filter left_initfilter;
-
+    private Activity activity;
+    private FilterDBAccess filterDBAccess;
+    private ArrayList<FilterModel> filterModels;
     public void setListener(FiltersListFragmentListener listener){
         this.listener = listener;
     }
@@ -53,6 +61,14 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
     }
 
     @Override
@@ -77,6 +93,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
 
         return view;
     }
+
     public void prepareThumbnail(final Bitmap bitmap) {
         Runnable r = () -> {
             Bitmap thumbImage;
@@ -110,13 +127,35 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
                 tI.image = thumbImage;
                 tI.filter = filter;
                 tI.filterName = filter.getName();
-                filter.addSubFilter(new BrightnessSubFilter(0));
+
                 ThumbnailsManager.addThumb(tI);
+            }
+            this.filterDBAccess = FilterDBAccess.getInstance(activity);
+            filterDBAccess.open();
+            filterModels=  filterDBAccess.getCustomFilterFromDB();
+            filterDBAccess.close();
+
+            for(int i=0;i<filterModels.size();i++){
+                FilterModel filterModel = filterModels.get(i);
+                ThumbnailItem tl = new ThumbnailItem();
+                tl.image = thumbImage;
+                tl.filterName = filterModel.getFiltername();
+                int SampleFilter = filterModel.getSampleFilter();
+                int brightness = filterModel.getBrightness();
+                float Contrast = filterModel.getContrast();
+                float saturation = filterModel.getSaturation();
+
+                Filter filter = filters.get(SampleFilter);
+                filter.addSubFilter(new BrightnessSubFilter(brightness));
+                filter.addSubFilter(new ContrastSubFilter(Contrast));
+                filter.addSubFilter(new SaturationSubfilter(saturation));
+                tl.filter = filter;
+                ThumbnailsManager.addThumb(tl);
             }
 
             thumbnailItemList.addAll(ThumbnailsManager.processThumbs(getActivity()));
 
-            left_initfilter = thumbnailItemList.get(0).filter;
+
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -148,7 +187,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
 
         final Animation out = new AlphaAnimation(1.0f,0.0f);
         out.setDuration(2000);
-
+        filtername.bringToFront();
         filtername.startAnimation(out);
         filtername.setVisibility(View.INVISIBLE);
     }
@@ -158,8 +197,13 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         recyclerView.smoothScrollToPosition(CurrentFilter);
     }
 
-    public int getCurrentFilter(){
-        return thumbnailAdapter.getCurrentIndex("LEFT");
+    public int getCurrentFilter(String Direction){
+        if(Direction == GalleryAppCode.GoLeft){
+            return thumbnailAdapter.getCurrentIndex("LEFT");
+        }else{
+            return thumbnailAdapter.getCurrentIndex("RIGHT");
+        }
+
     }
 
 

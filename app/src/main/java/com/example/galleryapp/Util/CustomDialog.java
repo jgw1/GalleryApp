@@ -47,6 +47,9 @@ public class CustomDialog extends Dialog {
         mContext = activity.getApplicationContext();
         setContentView(R.layout.custom_dialog);
 
+
+
+
         //셋팅
         mPositiveButton=(Button)findViewById(R.id.pbutton);
         mNegativeButton=(Button)findViewById(R.id.nbutton);

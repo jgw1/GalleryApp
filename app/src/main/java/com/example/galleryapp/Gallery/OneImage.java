@@ -1,17 +1,25 @@
 package com.example.galleryapp.Gallery;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -26,7 +34,12 @@ import com.kakao.kakaolink.KakaoLink;
 import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
 import com.kakao.util.KakaoParameterException;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static com.example.galleryapp.Util.GalleryAppCode.GoToFilterPath;
 
@@ -35,7 +48,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
     private LinearLayout ll_TopGalleryLayout,ll_BottomGalleryLayout;
     private ToggleButton TB_SetFavorite;
     private TextView TV_GalleryHashtag;
-    private ImageView IV_Filter,IV_KAKAOTALK;
+    private ImageView IV_Filter,IV_KAKAOTALK,IV_Information;
     private int InitPosition, CurrentPosition;
     private String hashtag1, hashtag2,hashtag3,total_hashtag;
     private GalleryDBAccess galleryDBAccess;
@@ -100,6 +113,9 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         ll_BottomGalleryLayout.setVisibility(View.INVISIBLE);
         IV_Filter = findViewById(R.id.CompareButton);
         IV_Filter.setOnClickListener(this);
+
+        IV_Information = findViewById(R.id.PictureInfo);
+        IV_Information.setOnClickListener(this);
 
         IV_KAKAOTALK = findViewById(R.id.KAKAOTALK);
         IV_KAKAOTALK.setOnClickListener(this);
@@ -169,8 +185,12 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                 startActivity(intent);
                 break;
             case R.id.KAKAOTALK:
-                shareKAKAO();
+//                shareKAKAO();
+                SelectHowtoEdit();
                 break;
+            case R.id.PictureInfo:
+                GalleryModel galleryModel = ImageList.get(viewPager.getCurrentItem());
+                ImageInformation(galleryModel);
         }
     }
 
@@ -212,6 +232,123 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
             e.printStackTrace();
         }
     }
+
+    private void SelectHowtoEdit(){
+//         선택 Dialog 형성
+    String[] listItems = {"이미지 1개로 단순 필터 적용", "이미지 2개로 비교하며 필터 적용"};
+
+    LayoutInflater inflater = (LayoutInflater)(OneImage.this).getSystemService(LAYOUT_INFLATER_SERVICE);
+    View Layout = inflater.inflate(R.layout.customdialogpractice,(ViewGroup) findViewById(R.id.layout_root));
+    TextView firstText = Layout.findViewById(R.id.firsttext);
+    TextView secondText = Layout.findViewById(R.id.secondtext);
+    ImageView firstImage = Layout.findViewById(R.id.firsttextimage);
+    ImageView secondImage = Layout.findViewById(R.id.secondtextimage);
+
+    firstText.setText(listItems[0]);
+    secondText.setText(listItems[1]);
+
+    firstImage.setImageResource(R.mipmap.oneimagefilter);
+    secondImage.setImageResource(R.mipmap.twoimagefilter);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(OneImage.this);
+
+          builder.setItems(listItems, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i) {
+                  //해당 아이템 선택시 발생
+                  if(i == 0){
+                      Log.d("GWGWGW","Success");
+                      CurrentPosition = viewPager.getCurrentItem();
+                      String CurrentFile = ImageList.get(CurrentPosition).getFilename();
+                      Intent intent = new Intent(OneImage.this, OneFilter.class);
+
+                      Bundle bundle = new Bundle();
+                      bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
+                      intent.putExtras(bundle);
+
+                      intent.putExtra(GoToFilterPath,CurrentFile);
+                      intent.putExtra(GalleryAppCode.Position,CurrentPosition);
+                      startActivity(intent);
+                      overridePendingTransition(0, 0);
+                  }else if(i ==1){
+                      Log.d("GWGWGW","Success");
+                      CurrentPosition = viewPager.getCurrentItem();
+                      String CurrentFile = ImageList.get(CurrentPosition).getFilename();
+                      Intent intent = new Intent(OneImage.this, ImageEdit.class);
+
+                      Bundle bundle = new Bundle();
+                      bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
+                      intent.putExtras(bundle);
+
+                      intent.putExtra(GoToFilterPath,CurrentFile);
+                      intent.putExtra(GalleryAppCode.Position,CurrentPosition);
+                      startActivity(intent);
+                      overridePendingTransition(0, 0);
+                  }
+              }
+          });
+
+    AlertDialog dialog = builder.create();
+           dialog.show();
+    }
+
+    private void ImageInformation(GalleryModel galleryModel){
+
+        String FileName = galleryModel.getFilename();
+        Double Longitude = galleryModel.getLongitude();
+        Double Latitude = galleryModel.getLatitude();
+        String Hashtag1 = galleryModel.getHashtag1();
+        String Hashtag2 = galleryModel.getHashtag2();
+        String Hashtag3 = galleryModel.getHashtag3();
+        int Favorite = galleryModel.getFavorite();
+
+        FileName = FileName.replaceAll(".jpg","");
+        long filename = Long.parseLong(FileName);
+        Date date=new Date(filename);
+        SimpleDateFormat df2 = new SimpleDateFormat("MM월 dd일");
+        FileName = df2.format(date);
+
+        LayoutInflater inflater = (LayoutInflater)(OneImage.this).getSystemService(LAYOUT_INFLATER_SERVICE);
+        View Layout = inflater.inflate(R.layout.informationdialog,(ViewGroup) findViewById(R.id.informationdialoglayout));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(OneImage.this);
+
+        TextView name = Layout.findViewById(R.id.ImageDate);
+        TextView location = Layout.findViewById(R.id.ImageLocation);
+        TextView hashtag1 = Layout.findViewById(R.id.ImageHashtag1);
+        TextView hashtag2 = Layout.findViewById(R.id.ImageHashtag2);
+        TextView hashtag3 = Layout.findViewById(R.id.ImageHashtag3);
+        TextView Like = Layout.findViewById(R.id.ImageFavorite);
+        TextView filtername = Layout.findViewById(R.id.ImageFilter);
+
+        Geocoder mGeoCoder = new Geocoder(OneImage.this);
+        //섬네일 리스트 상단에 선택 클러스터 주소 표시
+        try {
+            List<Address> mResultList = mGeoCoder.getFromLocation(Longitude,Latitude,1);
+            String ImageLocation  = String.valueOf(mResultList.get(0).getAddressLine(0));
+            String[] data = ImageLocation.split(" ");
+            ImageLocation = data[1] + " "  +data[2];
+            location.setText(ImageLocation);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        name.setText(FileName);
+        hashtag1.setText(Hashtag1);
+        hashtag2.setText(Hashtag2);
+        hashtag3.setText(Hashtag3);
+        if(Favorite == 0){
+            Like.setText("좋아요!!");
+        }else{
+            Like.setText("아직 안 했어요!");
+        }
+
+        builder.setView(Layout);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 }
 
 
