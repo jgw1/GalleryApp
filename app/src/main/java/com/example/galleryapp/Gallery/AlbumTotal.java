@@ -25,6 +25,7 @@ import com.example.galleryapp.Util.HashTagAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumTotal extends Fragment {
     private RecyclerView RV_GalleryTotalView,RV_HashtagSearchList;
@@ -35,10 +36,10 @@ public class AlbumTotal extends Fragment {
     private GalleryDBAccess galleryDBAccess;
     private ImageButton IB_Search,IB_DELETE;
     private GalleryTotalAdapter galleryTotalAdapter;
-    private Boolean search,delete = false;
+    private boolean search,delete = false;
     private InputMethodManager inputMethodManager;
 
-    ArrayList<String> AL_HashtagList = new ArrayList<>();
+    private ArrayList<String> AL_HashtagList = new ArrayList<>();
 
     public AlbumTotal()
     {
@@ -87,48 +88,69 @@ public class AlbumTotal extends Fragment {
     }
 
     @Override
-    public void onViewCreated(final View view,Bundle savedInstanceState){
+    public void onViewCreated(final View view,Bundle savedInstanceState) {
         galleryTotalAdapter.notifyDataSetChanged();
         RV_GalleryTotalView.setAdapter(galleryTotalAdapter);
 
-        hashTagAdapter = new HashTagAdapter(activity,AL_HashtagList);
+        hashTagAdapter = new HashTagAdapter(activity, AL_HashtagList);
         RV_HashtagSearchList.setAdapter(hashTagAdapter);
-        inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        IB_Search.setOnClickListener(view1 -> {
-            search = !search;
-            if(search){
-            ET_SearchHashTag.requestFocus();
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);}
-            else{
-                ET_SearchHashTag.clearFocus();
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
-        });
+//        inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+//        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
-        RV_HashtagSearchList.setLayoutManager(new GridLayoutManager(activity,3));
+        IB_Search.setOnClickListener(this::onClick);
+        RV_HashtagSearchList.setLayoutManager(new GridLayoutManager(activity, 3));
         ET_SearchHashTag.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 
         ET_SearchHashTag.setOnEditorActionListener((v, actionId, event) -> {
-            if(actionId == EditorInfo.IME_ACTION_SEARCH)
-            {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 AL_HashtagList.add(ET_SearchHashTag.getText().toString());
                 hashTagAdapter.notifyDataSetChanged();
+                setactionId(ET_SearchHashTag,AL_HashtagList);
                 ET_SearchHashTag.setText(null);
                 return true;
+            }else if(actionId == EditorInfo.IME_ACTION_DONE){
+                searchHashtag(AL_HashtagList,List_GalleryTotal,galleryTotalAdapter);
+                ET_SearchHashTag.clearFocus();
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
             return false;
         });
 
-
-
-
+        ET_SearchHashTag.setOnFocusChangeListener((view1, b) -> {
+            if(b){
+                setactionId(ET_SearchHashTag,AL_HashtagList);
+            }
+        });
     }
+
+
+    public void setactionId(ClearEditText clearEditText,ArrayList<String> arrayList){
+        if(arrayList.size()<3){
+            clearEditText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+        }else{
+            clearEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        }
+    }
+    public void searchHashtag(ArrayList<String> arrayList,ArrayList<GalleryModel> galleryModels,GalleryTotalAdapter galleryTotalAdapter){
+        for(int i = 0;i<arrayList.size();i++){
+            String hashtag = arrayList.get(i);
+            for(int j=0;j<galleryModels.size();j++){
+                GalleryModel galleryModel = galleryModels.get(j);
+                if((!galleryModel.getHashtag1().equals(hashtag)) && (!galleryModel.getHashtag2().equals(hashtag)) && (!galleryModel.getHashtag3().equals(hashtag))){
+                    galleryModels.remove(j);
+                    j--;
+                }
+            }
+        }
+        galleryTotalAdapter.notifyDataSetChanged();
+    }
+
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.DeleteTotal:
                 delete = !delete;
-                if( delete) {
+                if(delete) {
                     galleryTotalAdapter.setSelectable(true);
                 }else{
                     int size = List_GalleryTotal.size();
@@ -150,6 +172,18 @@ public class AlbumTotal extends Fragment {
                     }
 
                     galleryTotalAdapter.setSelectable(false);
+                }
+                break;
+            case R.id.SearchTotal:
+                search = !search;
+                if (search) {
+                    //키보드 팝업 & edittext에 focus on
+                    ET_SearchHashTag.requestFocus();
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                } else{
+                    searchHashtag(AL_HashtagList,List_GalleryTotal,galleryTotalAdapter);
+                    ET_SearchHashTag.clearFocus();
+                    inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 }
                 break;
         }

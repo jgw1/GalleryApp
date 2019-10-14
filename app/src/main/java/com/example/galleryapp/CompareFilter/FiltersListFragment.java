@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -16,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,7 +49,7 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
     private List<ThumbnailItem> thumbnailItemList;
     private FiltersListFragmentListener listener;
     private int CurrentFilter;
-    private Filter left_initfilter;
+    private Filter Customfilter;
     private Activity activity;
     private FilterDBAccess filterDBAccess;
     private ArrayList<FilterModel> filterModels;
@@ -90,7 +92,6 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         File ImageFile = new File(GalleryAppCode.Path,File_Name);
         Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
         prepareThumbnail(bitmap);
-
         return view;
     }
 
@@ -144,12 +145,15 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
                 int brightness = filterModel.getBrightness();
                 float Contrast = filterModel.getContrast();
                 float saturation = filterModel.getSaturation();
-
-                Filter filter = filters.get(SampleFilter);
-                filter.addSubFilter(new BrightnessSubFilter(brightness));
-                filter.addSubFilter(new ContrastSubFilter(Contrast));
-                filter.addSubFilter(new SaturationSubfilter(saturation));
-                tl.filter = filter;
+                if(SampleFilter == 0){
+                    Customfilter = new Filter();
+                }else{
+                    Customfilter = filters.get(SampleFilter-1);
+                }
+                Customfilter.addSubFilter(new BrightnessSubFilter(brightness));
+                Customfilter.addSubFilter(new ContrastSubFilter(Contrast));
+                Customfilter.addSubFilter(new SaturationSubfilter(saturation));
+                tl.filter = Customfilter;
                 ThumbnailsManager.addThumb(tl);
             }
 
@@ -203,8 +207,9 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         }else{
             return thumbnailAdapter.getCurrentIndex("RIGHT");
         }
-
     }
-
+    public int getSelectedFilter(){
+        return thumbnailAdapter.getSelectedFilter();
+    }
 
 }

@@ -65,6 +65,8 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
            if(getSelectable()){
                 setCheckedToggle(position);
            }else{
+               
+
                Intent intent = new Intent(context, OneImage.class);
                intent.putExtra(GalleryAppCode.Position,position);
                Bundle bundle = new Bundle();
@@ -88,6 +90,7 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
         if( isSelectable ) {
             mDataset.get(i).setChecked(!mDataset.get(i).getChecked());
             notifyDataSetChanged();
+            
         }
     }
     @Override

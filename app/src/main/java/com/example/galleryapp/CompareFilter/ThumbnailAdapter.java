@@ -27,6 +27,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     private int LeftFilterIndex = 0;
     private int RightFilterIndex = 0;
     private int currentindex;
+
     private ViewHolder viewHolder;
     public ThumbnailAdapter(Context context,List<ThumbnailItem> thumbnailItemList,ThumbnailsAdapterListener listener){
         mContext = context;
@@ -48,8 +49,11 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         holder.thumbnail.setImageBitmap(thumbnailItem.image);
         holder.thumbnail.setBackgroundColor(Color.RED);
         holder.thumbnail.setOnClickListener(view -> {
-            listener.onFilterSelected(thumbnailItem.filter);
             currentindex = position;
+            listener.onFilterSelected(thumbnailItem.filter);
+            Log.d("GetCurrentIndex","GetCurrentIndex : " + position);
+
+
             notifyDataSetChanged();
         });
 
@@ -127,7 +131,9 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     }
 
 
-
+    public int getSelectedFilter(){
+        return currentindex;
+    }
     public interface ThumbnailsAdapterListener{
         void onFilterSelected(Filter filter);
     }

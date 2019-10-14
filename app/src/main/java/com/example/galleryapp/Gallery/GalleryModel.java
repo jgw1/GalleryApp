@@ -4,11 +4,12 @@ import java.io.Serializable;
 
 public class GalleryModel implements Serializable {
     private int thumbnail, Favorite;
-    private String Filename,Hashtag1,Hashtag2,Hashtag3;
+    private String Filename,Hashtag1,Hashtag2,Hashtag3,filtername;
     private Double Longitude,Latitude;
     private boolean checked = false;
 
-    public GalleryModel(String Filename,Double Longitude,Double Latitude, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite){
+
+    public GalleryModel(String Filename, Double Longitude, Double Latitude, String Hashtag1, String Hashtag2, String Hashtag3, int Favorite, String filtername){
         this.Filename = Filename;
         this.Longitude = Longitude;
         this.Latitude = Latitude;
@@ -16,10 +17,20 @@ public class GalleryModel implements Serializable {
         this.Hashtag2 = Hashtag2;
         this.Hashtag3 = Hashtag3;
         this.Favorite = Favorite;
+        this.filtername = filtername;
 
     }
     public GalleryModel() {
         this.Filename = new String();
+    }
+
+
+    public String getFiltername() {
+        return filtername;
+    }
+
+    public void setFiltername(String filtername) {
+        this.filtername = filtername;
     }
 
     public int getFavorite() {

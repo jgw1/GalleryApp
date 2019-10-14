@@ -10,16 +10,19 @@ public class Animation {
 
     //화면 하단에서 위로 올라오는 애니메이션
     public static void slideUp(View view){
-        view.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                view.getHeight(),  // fromYDelta
-                0);                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        view.startAnimation(animate);
-        view.bringToFront();
+        if(view.getVisibility() == View.INVISIBLE){
+            view.setVisibility(View.VISIBLE);
+            TranslateAnimation animate = new TranslateAnimation(
+                    0,                 // fromXDelta
+                    0,                 // toXDelta
+                    view.getHeight(),  // fromYDelta
+                    0);                // toYDelta
+            animate.setDuration(500);
+            animate.setFillAfter(true);
+            view.startAnimation(animate);
+            view.bringToFront();
+        }
+
 
     }
 
@@ -34,6 +37,7 @@ public class Animation {
         animate.setDuration(500);
         animate.setFillAfter(true);
         view.startAnimation(animate);
+        view.setVisibility(View.INVISIBLE);
     }
 
     //화면 상단에서 아래로 떨어지는 애니메이션

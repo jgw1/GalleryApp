@@ -1,18 +1,13 @@
 package com.example.galleryapp.CompareFilter;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,7 +26,7 @@ import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
-import com.example.galleryapp.Util.CustomDialog;
+import com.example.galleryapp.Util.HashtagCustomDialog;
 import com.example.galleryapp.Util.FileModule;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
@@ -42,7 +37,6 @@ import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +53,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
     private String ImagePath,Hashtag1,Hashtag2,Hashtag3;
     private File ImageFile;
     private Filter Selectedfilter;
-    private CustomDialog customDialog;
+    private HashtagCustomDialog hashtagCustomDialog;
     private GalleryDBAccess galleryDBAccess;
     private ImageButton IB_SaveFilterImage;
     private TextView TV_FilterName;
@@ -112,14 +106,14 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
     public void onClick(View view) {
             switch(view.getId()){
                 case R.id.SaveImage:
-                    customDialog.show();
-                    EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
+                    hashtagCustomDialog.show();
+                    EditText hashtag1 = hashtagCustomDialog.findViewById(R.id.hashtag1);
                     hashtag1.setText(Hashtag1);
 
-                    EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
+                    EditText hashtag2 = hashtagCustomDialog.findViewById(R.id.hashtag2);
                     hashtag2.setText(Hashtag2);
 
-                    EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+                    EditText hashtag3 = hashtagCustomDialog.findViewById(R.id.hashtag3);
                     hashtag3.setText(Hashtag3);
 
                     break;
@@ -179,7 +173,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
 
 
         viewPager = findViewById(R.id.filterViewPager);
-        customDialog = new CustomDialog(this,positiveListener,negativeListener);
+        hashtagCustomDialog = new HashtagCustomDialog(this);
         viewPager.setVisibility(View.INVISIBLE);
         top_navigation.setVisibility(View.INVISIBLE);
 
@@ -249,9 +243,9 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
             saveImage = new FileModule.SaveImage(OneFilter.this);
             saveImage.execute(currentData);
 
-            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
-            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
-            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+            EditText hashtag1 = hashtagCustomDialog.findViewById(R.id.hashtag1);
+            EditText hashtag2 = hashtagCustomDialog.findViewById(R.id.hashtag2);
+            EditText hashtag3 = hashtagCustomDialog.findViewById(R.id.hashtag3);
 
             String Hashtag1 = "#" + hashtag1.getText().toString();
             String Hashtag2 = "#" + hashtag2.getText().toString();
@@ -267,7 +261,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
 
 
 
-            customDialog.dismiss();
+            hashtagCustomDialog.dismiss();
         }
     };
     private View.OnClickListener negativeListener = new View.OnClickListener() {
@@ -291,7 +285,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
 
 
 
-            customDialog.dismiss();
+            hashtagCustomDialog.dismiss();
         }
     };
     // slide the view from below itself to the current position

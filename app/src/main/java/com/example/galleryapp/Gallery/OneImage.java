@@ -1,6 +1,7 @@
 package com.example.galleryapp.Gallery;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -258,32 +259,10 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                   //해당 아이템 선택시 발생
                   if(i == 0){
                       Log.d("GWGWGW","Success");
-                      CurrentPosition = viewPager.getCurrentItem();
-                      String CurrentFile = ImageList.get(CurrentPosition).getFilename();
-                      Intent intent = new Intent(OneImage.this, OneFilter.class);
-
-                      Bundle bundle = new Bundle();
-                      bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
-                      intent.putExtras(bundle);
-
-                      intent.putExtra(GoToFilterPath,CurrentFile);
-                      intent.putExtra(GalleryAppCode.Position,CurrentPosition);
-                      startActivity(intent);
-                      overridePendingTransition(0, 0);
+                      GotoImageEdit(viewPager,ImageList,"ONE");
                   }else if(i ==1){
                       Log.d("GWGWGW","Success");
-                      CurrentPosition = viewPager.getCurrentItem();
-                      String CurrentFile = ImageList.get(CurrentPosition).getFilename();
-                      Intent intent = new Intent(OneImage.this, ImageEdit.class);
-
-                      Bundle bundle = new Bundle();
-                      bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
-                      intent.putExtras(bundle);
-
-                      intent.putExtra(GoToFilterPath,CurrentFile);
-                      intent.putExtra(GalleryAppCode.Position,CurrentPosition);
-                      startActivity(intent);
-                      overridePendingTransition(0, 0);
+                      GotoImageEdit(viewPager,ImageList,"TWO");
                   }
               }
           });
@@ -292,6 +271,25 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
            dialog.show();
     }
 
+
+    private void GotoImageEdit(ViewPager viewPager,ArrayList<GalleryModel> galleryModels,String ImageEdit){
+        Intent intent = new Intent();
+        CurrentPosition = viewPager.getCurrentItem();
+        String CurrentFile = galleryModels.get(CurrentPosition).getFilename();
+        if(ImageEdit == "ONE"){
+            intent = new Intent(OneImage.this, OneImage.class);
+        }else if(ImageEdit == "TWO"){
+            intent = new Intent(OneImage.this, ImageEdit.class);
+        }
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
+        intent.putExtras(bundle);
+
+        intent.putExtra(GoToFilterPath,CurrentFile);
+        intent.putExtra(GalleryAppCode.Position,CurrentPosition);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
     private void ImageInformation(GalleryModel galleryModel){
 
         String FileName = galleryModel.getFilename();
@@ -300,6 +298,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         String Hashtag1 = galleryModel.getHashtag1();
         String Hashtag2 = galleryModel.getHashtag2();
         String Hashtag3 = galleryModel.getHashtag3();
+        String Filtername = galleryModel.getFiltername();
         int Favorite = galleryModel.getFavorite();
 
         FileName = FileName.replaceAll(".jpg","");
@@ -338,10 +337,11 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         hashtag1.setText(Hashtag1);
         hashtag2.setText(Hashtag2);
         hashtag3.setText(Hashtag3);
+        filtername.setText(Filtername);
         if(Favorite == 0){
-            Like.setText("좋아요!!");
+            Like.setText("아직 설정 안 했어요");
         }else{
-            Like.setText("아직 안 했어요!");
+            Like.setText("좋아요");
         }
 
         builder.setView(Layout);

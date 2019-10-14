@@ -108,6 +108,7 @@ public class AlbumDay extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        allSampleData.get(0).getAllItemsInSection();
         Log.d("GWGW","SIZE : " + allSampleData.size());
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);

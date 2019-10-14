@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -13,26 +15,27 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 
 import com.example.galleryapp.DB.GalleryDBAccess;
+import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
-public class CustomDialog extends Dialog {
+public class HashtagCustomDialog extends Dialog {
     private Activity activity;
     private Button mPositiveButton;
     private Button mNegativeButton;
     private EditText hashtag1,hashtag2,hashtag3;
     private GalleryDBAccess galleryDBAccess;
-    private CustomDialog customDialog;
+    private HashtagCustomDialog hashtagCustomDialog;
     private Context mContext;
     private View.OnClickListener mPositiveListener,mNegativeListener;
-    private ArrayList<String> arrayList;
-    public CustomDialog(@NonNull Activity activity,View.OnClickListener mPositiveListener,View.OnClickListener mNegativeListener) {
+    private ArrayList<GalleryModel> arrayList;
+    public HashtagCustomDialog(@NonNull Activity activity) {
         super(activity);
         this.activity=activity;
-        this.mPositiveListener = mPositiveListener;
-        this.mNegativeListener = mNegativeListener;
+
     }
 
     @Override
@@ -45,7 +48,7 @@ public class CustomDialog extends Dialog {
         layoutParams.dimAmount = 0.8f;
         getWindow().setAttributes(layoutParams);
         mContext = activity.getApplicationContext();
-        setContentView(R.layout.custom_dialog);
+        setContentView(R.layout.hashtag_custom_dialog);
 
 
 
@@ -81,28 +84,50 @@ public class CustomDialog extends Dialog {
 //            return false;
 //        });
 
-        mPositiveButton.setOnClickListener(mPositiveListener);
-        mNegativeButton.setOnClickListener(mNegativeListener);
+        mPositiveButton.setOnClickListener(mpositiveListener);
+        mNegativeButton.setOnClickListener(negativeListener);
     }
-    private ArrayList<String> DialogInformation(){
-        arrayList = new ArrayList<>();
 
-        EditText hashtag1 = findViewById(R.id.hashtag1);
-        EditText hashtag2 = findViewById(R.id.hashtag2);
-        EditText hashtag3 = findViewById(R.id.hashtag3);
 
-        String Hashtag1 = hashtag1.getText().toString();
-        String Hashtag2 = hashtag2.getText().toString();
-        String Hashtag3 = hashtag3.getText().toString();
-        ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
+    private View.OnClickListener mpositiveListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            galleryDBAccess.open();
 
-        arrayList.add(0,String.valueOf(LatLng.get(0)));
-        arrayList.add(1,String.valueOf(LatLng.get(1)));
-        arrayList.add(2,Hashtag1);
-        arrayList.add(3,Hashtag2);
-        arrayList.add(4,Hashtag3);
-        return arrayList;
-    }
+            String Hashtag1 = hashtag1.getText().toString();
+            String Hashtag2 = hashtag2.getText().toString();
+            String Hashtag3 = hashtag3.getText().toString();
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
+            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
+            galleryDBAccess.InsertData(file.getName(),LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
+            galleryDBAccess.close();
+            dismiss();
+
+            hashtag1.setText(null);
+            hashtag2.setText(null);
+            hashtag3.setText(null);
+        }
+    };
+
+    private View.OnClickListener negativeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
+            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
+            String file_name = file.getName();
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
+            galleryDBAccess.open();
+            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
+            galleryDBAccess.close();
+            dismiss();
+
+            hashtag1.setText(null);
+            hashtag2.setText(null);
+            hashtag3.setText(null);
+        }
+    };
+
 
 
 

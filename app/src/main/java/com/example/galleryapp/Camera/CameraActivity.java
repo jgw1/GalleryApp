@@ -23,7 +23,7 @@ import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
-import com.example.galleryapp.Util.CustomDialog;
+import com.example.galleryapp.Util.HashtagCustomDialog;
 import com.example.galleryapp.Util.FileModule;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import static android.view.View.GONE;
 
 public class CameraActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback,View.OnClickListener{
-    private CustomDialog customDialog;
+    private HashtagCustomDialog hashtagCustomDialog;
     private GalleryDBAccess galleryDBAccess;
     private static final String TAG = "android_camera_example";
     private static final int PERMISSIONS_REQUEST_CODE = 100;
@@ -76,7 +76,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         mLayout = findViewById(R.id.layout_main);
         surfaceView = findViewById(R.id.camera_preview_main);
         galleryDBAccess = GalleryDBAccess.getInstance(getApplicationContext());
-        customDialog = new CustomDialog(this,positiveListener,negativeListener);
+        hashtagCustomDialog = new HashtagCustomDialog(this);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
 
         surfaceView.setVisibility(GONE);
@@ -200,9 +200,9 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private View.OnClickListener positiveListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            EditText hashtag1 = customDialog.findViewById(R.id.hashtag1);
-            EditText hashtag2 = customDialog.findViewById(R.id.hashtag2);
-            EditText hashtag3 = customDialog.findViewById(R.id.hashtag3);
+            EditText hashtag1 = hashtagCustomDialog.findViewById(R.id.hashtag1);
+            EditText hashtag2 = hashtagCustomDialog.findViewById(R.id.hashtag2);
+            EditText hashtag3 = hashtagCustomDialog.findViewById(R.id.hashtag3);
 
             String Hashtag1 = "#" + hashtag1.getText().toString();
             String Hashtag2 = "#" + hashtag2.getText().toString();
@@ -214,7 +214,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             galleryDBAccess.open();
             galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
             galleryDBAccess.close();
-            customDialog.dismiss();
+            hashtagCustomDialog.dismiss();
             hashtag1.setText(null);
             hashtag2.setText(null);
             hashtag3.setText(null);
@@ -230,7 +230,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             galleryDBAccess.open();
             galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
             galleryDBAccess.close();
-            customDialog.dismiss();
+            hashtagCustomDialog.dismiss();
         }
     };
 
@@ -239,7 +239,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         switch(view.getId()){
             case R.id.button_main_capture:
                 mCameraPreview.takePicture();
-                customDialog.show();
+                hashtagCustomDialog.show();
                 break;
             case R.id.GoToGallery:
                 startActivity(new Intent(this, GalleryFragment.class));

@@ -2,19 +2,18 @@ package com.example.galleryapp.CompareFilter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -24,10 +23,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.galleryapp.DB.FilterDBAccess;
+import com.example.galleryapp.GalleryTotal.GalleryTotalAdapter;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.FileModule;
+import com.example.galleryapp.Util.FilterCustomDialog;
 import com.example.galleryapp.Util.GalleryAppCode;
+import com.example.galleryapp.Util.HashtagCustomDialog;
+import com.example.galleryapp.Util.ImageCustomDialog;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
 import com.google.android.material.tabs.TabLayout;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -54,13 +57,15 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     private ViewPager viewPager;
     private CoordinatorLayout coordinatorLayout;
     private Bitmap  originalImage,filteredImage, Left_previewImage,scaleDownImage, Right_previewImage,Left_finalImage,Right_finalImage;
-    private Filter left_filter,right_filter;
+    private Filter leftimage_filter, rightimage_filter;
     private File ImageFile;
     private FileModule.SaveImage saveImage;
     private boolean Current_LeftImage, Current_RightImage = false;
     private TextView tv_leftFiltername,tv_rightFilterName;
     private RelativeLayout relativeLayout;
-    private ArrayList<FilterModel> leftcustomfilter,rightcustomfilter;
+    private ImageCustomDialog imageCustomDialog;
+    private FilterCustomDialog filterCustomDialog;
+    private ArrayList<FilterModel> leftimage_DBfilter, rightimage_DBfilter;
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
 
@@ -91,7 +96,7 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         tabLayout.setupWithViewPager(viewPager);
 
 
-        Log.d("LeftFilter", "LeftFilter : " + left_filter);
+        Log.d("LeftFilter", "LeftFilter : " + leftimage_filter);
 
     }
     private void setupViewPager(ViewPager viewPager) {
@@ -123,25 +128,25 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         rightImage = findViewById(R.id.RightImage);
         tabLayout = findViewById(R.id.tabs);
 
-        leftImage.bringToFront();
-        rightImage.bringToFront();
+//        leftImage.bringToFront();
+//        rightImage.bringToFront();
         filterDBAccess = FilterDBAccess.getInstance(getApplicationContext());
 
-        left_filter = new Filter();
-        right_filter = new Filter();
+        leftimage_filter = new Filter();
+        rightimage_filter = new Filter();
 
-        leftcustomfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
-        rightcustomfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
+        leftimage_DBfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
+        rightimage_DBfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
 
         coordinatorLayout = findViewById(R.id.coordinator_layout);
         relativeLayout = findViewById(R.id.filterlayout);
-        relativeLayout.setVisibility(View.INVISIBLE);
+        relativeLayout.setVisibility(View.VISIBLE);
 
         tv_leftFiltername=findViewById(R.id.leftFilterName);
         tv_rightFilterName=findViewById(R.id.rightFilterName);
 
-        SwipeListener Left_swipeListener = new SwipeListener(getApplicationContext(),GalleryAppCode.GoLeft,tv_leftFiltername,filtersListFragment,relativeLayout);
-        SwipeListener Right_swipeListener = new SwipeListener(getApplicationContext(),GalleryAppCode.GoRight,tv_rightFilterName,filtersListFragment,relativeLayout);
+        SwipeListener Left_swipeListener = new SwipeListener(getApplicationContext(),GalleryAppCode.GoLeft,tv_leftFiltername,filtersListFragment,relativeLayout,leftimage_DBfilter,leftimage_filter);
+        SwipeListener Right_swipeListener = new SwipeListener(getApplicationContext(),GalleryAppCode.GoRight,tv_rightFilterName,filtersListFragment,relativeLayout,rightimage_DBfilter,rightimage_filter);
 
         leftImage.setOnTouchListener(Left_swipeListener);
         rightImage.setOnTouchListener(Right_swipeListener);
@@ -176,10 +181,11 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         if(Current_LeftImage){
             leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
 
-            leftcustomfilter.get(0).setBrightness(brightness);
+            leftimage_DBfilter.get(0).setBrightness(brightness);
         }else if(Current_RightImage){
             rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            rightcustomfilter.get(0).setBrightness(brightness);
+            rightimage_DBfilter.get(0).setBrightness(brightness);
+
         }
 
     }
@@ -191,10 +197,12 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         myFilter.addSubFilter(new SaturationSubfilter(saturation));
         if(Current_LeftImage){
             leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            leftcustomfilter.get(0).setSaturation(saturation);
+
+            leftimage_DBfilter.get(0).setSaturation(saturation);
         }else if(Current_RightImage){
             rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            rightcustomfilter.get(0).setSaturation(saturation);
+
+            rightimage_DBfilter.get(0).setSaturation(saturation);
         }
 
     }
@@ -206,10 +214,11 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
         if(Current_LeftImage){
             leftImage.setImageBitmap(myFilter.processFilter(Left_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            leftcustomfilter.get(0).setContrast(contrast);
+
+            leftimage_DBfilter.get(0).setContrast(contrast);
         }else if(Current_RightImage){
             rightImage.setImageBitmap(myFilter.processFilter(Right_previewImage.copy(Bitmap.Config.ARGB_8888, true)));
-            rightcustomfilter.get(0).setContrast(contrast);
+            rightimage_DBfilter.get(0).setContrast(contrast);
         }
 
     }
@@ -224,7 +233,7 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     }
 
     private void loadImage() {
-        left_filter = new Filter();
+        leftimage_filter = new Filter();
 
 
         originalImage = BitmapFactory.decodeFile(ImageFile.getPath());
@@ -250,12 +259,15 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         if(Current_LeftImage){
             Left_previewImage = filter.processFilter(filteredImage);
             leftImage.setImageBitmap(Left_previewImage);
-            leftcustomfilter.get(0).setSampleFilter(filtersListFragment.getCurrentFilter(GalleryAppCode.GoLeft));
+            leftimage_filter = filter;
+            Log.d("CUrrentINdex","CUrrentINdex : " + filtersListFragment.getSelectedFilter());
+            leftimage_DBfilter.get(0).setSampleFilter(filtersListFragment.getSelectedFilter());
 
         }else if(Current_RightImage){
             Right_previewImage = filter.processFilter(filteredImage);
             rightImage.setImageBitmap(Right_previewImage);
-            rightcustomfilter.get(0).setSampleFilter(filtersListFragment.getCurrentFilter(GalleryAppCode.GoRight));
+            rightimage_DBfilter.get(0).setSampleFilter(filtersListFragment.getSelectedFilter());
+            rightimage_filter = filter;
         }
 
     }
@@ -316,13 +328,18 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         private FiltersListFragment filtersFragment;
         private Context context;
         private View view;
-       public SwipeListener(Context ctx, String Direction, TextView textView, FiltersListFragment filtersListFragment,View view) {
+        private ArrayList<FilterModel> FilterModel;
+        private Filter filter;
+
+       public SwipeListener(Context ctx, String Direction, TextView textView, FiltersListFragment filtersListFragment,View view,ArrayList<FilterModel> filterModel,Filter filter) {
            super(ctx);
            this.context = ctx;
            this.Direction = Direction;
            this.textView = textView;
            this.filtersFragment = filtersListFragment;
            this.view = view;
+           this.FilterModel = filterModel;
+           this.filter = filter;
 
        }
        public void onSwipeLeft() {
@@ -353,14 +370,47 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
            slideDown(view);
        }
        public void onLongPressed(){
-//           TotalImage(originalImage,left_filter);
+           int bright = FilterModel.get(0).getBrightness();
+           float contrast = FilterModel.get(0).getContrast();
+           float saturation = FilterModel.get(0).getSaturation();
 
-//           filterDBAccess.open();
-//           filterDBAccess.InsertData(leftcustomfilter);
-//           filterDBAccess.close();
+           if(Direction == GalleryAppCode.GoLeft){
+               filter = leftimage_filter;
+           }else if(Direction == GalleryAppCode.GoRight){
+               filter = rightimage_filter;
+           }
+
+           filter.addSubFilter(new BrightnessSubFilter(bright));
+           filter.addSubFilter(new ContrastSubFilter(contrast));
+           filter.addSubFilter(new SaturationSubfilter(saturation));
+           TotalImage(originalImage,filter);
+
+           OKclickListener oKclickListener = new OKclickListener(context,FilterModel);
+           filterCustomDialog = new FilterCustomDialog(ImageEdit.this,oKclickListener);
+           filterCustomDialog.show();
            Log.d("AAFSS","AAF");
        }
    }
+   public class OKclickListener implements View.OnClickListener {
+       private Context context;
+       private ArrayList<FilterModel> Filter;
 
+        public OKclickListener(Context ctx, ArrayList<FilterModel> filter) {
+           this.context = ctx;
+           this.Filter = filter;
+
+       }
+       @Override
+       public void onClick(View view) {
+           EditText editText = filterCustomDialog.findViewById(R.id.customfiltername);
+           leftimage_DBfilter.get(0).setFiltername(editText.getText().toString());
+           filterDBAccess.open();
+           filterDBAccess.InsertData(Filter);
+           filterDBAccess.close();
+           filterCustomDialog.dismiss();
+           HashtagCustomDialog hashtagCustomDialog = new HashtagCustomDialog(ImageEdit.this);
+           hashtagCustomDialog.show();
+       }
+   }
 
 }
