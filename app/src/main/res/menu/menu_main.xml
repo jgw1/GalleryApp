@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="info.androidhive.imagefilters.MainActivity">
     <item
-        android:id="@+id/action_open"
+        android:id="@+id/action_kakaotalk"
         android:orderInCategory="100"
         android:icon="@mipmap/kakaotalk"
         android:title=""

@@ -3,6 +3,7 @@ package com.example.galleryapp.CompareFilter;
 import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class FilterModel implements Serializable {
     private int SampleFilter,Brightness;
@@ -60,5 +61,11 @@ public class FilterModel implements Serializable {
 
     public void setFiltername(String filtername) {
         this.filtername = filtername;
+    }
+
+    public static ArrayList<FilterModel> initfilterModel(){
+        ArrayList<FilterModel> filterModel = new ArrayList<>();
+        filterModel.add(new FilterModel("Sample",0,0,1.0f,1.0f));
+        return filterModel;
     }
 }

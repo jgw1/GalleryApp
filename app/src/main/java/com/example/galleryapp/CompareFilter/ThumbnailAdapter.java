@@ -26,6 +26,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     private List<ThumbnailItem> thumbnailItemList;
     private int LeftFilterIndex = 0;
     private int RightFilterIndex = 0;
+    private int OneImageFilterIndex = 0;
     private int currentindex;
 
     private ViewHolder viewHolder;
@@ -95,27 +96,33 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     }
 
     public int getCurrentIndex(String ChangeImage){
-        if(ChangeImage=="LEFT"){
+        if(ChangeImage==GalleryAppCode.GoLeft){
             return LeftFilterIndex;
-        }else if(ChangeImage=="RIGHT"){
+        }else if(ChangeImage==GalleryAppCode.GoRight){
             return RightFilterIndex;
+        }else if(ChangeImage==GalleryAppCode.OneImage){
+            return OneImageFilterIndex;
         }else{
             return Integer.parseInt(null);
         }
     }
 
     public void setCurrentindex(int index,String changeImage){
-        if(changeImage=="LEFT"){
+        if(changeImage==GalleryAppCode.GoLeft){
             LeftFilterIndex =index;
-        }else if(changeImage=="RIGHT"){
+        }else if(changeImage==GalleryAppCode.GoRight){
             RightFilterIndex=index;
+        } else if (changeImage == GalleryAppCode.OneImage) {
+            OneImageFilterIndex = index;
         }
     }
     public void setIndex(String ChangeImage){
-        if(ChangeImage=="LEFT"){
+        if(ChangeImage==GalleryAppCode.GoLeft){
              currentindex=LeftFilterIndex;
-        }else if(ChangeImage=="RIGHT"){
+        }else if(ChangeImage==GalleryAppCode.GoRight){
             currentindex=RightFilterIndex;
+        }else if(ChangeImage== GalleryAppCode.OneImage){
+            currentindex=OneImageFilterIndex;
         }
         notifyDataSetChanged();
     }

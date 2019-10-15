@@ -65,7 +65,6 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
            if(getSelectable()){
                 setCheckedToggle(position);
            }else{
-               
 
                Intent intent = new Intent(context, OneImage.class);
                intent.putExtra(GalleryAppCode.Position,position);

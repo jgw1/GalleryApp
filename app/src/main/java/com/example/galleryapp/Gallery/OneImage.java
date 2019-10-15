@@ -175,7 +175,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                 Log.d("GWGWGW","Success");
                 CurrentPosition = viewPager.getCurrentItem();
                 String CurrentFile = ImageList.get(CurrentPosition).getFilename();
-                Intent intent = new Intent(this, ImageEdit.class);
+                Intent intent = new Intent(this, OneFilter.class);
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
@@ -323,7 +323,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         Geocoder mGeoCoder = new Geocoder(OneImage.this);
         //섬네일 리스트 상단에 선택 클러스터 주소 표시
         try {
-            List<Address> mResultList = mGeoCoder.getFromLocation(Longitude,Latitude,1);
+            List<Address> mResultList = mGeoCoder.getFromLocation(Latitude,Longitude,1);
             String ImageLocation  = String.valueOf(mResultList.get(0).getAddressLine(0));
             String[] data = ImageLocation.split(" ");
             ImageLocation = data[1] + " "  +data[2];

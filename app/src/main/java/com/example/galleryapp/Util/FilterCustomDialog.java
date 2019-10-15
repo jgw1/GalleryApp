@@ -13,6 +13,9 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 
+import com.example.galleryapp.CompareFilter.FilterModel;
+import com.example.galleryapp.CompareFilter.ImageEdit;
+import com.example.galleryapp.DB.FilterDBAccess;
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Map.Location;
@@ -25,21 +28,21 @@ public class FilterCustomDialog extends Dialog {
     private Activity activity;
     private Button mOkButton;
     private EditText hashtag1,hashtag2,hashtag3;
-    private GalleryDBAccess galleryDBAccess;
+    private FilterDBAccess filterDBAccess;
     private FilterCustomDialog hashtagCustomDialog;
     private Context mContext;
-    private View.OnClickListener okclicklistener;
-    private ArrayList<GalleryModel> arrayList;
-    public FilterCustomDialog(@NonNull Activity activity,View.OnClickListener okclicklistener) {
+    private OKclickListener okclicklistener;
+    private ArrayList<FilterModel> filterModel;
+    public FilterCustomDialog(@NonNull Activity activity,ArrayList<FilterModel> filterModel) {
         super(activity);
         this.activity=activity;
-        this.okclicklistener = okclicklistener;
+        this.filterModel=filterModel;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        galleryDBAccess = GalleryDBAccess.getInstance(activity);
+        filterDBAccess = FilterDBAccess.getInstance(activity);
         //다이얼로그 밖의 화면은 흐리게 만들어줌
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
@@ -49,8 +52,30 @@ public class FilterCustomDialog extends Dialog {
         setContentView(R.layout.filter_custom_dialog);
 
         //셋팅
-        mOkButton=(Button)findViewById(R.id.okbutton);
-        mOkButton.setOnClickListener(okclicklistener);
+        mOkButton= findViewById(R.id.okbutton);
+        OKclickListener oKclickListener = new OKclickListener(filterModel);
+        mOkButton.setOnClickListener(oKclickListener);
+    }
+    public class OKclickListener implements View.OnClickListener {
+
+        private ArrayList<FilterModel> Filter;
+
+        public OKclickListener(ArrayList<FilterModel> filter) {
+
+            this.Filter = filter;
+
+        }
+        @Override
+        public void onClick(View view) {
+            EditText editText = findViewById(R.id.customfiltername);
+            Filter.get(0).setFiltername(editText.getText().toString());
+            filterDBAccess.open();
+            filterDBAccess.InsertData(Filter);
+            filterDBAccess.close();
+            dismiss();
+            HashtagCustomDialog hashtagCustomDialog = new HashtagCustomDialog(activity);
+            hashtagCustomDialog.show();
+        }
     }
 
 }

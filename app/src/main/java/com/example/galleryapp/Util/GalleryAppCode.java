@@ -16,6 +16,8 @@ public class GalleryAppCode {
     public static final String GoToFilterPath = "GoToFilterPath";
     public static final String GoLeft = "LEFT";
     public static final String GoRight = "RIGHT";
+    public static final String OneImage = "ONE";
+    public static final String TwoImage = "TWO";
     // Camera 관련 참고 : https://yeolco.tistory.com/45?category=757621
     // UI THREAD 해결 참고 - https://stackoverflow.com/questions/14678593/the-application-may-be-doing-too-much-work-on-its-main-thread
     // ImageView - URI VS Bitmap - https://stackoverflow.com/questions/41430796/difference-between-uri-and-bitmap-image

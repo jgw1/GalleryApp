@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,7 +61,9 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
     private Filter leftimage_filter, rightimage_filter;
     private File ImageFile;
     private FileModule.SaveImage saveImage;
-    private boolean Current_LeftImage, Current_RightImage = false;
+    private boolean Current_LeftImage = true;
+    private boolean Current_RightImage = false;
+
     private TextView tv_leftFiltername,tv_rightFilterName;
     private RelativeLayout relativeLayout;
     private ImageCustomDialog imageCustomDialog;
@@ -97,16 +100,29 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
 
         Log.d("LeftFilter", "LeftFilter : " + leftimage_filter);
-
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // NavUtils.navigateUpFromSameTask(this);
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         FilterPagerAdapter adapter = new FilterPagerAdapter(getSupportFragmentManager());
 
         // adding filter list fragment
         filtersListFragment = new FiltersListFragment();
         filtersListFragment.setListener(this);
-
-
 
         // adding edit image fragment
         editImageFragment = new EditImageFragment();
@@ -135,8 +151,8 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
         leftimage_filter = new Filter();
         rightimage_filter = new Filter();
 
-        leftimage_DBfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
-        rightimage_DBfilter = initfilterModel("Sample",0,initbrightness,initconstrast,initsaturation);
+        leftimage_DBfilter =  FilterModel.initfilterModel();
+        rightimage_DBfilter = FilterModel.initfilterModel();
 
         coordinatorLayout = findViewById(R.id.coordinator_layout);
         relativeLayout = findViewById(R.id.filterlayout);
@@ -153,11 +169,7 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
 
 
     }
-    private ArrayList<FilterModel> initfilterModel(String FilterName,int SampleFilter,int Brightness, float Contrast,float Saturation){
-        ArrayList<FilterModel> filterModel = new ArrayList<>();
-        filterModel.add(new FilterModel(FilterName,SampleFilter,Brightness,Contrast,Saturation));
-        return filterModel;
-    }
+
     public void CurrentChangePicture(String Direction){
         if(Direction == GalleryAppCode.GoLeft){
             Current_LeftImage = true;
@@ -345,6 +357,7 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
        public void onSwipeLeft() {
            CurrentChangePicture(Direction);
            filtersFragment.FilterSwipe(Direction,GalleryAppCode.GoLeft,textView);
+
        }
 
        //왼쪽방향 스와이프 - 필터변경
@@ -385,32 +398,10 @@ public class ImageEdit extends AppCompatActivity implements FiltersListFragment.
            filter.addSubFilter(new SaturationSubfilter(saturation));
            TotalImage(originalImage,filter);
 
-           OKclickListener oKclickListener = new OKclickListener(context,FilterModel);
-           filterCustomDialog = new FilterCustomDialog(ImageEdit.this,oKclickListener);
+
+           filterCustomDialog = new FilterCustomDialog(ImageEdit.this,FilterModel);
            filterCustomDialog.show();
            Log.d("AAFSS","AAF");
        }
    }
-   public class OKclickListener implements View.OnClickListener {
-       private Context context;
-       private ArrayList<FilterModel> Filter;
-
-        public OKclickListener(Context ctx, ArrayList<FilterModel> filter) {
-           this.context = ctx;
-           this.Filter = filter;
-
-       }
-       @Override
-       public void onClick(View view) {
-           EditText editText = filterCustomDialog.findViewById(R.id.customfiltername);
-           leftimage_DBfilter.get(0).setFiltername(editText.getText().toString());
-           filterDBAccess.open();
-           filterDBAccess.InsertData(Filter);
-           filterDBAccess.close();
-           filterCustomDialog.dismiss();
-           HashtagCustomDialog hashtagCustomDialog = new HashtagCustomDialog(ImageEdit.this);
-           hashtagCustomDialog.show();
-       }
-   }
-
 }

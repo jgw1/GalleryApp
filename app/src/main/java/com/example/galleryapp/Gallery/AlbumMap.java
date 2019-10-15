@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Map.MapMarkerItem;
 import com.example.galleryapp.Map.MapRecyclerViewAdapter;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.BitmapUtils;
+import com.example.galleryapp.Util.GalleryAppCode;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,6 +47,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +59,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private TextView tv_marker,position;
     private Context mContext;
     private GalleryDBAccess galleryDBAccess;
-    private ArrayList<GalleryModel> mapClusterModel,mapModel;
+    private ArrayList<GalleryModel> mapClusterModel, mapTotalModel;
     private LinearLayout linearLayout;
     private RecyclerView mapRecyclerView;
     private int TotalClusterItem;
@@ -153,7 +157,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap.setOnCameraChangeListener(mClusterManager);
 
         galleryDBAccess.open();
-        mapModel = galleryDBAccess.getDataForMap();
+        mapTotalModel = galleryDBAccess.getDataForMap();
         galleryDBAccess.close();
 
 
@@ -162,9 +166,9 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap.setOnMapClickListener(this);
 
         //결과확인을 위한 테스트용 세팅
-        for(int i = 0; i<mapModel.size();i++){
-            double lat = mapModel.get(i).getLatitude();
-            double lng = mapModel.get(i).getLongitude();
+        for(int i = 0; i< mapTotalModel.size(); i++){
+            double lat = mapTotalModel.get(i).getLatitude();
+            double lng = mapTotalModel.get(i).getLongitude();
             mClusterManager.addItem(new MapMarkerItem((new LatLng(lat, lng))));
         }
         Log.d("GQGQGQ","AAFA" + mClusterManager.getMarkerCollection());
@@ -192,12 +196,12 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
                 linearLayout.setVisibility(View.VISIBLE);
 
-                for(int i = 0; i<mapModel.size();i++){
-                    double lat = mapModel.get(i).getLatitude();
-                    double lng = mapModel.get(i).getLongitude();
+                for(int i = 0; i< mapTotalModel.size(); i++){
+                    double lat = mapTotalModel.get(i).getLatitude();
+                    double lng = mapTotalModel.get(i).getLongitude();
                     if((a==lat) && (b ==lng))
 
-                        mapClusterItemModel.add(mapModel.get(i));
+                        mapClusterItemModel.add(mapTotalModel.get(i));
                 }
                 MapRecyclerViewAdapter itemListDataAdapter = new MapRecyclerViewAdapter(activity, mapClusterItemModel);
                 TotalClusterItem = mapClusterItemModel.size();
@@ -235,11 +239,11 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 double b = clusterItem.getPosition().longitude;
 
                 linearLayout.setVisibility(View.VISIBLE);
-                for(int i = 0; i<mapModel.size();i++){
-                    double lat = mapModel.get(i).getLatitude();
-                    double lng = mapModel.get(i).getLongitude();
+                for(int i = 0; i< mapTotalModel.size(); i++){
+                    double lat = mapTotalModel.get(i).getLatitude();
+                    double lng = mapTotalModel.get(i).getLongitude();
                     if((a==lat) && (b ==lng))
-                        mapClusterModel.add(mapModel.get(i));
+                        mapClusterModel.add(mapTotalModel.get(i));
                 }
             }
 
@@ -273,9 +277,9 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
             //해당 클러스터에 포함된 마커 개수들 표현
             textview.setText(String.valueOf(cluster.getSize()));
-//            for(ClusterItem clusterItem : cluster.getItems()){
-//                Log.d("HAHAHA","GETITEMS"+clusterItem.getPosition());
-//            }
+            for(ClusterItem clusterItem : cluster.getItems()){
+                Log.d("HAHAHA","GETITEMS"+clusterItem.getPosition());
+            }
 
 //            textview.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
             //해당 클러스터에 포함된 마커 개수들 표현 디자인 설정
@@ -296,13 +300,27 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         protected void  onBeforeClusterItemRendered(MapMarkerItem markerItem, MarkerOptions markerOptions){
             final IconGenerator mClusterIconGenerator;
             mClusterIconGenerator = new IconGenerator(activity);
-
+            Log.d("MapMarkerItem","MapMarkerItem : " + markerItem.getLocation());
             //클러스터 디자인 설정
             LayoutInflater myInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View activityview = myInflater.inflate(R.layout.clustermarker,null,false);
             TextView textview = activityview.findViewById(R.id.textview);
             ImageView imageView = activityview.findViewById(R.id.flag);
 
+
+            for(int i=0;i<mapTotalModel.size();i++){
+                GalleryModel galleryModel = mapTotalModel.get(i);
+                Double Latitude = galleryModel.getLatitude();
+                Double Longitude = galleryModel.getLongitude();
+
+                LatLng LatLng = new LatLng(Latitude,Longitude);
+                if(LatLng.equals(markerItem.getLocation())){
+                    Log.d("HAHAHAQRQ","Success");
+                    File currentfile = new File(GalleryAppCode.Path+galleryModel.getFilename());
+                    Bitmap bitmap  = BitmapUtils.resize(getActivity(), Uri.fromFile(currentfile),100);
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
             //
 //            Bitmap bitmap = Thumbnail.MakeThumbnail("FullscreenActionBarStyle");
 

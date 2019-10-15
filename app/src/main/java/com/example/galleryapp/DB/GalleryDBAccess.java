@@ -91,7 +91,7 @@ public class GalleryDBAccess {
         String date = galleryModel.getFilename();
         database.update(GalleryDBOpenHelper.TABLE, values, "date = ?", new String[]{date});
     }
-    public void InsertData(String file_name,Double longitude, Double latitude,String hashtag1,String hashtag2,String hashtag3){
+    public void InsertData(String file_name,Double latitude, Double longitude,String hashtag1,String hashtag2,String hashtag3){
         instance.open();
         GalleryModel temp = new GalleryModel();
         if(picture == null) {
@@ -121,13 +121,13 @@ public class GalleryDBAccess {
         while(!cursor.isAfterLast())
         {
             file_name = cursor.getString(0);
-            Longit = cursor.getDouble(1);
-            latit = cursor.getDouble(2);
+            latit = cursor.getDouble(1);
+            Longit = cursor.getDouble(2);
             favorite = cursor.getInt(3);
             hashtag1 = cursor.getString(4);
             hashtag2 = cursor.getString(5);
             hashtag3 = cursor.getString(6);
-            DataFromDatabase.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,"Normal"));
+            DataFromDatabase.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,"Normal"));
             cursor.moveToNext();
         }
         cursor.close();
@@ -147,8 +147,8 @@ public class GalleryDBAccess {
             Long time = cursor.getLong(0);
 
             file_name = cursor.getString(0);
-            Longit = cursor.getDouble(1);
-            latit = cursor.getDouble(2);
+            latit = cursor.getDouble(1);
+            Longit = cursor.getDouble(2);
             favorite = cursor.getInt(3);
             hashtag1 = cursor.getString(4);
             hashtag2 = cursor.getString(5);
@@ -169,13 +169,13 @@ public class GalleryDBAccess {
                 if(MD.getHeaderTitle() == null)
                 {
                     MD.setHeaderTitle(currentTitle);
-                    childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                    childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                 }
 
                 else{
                     if(cursor.isLast()){
                         if(currentTitle.equals(MD.getHeaderTitle())){
-                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                             MD.setAllItemsInSection(childDataModels);
                             allSampleData.add(MD);
                         }
@@ -186,7 +186,7 @@ public class GalleryDBAccess {
                             MD = new DayMotherModel();
                             MD.setHeaderTitle(currentTitle);
                             childDataModels = new ArrayList<>();
-                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                             MD.setAllItemsInSection(childDataModels);
                             allSampleData.add(MD);
                         }
@@ -194,7 +194,7 @@ public class GalleryDBAccess {
 
                     else{
                         if(currentTitle.equals(MD.getHeaderTitle())){
-                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                             MD.setAllItemsInSection(childDataModels);
                             allSampleData.add(MD);
                         }
@@ -205,7 +205,7 @@ public class GalleryDBAccess {
                             MD = new DayMotherModel();
                             MD.setHeaderTitle(currentTitle);
                             childDataModels = new ArrayList<>();
-                            childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                         }
                     }
                 }
@@ -213,7 +213,7 @@ public class GalleryDBAccess {
             }else{
                 if(cursor.isLast()){
                     if(currentTitle.equals(MD.getHeaderTitle())){
-                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                         MD.setAllItemsInSection(childDataModels);
                         allSampleData.add(MD);
                     }
@@ -225,14 +225,14 @@ public class GalleryDBAccess {
                         MD = new DayMotherModel();
                         MD.setHeaderTitle(currentTitle);
                         childDataModels = new ArrayList<>();
-                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                         MD.setAllItemsInSection(childDataModels);
                         allSampleData.add(MD);
                     }
 
                 }else{
                     if(currentTitle.equals(MD.getHeaderTitle())){
-                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                     }
                     else{
                         MD.setAllItemsInSection(childDataModels);
@@ -240,7 +240,7 @@ public class GalleryDBAccess {
                         MD = new DayMotherModel();
                         MD.setHeaderTitle(currentTitle);
                         childDataModels = new ArrayList<>();
-                        childDataModels.add(new GalleryModel(file_name,Longit,latit,hashtag1,hashtag2,hashtag3,favorite,filtername));
+                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
                     }
                 }
             }

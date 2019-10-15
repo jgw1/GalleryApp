@@ -201,13 +201,6 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         recyclerView.smoothScrollToPosition(CurrentFilter);
     }
 
-    public int getCurrentFilter(String Direction){
-        if(Direction == GalleryAppCode.GoLeft){
-            return thumbnailAdapter.getCurrentIndex("LEFT");
-        }else{
-            return thumbnailAdapter.getCurrentIndex("RIGHT");
-        }
-    }
     public int getSelectedFilter(){
         return thumbnailAdapter.getSelectedFilter();
     }
