@@ -41,15 +41,18 @@ public class DayMotherAdapter extends RecyclerView.Adapter<DayMotherAdapter.Item
 
         holder.itemTitle.setText(sectionName);
         holder.shotaddress.setText(shotaddress);
-        holder.itemTitle.setOnClickListener(view -> {
 
-        });
 
         DayChildAdapter itemListDataAdapter = new DayChildAdapter(mContext, singleSectionItems);
 
         holder.recycler_view_list.setHasFixedSize(true);
         holder.recycler_view_list.setAdapter(itemListDataAdapter);
         holder.recycler_view_list.setLayoutManager(new GridLayoutManager(mContext,6));
+        holder.itemTitle.setOnClickListener(view -> {
+            itemListDataAdapter.setCheckedToggleAll();
+            itemListDataAdapter.notifyDataSetChanged();
+            Log.d("AABB#E","Singlesec");
+        });
         Log.d("AABB#E","Singlesec" + singleSectionItems);
 
 

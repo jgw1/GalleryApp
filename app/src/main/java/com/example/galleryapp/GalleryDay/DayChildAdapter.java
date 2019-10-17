@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHolder> {
     private ArrayList<GalleryModel> itemModelArrayList;
     Context mContext;
+    private boolean isSelectable,isAllChecked= false;
 
 
     public DayChildAdapter(Context context, ArrayList<GalleryModel> itemModelArrayList){
@@ -58,20 +60,54 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
 //        holder.thumbnail.setImageResource(R.drawable.bubble_mask);
 //        Log.d("GWGWGWGWGWGWGW", "OUTPUTFILE" + Uri.fromFile(outputFile));
 
+        holder.checkBox.setVisibility(isSelectable?View.VISIBLE:View.INVISIBLE);
+        if(getCheckedToggleAll()){
+            holder.checkBox.setChecked(true);
+        }
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, OneImage.class);
-                intent.putExtra(GalleryAppCode.Position,position);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(GalleryAppCode.GalleryList,itemModelArrayList);
-                intent.putExtras(bundle);
-                mContext.startActivity(intent);
+                if(isSelectable){
+                    galleryModel.setChecked(!galleryModel.getChecked());
+                    holder.checkBox.setChecked(!galleryModel.getChecked());
+                }else{
+                    Intent intent = new Intent(mContext, OneImage.class);
+                    intent.putExtra(GalleryAppCode.Position,position);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(GalleryAppCode.GalleryList,itemModelArrayList);
+                    intent.putExtras(bundle);
+                    mContext.startActivity(intent);
+                }
+
+            }
+        });
+        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+               setSelectable(true);
+                return false;
             }
         });
     }
+    public void setCheckedToggleAll(){
+        isAllChecked = !isAllChecked;
+        isSelectable = !isSelectable;
+        for(GalleryModel v : itemModelArrayList){
+            v.setChecked(isAllChecked);
+        }
+        notifyDataSetChanged();
+    }
 
-
+    public void setSelectable(boolean isSelectable){
+        this.isSelectable = isSelectable;
+        notifyDataSetChanged();
+    }
+    public boolean getCheckedToggleAll(){
+        return isAllChecked;
+    }
+    public boolean getSelectable(){
+        return isSelectable;
+    }
     @Override
     public int getItemCount() {
         return itemModelArrayList.size();
@@ -79,10 +115,12 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         protected ImageView thumbnail;
+        protected CheckBox checkBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.thumbnail = itemView.findViewById(R.id.thumbnail);
+            this.checkBox = itemView.findViewById(R.id.checkBox_day);
 
         }
     }

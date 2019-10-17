@@ -203,7 +203,7 @@ public class OneFilter extends AppCompatActivity implements  FiltersListFragment
         onefilterlayout = findViewById(R.id.onefilterlayout);
         ImageFilter = new Filter();
         oneimage_DBfilter = FilterModel.initfilterModel();
-
+        onefilterlayout.bringToFront();
         TV_FilterName = findViewById(R.id.selectfilterName);
         Hashtag1 = galleryModel.getHashtag1();
         Hashtag2 = galleryModel.getHashtag2();

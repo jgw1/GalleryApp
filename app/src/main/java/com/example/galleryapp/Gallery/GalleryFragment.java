@@ -15,7 +15,10 @@ import com.example.galleryapp.R;
 public class GalleryFragment extends AppCompatActivity {
     ViewPager pager;
 
-    ImageButton NewAlbumDay,NewAlbumTotal,NewAlbumMap,NewAlbumFavorite;
+    ImageButton NewAlbumDay;
+    ImageButton NewAlbumTotal;
+    ImageButton NewAlbumMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +28,6 @@ public class GalleryFragment extends AppCompatActivity {
         NewAlbumDay = findViewById(R.id.NewAlbumDay);
         NewAlbumTotal = findViewById(R.id.NewAlbumTotal);
         NewAlbumMap = findViewById(R.id.NewAlbumMap);
-        NewAlbumFavorite = findViewById(R.id.NewAlbumFavorite);
 
         pager.setAdapter(new pagerAdapter(getSupportFragmentManager()));
         pager.setCurrentItem(0);
@@ -41,17 +43,18 @@ public class GalleryFragment extends AppCompatActivity {
         NewAlbumTotal.setTag(1);
         NewAlbumMap.setOnClickListener(movePageListener);
         NewAlbumMap.setTag(2);
-        NewAlbumFavorite.setOnClickListener(movePageListener);
-        NewAlbumFavorite.setTag(3);
+
     }
 
     private class pagerAdapter extends FragmentStatePagerAdapter {
         private AlbumTotal albumTotal;
         private AlbumDay albumDay;
+        private AlbumMap albumMap;
         public pagerAdapter(FragmentManager fm){
             super(fm);
             albumTotal = new AlbumTotal();
             albumDay = new AlbumDay();
+            albumMap = new AlbumMap();
         }
 
         @Override
@@ -63,9 +66,7 @@ public class GalleryFragment extends AppCompatActivity {
                 case 1:
                     return albumDay;
                 case 2:
-                    return new AlbumMap();
-                case 3:
-                    return new AlbumFavorite();
+                    return albumMap;
                 default:
                     return null;
             }
@@ -73,7 +74,7 @@ public class GalleryFragment extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
     }
 

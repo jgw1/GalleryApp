@@ -1,10 +1,8 @@
 package com.example.galleryapp.Gallery;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AlertDialog;
@@ -26,7 +23,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.galleryapp.CompareFilter.ImageEdit;
 import com.example.galleryapp.CompareFilter.OneFilter;
-import com.example.galleryapp.CompareFilter.practiceseekbar;
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.GalleryAppCode;
@@ -35,7 +31,6 @@ import com.kakao.kakaolink.KakaoLink;
 import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
 import com.kakao.util.KakaoParameterException;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -162,7 +157,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         hashtag2 = galleryModel.getHashtag2();
         hashtag3 = galleryModel.getHashtag3();
 
-        total_hashtag = hashtag1+","+hashtag2+","+hashtag3;
+        total_hashtag = "#"+hashtag1+"#"+hashtag2+"#"+hashtag3;
         TV_GalleryHashtag.setText(total_hashtag);
 
     }
@@ -172,22 +167,10 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.CompareButton:
-                Log.d("GWGWGW","Success");
-                CurrentPosition = viewPager.getCurrentItem();
-                String CurrentFile = ImageList.get(CurrentPosition).getFilename();
-                Intent intent = new Intent(this, OneFilter.class);
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(GalleryAppCode.GalleryList,ImageList);
-                intent.putExtras(bundle);
-
-                intent.putExtra(GoToFilterPath,CurrentFile);
-                intent.putExtra(GalleryAppCode.Position,CurrentPosition);
-                startActivity(intent);
+                SelectHowtoEdit();
                 break;
             case R.id.KAKAOTALK:
-//                shareKAKAO();
-                SelectHowtoEdit();
+                shareKAKAO();
                 break;
             case R.id.PictureInfo:
                 GalleryModel galleryModel = ImageList.get(viewPager.getCurrentItem());
@@ -259,10 +242,10 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
                   //해당 아이템 선택시 발생
                   if(i == 0){
                       Log.d("GWGWGW","Success");
-                      GotoImageEdit(viewPager,ImageList,"ONE");
+                      GotoImageEdit(viewPager,ImageList,GalleryAppCode.OneImage);
                   }else if(i ==1){
                       Log.d("GWGWGW","Success");
-                      GotoImageEdit(viewPager,ImageList,"TWO");
+                      GotoImageEdit(viewPager,ImageList,GalleryAppCode.TwoImage);
                   }
               }
           });

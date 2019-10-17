@@ -92,23 +92,23 @@ public class AlbumDay extends Fragment {
 
 
         allSampleData = new ArrayList<>();
-//        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
-//        galleryDBAccess.open();
-//        allSampleData = galleryDBAccess.getDataForGallery();
-//        for(int i =0 ;i<allSampleData.size() ;i++){
-//            if(allSampleData.get(i).getHeaderTitle() == null){
-//                allSampleData.remove(i);
-//            }
-//        }
-//
-//        galleryDBAccess.close();
-        getDataFromDB = new GetDataFromDB(activity);
-        try {
-            allSampleData = getDataFromDB.execute().get();
-        } catch (Exception e) {
-            e.printStackTrace();
+        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
+        galleryDBAccess.open();
+        allSampleData = galleryDBAccess.getDataForGallery();
+        for(int i =0 ;i<allSampleData.size() ;i++){
+            if(allSampleData.get(i).getHeaderTitle() == null){
+                allSampleData.remove(i);
+            }
         }
-        allSampleData.get(0).getAllItemsInSection();
+
+        galleryDBAccess.close();
+//        getDataFromDB = new GetDataFromDB(activity);
+//        try {
+//            allSampleData = getDataFromDB.execute().get();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        allSampleData.get(0).getAllItemsInSection();
         Log.d("GWGW","SIZE : " + allSampleData.size());
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);

@@ -4,15 +4,16 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.SparseArray;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,14 +22,9 @@ import androidx.core.content.ContextCompat;
 
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
-import com.example.galleryapp.Map.Location;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.HashtagCustomDialog;
-import com.example.galleryapp.Util.FileModule;
 import com.google.android.material.snackbar.Snackbar;
-
-import java.io.File;
-import java.util.ArrayList;
 
 import static android.view.View.GONE;
 
@@ -47,7 +43,16 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private SurfaceView surfaceView;
     private CameraPreview mCameraPreview;
     private boolean cameraFront = false;
-    private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
+    private View mLayout;
+    protected Paint mFinderMaskPaint;
+    protected Paint mBorderPaint;
+    private int mFinderWLength = 20;
+    private int mFinderHLength = 20;
+    private int mBorderWidth = 300;
+    private int mBorderHeight = 300;
+    private Rect mTgRect = null;
+    private PointF mDownPoint = null;
+    SparseArray<PointF> mActivePointers;// Snackbar 사용하기 위해서는 View가 필요합니다.
     // (참고로 Toast에서는 Context가 필요했습니다.)
 
 
@@ -74,15 +79,17 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
     private void initComponents(){
         mLayout = findViewById(R.id.layout_main);
+        mActivePointers = new SparseArray<>();
+
         surfaceView = findViewById(R.id.camera_preview_main);
         galleryDBAccess = GalleryDBAccess.getInstance(getApplicationContext());
         hashtagCustomDialog = new HashtagCustomDialog(this);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
 
         surfaceView.setVisibility(GONE);
-        Button button = findViewById(R.id.button_main_capture);
-        ImageButton IB_GoToGallery = findViewById(R.id.GoToGallery);
-        ImageButton IB_FlipCamera = findViewById(R.id.FlipCamera);
+        ImageView button = findViewById(R.id.button_main_capture);
+        ImageView IB_GoToGallery = findViewById(R.id.GoToGallery);
+        ImageView IB_FlipCamera = findViewById(R.id.FlipCamera);
 
         button.setOnClickListener(this::onClick);
         IB_GoToGallery.setOnClickListener(this::onClick);
@@ -197,42 +204,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             }
         }
     }
-    private View.OnClickListener positiveListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            EditText hashtag1 = hashtagCustomDialog.findViewById(R.id.hashtag1);
-            EditText hashtag2 = hashtagCustomDialog.findViewById(R.id.hashtag2);
-            EditText hashtag3 = hashtagCustomDialog.findViewById(R.id.hashtag3);
 
-            String Hashtag1 = "#" + hashtag1.getText().toString();
-            String Hashtag2 = "#" + hashtag2.getText().toString();
-            String Hashtag3 = "#" + hashtag3.getText().toString();
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
-            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
-            String file_name = file.getName();
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            galleryDBAccess.open();
-            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),Hashtag1,Hashtag2,Hashtag3);
-            galleryDBAccess.close();
-            hashtagCustomDialog.dismiss();
-            hashtag1.setText(null);
-            hashtag2.setText(null);
-            hashtag3.setText(null);
-        }
-    };
-    private View.OnClickListener negativeListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
-            File file = new File(String.valueOf(FileModule.latestFileModified(path)));
-            String file_name = file.getName();
-            ArrayList<Double> LatLng = Location.GetCurrentLocation(getApplicationContext());
-            galleryDBAccess.open();
-            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
-            galleryDBAccess.close();
-            hashtagCustomDialog.dismiss();
-        }
-    };
 
     @Override
     public void onClick(View view) {
@@ -256,7 +228,5 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
         }
     }
-
-
 
 }

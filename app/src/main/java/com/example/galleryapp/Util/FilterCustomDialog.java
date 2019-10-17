@@ -27,11 +27,8 @@ import java.util.ArrayList;
 public class FilterCustomDialog extends Dialog {
     private Activity activity;
     private Button mOkButton;
-    private EditText hashtag1,hashtag2,hashtag3;
     private FilterDBAccess filterDBAccess;
-    private FilterCustomDialog hashtagCustomDialog;
     private Context mContext;
-    private OKclickListener okclicklistener;
     private ArrayList<FilterModel> filterModel;
     public FilterCustomDialog(@NonNull Activity activity,ArrayList<FilterModel> filterModel) {
         super(activity);
