@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.CustomGridView;
 import com.example.galleryapp.Util.HashtagCustomDialog;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -40,19 +41,11 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private static final int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;
     private Camera camera;
     private Context context;
+    private CustomGridView customgridview;
     private SurfaceView surfaceView;
     private CameraPreview mCameraPreview;
     private boolean cameraFront = false;
     private View mLayout;
-    protected Paint mFinderMaskPaint;
-    protected Paint mBorderPaint;
-    private int mFinderWLength = 20;
-    private int mFinderHLength = 20;
-    private int mBorderWidth = 300;
-    private int mBorderHeight = 300;
-    private Rect mTgRect = null;
-    private PointF mDownPoint = null;
-    SparseArray<PointF> mActivePointers;// Snackbar 사용하기 위해서는 View가 필요합니다.
     // (참고로 Toast에서는 Context가 필요했습니다.)
 
 
@@ -79,9 +72,9 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
     private void initComponents(){
         mLayout = findViewById(R.id.layout_main);
-        mActivePointers = new SparseArray<>();
-
-        surfaceView = findViewById(R.id.camera_preview_main);
+        customgridview = findViewById(R.id.customgridview);
+        customgridview.bringToFront();
+         surfaceView = findViewById(R.id.camera_preview_main);
         galleryDBAccess = GalleryDBAccess.getInstance(getApplicationContext());
         hashtagCustomDialog = new HashtagCustomDialog(this);
         // 런타임 퍼미션 완료될때 까지 화면에서 보이지 않게 해야합니다.
@@ -228,5 +221,4 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
         }
     }
-
 }
