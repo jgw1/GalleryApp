@@ -6,12 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galleryapp.R;
+import com.example.galleryapp.Util.GalleryAppCode;
+import com.example.galleryapp.Util.OnSwipeTouchListener;
 
 import java.util.ArrayList;
 
@@ -47,7 +50,26 @@ public class DayMotherAdapter extends RecyclerView.Adapter<DayMotherAdapter.Item
 
         holder.recycler_view_list.setHasFixedSize(true);
         holder.recycler_view_list.setAdapter(itemListDataAdapter);
+        holder.recycler_view_list.addOnItemTouchListener(new RecyclerViewClickListener(mContext, holder.recycler_view_list, new RecyclerViewClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(mContext,"HAHAHA",Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                for(int i = 0;i<mDataset.size();i++){
+                    DayMotherModel dayMotherModel = mDataset.get(i);
+
+                    DayChildAdapter adapter = (DayChildAdapter) holder.recycler_view_list.getAdapter();
+                    adapter.setSelectable(true);
+                    Log.d("DATASETSIZE","DatasetSize " + mDataset.size());
+                }
+
+            }
+        }));
         holder.recycler_view_list.setLayoutManager(new GridLayoutManager(mContext,6));
+
         holder.itemTitle.setOnClickListener(view -> {
             itemListDataAdapter.setCheckedToggleAll();
             itemListDataAdapter.notifyDataSetChanged();

@@ -47,14 +47,9 @@ public class GalleryFragment extends AppCompatActivity {
     }
 
     private class pagerAdapter extends FragmentStatePagerAdapter {
-        private AlbumTotal albumTotal;
-        private AlbumDay albumDay;
-        private AlbumMap albumMap;
-        public pagerAdapter(FragmentManager fm){
+      public pagerAdapter(FragmentManager fm){
             super(fm);
-            albumTotal = new AlbumTotal();
-            albumDay = new AlbumDay();
-            albumMap = new AlbumMap();
+
         }
 
         @Override
@@ -62,11 +57,11 @@ public class GalleryFragment extends AppCompatActivity {
             switch(position)
             {
                 case 0:
-                    return albumTotal;
+                    return new AlbumTotal();
                 case 1:
-                    return albumDay;
+                    return new AlbumDay();
                 case 2:
-                    return albumMap;
+                    return new AlbumMap();
                 default:
                     return null;
             }

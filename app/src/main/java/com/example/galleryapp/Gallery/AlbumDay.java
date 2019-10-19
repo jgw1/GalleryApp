@@ -84,13 +84,6 @@ public class AlbumDay extends Fragment {
         RV_HashtagSearchList = layout.findViewById(R.id.SearchListDay);
         IB_Search = layout.findViewById(R.id.SearchDay);
         ET_SearchHashTag =layout.findViewById(R.id.HashtagSearchDay);
-        return layout;
-    }
-
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState){
-
-
         allSampleData = new ArrayList<>();
         this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
         galleryDBAccess.open();
@@ -102,6 +95,14 @@ public class AlbumDay extends Fragment {
         }
 
         galleryDBAccess.close();
+        return layout;
+    }
+
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState){
+
+
+
 //        getDataFromDB = new GetDataFromDB(activity);
 //        try {
 //            allSampleData = getDataFromDB.execute().get();

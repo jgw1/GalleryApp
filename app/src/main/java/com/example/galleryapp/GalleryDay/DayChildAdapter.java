@@ -64,30 +64,30 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
         if(getCheckedToggleAll()){
             holder.checkBox.setChecked(true);
         }
-        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isSelectable){
-                    galleryModel.setChecked(!galleryModel.getChecked());
-                    holder.checkBox.setChecked(!galleryModel.getChecked());
-                }else{
-                    Intent intent = new Intent(mContext, OneImage.class);
-                    intent.putExtra(GalleryAppCode.Position,position);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(GalleryAppCode.GalleryList,itemModelArrayList);
-                    intent.putExtras(bundle);
-                    mContext.startActivity(intent);
-                }
-
-            }
-        });
-        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-               setSelectable(true);
-                return false;
-            }
-        });
+//        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(isSelectable){
+//                    galleryModel.setChecked(!galleryModel.getChecked());
+//                    holder.checkBox.setChecked(!galleryModel.getChecked());
+//                }else{
+//                    Intent intent = new Intent(mContext, OneImage.class);
+//                    intent.putExtra(GalleryAppCode.Position,position);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable(GalleryAppCode.GalleryList,itemModelArrayList);
+//                    intent.putExtras(bundle);
+//                    mContext.startActivity(intent);
+//                }
+//
+//            }
+//        });
+//        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//               setSelectable(true);
+//                return false;
+//            }
+//        });
     }
     public void setCheckedToggleAll(){
         isAllChecked = !isAllChecked;
@@ -101,6 +101,7 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
     public void setSelectable(boolean isSelectable){
         this.isSelectable = isSelectable;
         notifyDataSetChanged();
+        Log.d("sdfasdfsdfsdf","asdfasdfasdf");
     }
     public boolean getCheckedToggleAll(){
         return isAllChecked;

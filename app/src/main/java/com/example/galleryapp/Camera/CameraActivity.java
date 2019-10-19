@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
 import com.example.galleryapp.R;
+import com.example.galleryapp.SplashScreen.SplashScreen;
 import com.example.galleryapp.Util.CustomGridView;
 import com.example.galleryapp.Util.HashtagCustomDialog;
 import com.google.android.material.snackbar.Snackbar;
@@ -203,6 +204,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.button_main_capture:
+
                 mCameraPreview.takePicture();
                 hashtagCustomDialog.show();
                 break;
