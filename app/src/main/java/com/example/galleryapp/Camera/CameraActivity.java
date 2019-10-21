@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +23,9 @@ import androidx.core.content.ContextCompat;
 
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryFragment;
+import com.example.galleryapp.GalleryDay.RecyclerViewClickListener;
 import com.example.galleryapp.R;
+import com.example.galleryapp.RecyclerviewHeader;
 import com.example.galleryapp.SplashScreen.SplashScreen;
 import com.example.galleryapp.Util.CustomGridView;
 import com.example.galleryapp.Util.HashtagCustomDialog;
@@ -209,7 +212,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 hashtagCustomDialog.show();
                 break;
             case R.id.GoToGallery:
-                startActivity(new Intent(this, GalleryFragment.class));
+                startActivity(new Intent(this, RecyclerviewHeader.class));
                 break;
             case R.id.FlipCamera:
                 if(cameraFront) {

@@ -95,6 +95,7 @@ public class AlbumDay extends Fragment {
         }
 
         galleryDBAccess.close();
+
         return layout;
     }
 
@@ -114,7 +115,13 @@ public class AlbumDay extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);
         DayMotherAdapter adapter = new DayMotherAdapter(getContext(),allSampleData);
-
+        mRecyclerView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Log.d("mRecyclerView","mRecyclerView ");
+                return false;
+            }
+        });
         hashTagAdapter = new HashTagAdapter(activity,AL_HashtagList);
         RV_HashtagSearchList.setAdapter(hashTagAdapter);
         inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);

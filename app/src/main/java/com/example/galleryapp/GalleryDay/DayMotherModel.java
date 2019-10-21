@@ -8,6 +8,7 @@ public class DayMotherModel {
     private String headerTitle;
     private String shotaddress;
     private ArrayList<GalleryModel> allItemsInSection;
+    private boolean checked = false;
 
 
     public DayMotherModel() {
@@ -42,4 +43,12 @@ public class DayMotherModel {
     public void setAllItemsInSection(ArrayList<GalleryModel> allItemsInSection) {
         this.allItemsInSection = allItemsInSection;
     }
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public boolean getChecked() {
+        return this.checked;
+    }
+
 }

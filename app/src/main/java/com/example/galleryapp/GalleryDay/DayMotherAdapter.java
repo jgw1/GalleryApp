@@ -1,10 +1,14 @@
 package com.example.galleryapp.GalleryDay;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.galleryapp.Gallery.GalleryModel;
+import com.example.galleryapp.Gallery.OneImage;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.GalleryAppCode;
 import com.example.galleryapp.Util.OnSwipeTouchListener;
@@ -21,7 +27,7 @@ import java.util.ArrayList;
 public class DayMotherAdapter extends RecyclerView.Adapter<DayMotherAdapter.ItemRowHolder> {
     private ArrayList<DayMotherModel> mDataset;
     private Context mContext;
-
+    private boolean isSelectable = false;
     public DayMotherAdapter(Context context, ArrayList<DayMotherModel> allSampleData) {
         this.mContext = context;
         this.mDataset = allSampleData;
@@ -50,40 +56,62 @@ public class DayMotherAdapter extends RecyclerView.Adapter<DayMotherAdapter.Item
 
         holder.recycler_view_list.setHasFixedSize(true);
         holder.recycler_view_list.setAdapter(itemListDataAdapter);
-        holder.recycler_view_list.addOnItemTouchListener(new RecyclerViewClickListener(mContext, holder.recycler_view_list, new RecyclerViewClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Toast.makeText(mContext,"HAHAHA",Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-                for(int i = 0;i<mDataset.size();i++){
-                    DayMotherModel dayMotherModel = mDataset.get(i);
-
-                    DayChildAdapter adapter = (DayChildAdapter) holder.recycler_view_list.getAdapter();
-                    adapter.setSelectable(true);
-                    Log.d("DATASETSIZE","DatasetSize " + mDataset.size());
-                }
-
-            }
-        }));
         holder.recycler_view_list.setLayoutManager(new GridLayoutManager(mContext,6));
 
-        holder.itemTitle.setOnClickListener(view -> {
-            itemListDataAdapter.setCheckedToggleAll();
-            itemListDataAdapter.notifyDataSetChanged();
-            Log.d("AABB#E","Singlesec");
-        });
-        Log.d("AABB#E","Singlesec" + singleSectionItems);
+        holder.recycler_view_list.addOnItemTouchListener(new RecyclerViewClickListener(mContext, holder.recycler_view_list, new RecyclerViewClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int itemposition) {
+//                if(isSelectable){
+//                    CheckBox checkBox = view.findViewById(R.id.checkBox_day);
+//                    checkBox.setChecked(true);
+//                }
+
+                itemListDataAdapter.toggleChecked(itemposition);
+                itemListDataAdapter.notifyItemChanged(itemposition);
+//                view.setBackgroundColor(Color.RED);
+                Log.d("ClickListener","ItemPosition : "+ itemposition);
+                Log.d("ClickListener","DatasetPosition : "+ position);
+                Log.d("ClickListener","getSelectable : "+ isSelectable);
+                //                mDataset.get(position).getAllItemsInSection().get(itemposition).setChecked(true);
+//                DayChildAdapter dayChildAdapter = (DayChildAdapter) holder.recycler_view_list.getAdapter();
+//
+//                Log.d("POSITION","POSITION : "   + itemposition);
+//                Log.d("POSITION","Dataset Position : "   + position);
+            }
+
+            @Override
+            public void onLongItemClick(View view, int itemposition) {
+                setSelectable(true);
+                CheckBox checkBox = view.findViewById(R.id.checkBox_day);
+                checkBox.setVisibility(View.VISIBLE);
+            }
+
+        }));
+
+        for(int i = 0;i<mDataset.size();i++){
+            if(mDataset.get(i).getChecked() == true){
+                DayChildAdapter dayChildAdapter = (DayChildAdapter) holder.recycler_view_list.getAdapter();
+                dayChildAdapter.setSelectable(true);
+            }
+        }
+
+        Log.d("DATASETSIZE","DatasetSize " + mDataset.size());
 
 
+    }
+    public void setSelectable(boolean isSelectable){
+        this.isSelectable = isSelectable;
 
+        Log.d("sdfasdfsdfsdf","asdfasdfasdf");
+    }
+    public boolean getSelectable(){
+        return isSelectable;
     }
     @Override
     public int getItemCount() {
         return mDataset.size();
     }
+
 
     public class ItemRowHolder extends RecyclerView.ViewHolder{
         protected TextView itemTitle;
@@ -97,6 +125,7 @@ public class DayMotherAdapter extends RecyclerView.Adapter<DayMotherAdapter.Item
             this.itemTitle = itemView.findViewById(R.id.itemTitle);
             this.recycler_view_list = itemView.findViewById(R.id.recycler_view_list);
             this.shotaddress = itemView.findViewById(R.id.Album_Address);
+
 
         }
     }

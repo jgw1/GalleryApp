@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,13 +58,16 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
         Bitmap bitmap  = BitmapUtils.resize(mContext, Uri.fromFile(outputFile),100);
 
         holder.thumbnail.setImageBitmap(bitmap);
+
+        holder.itemView.setBackgroundColor(galleryModel.getChecked()?Color.RED: Color.TRANSPARENT);
 //        holder.thumbnail.setImageResource(R.drawable.bubble_mask);
 //        Log.d("GWGWGWGWGWGWGW", "OUTPUTFILE" + Uri.fromFile(outputFile));
 
-        holder.checkBox.setVisibility(isSelectable?View.VISIBLE:View.INVISIBLE);
-        if(getCheckedToggleAll()){
-            holder.checkBox.setChecked(true);
-        }
+//        holder.checkBox.setVisibility(isSelectable?View.VISIBLE:View.INVISIBLE);
+//        if(getCheckedToggleAll()){
+//            holder.checkBox.setChecked(true);
+//        }
+////        holder.checkBox.setChecked(galleryModel.getChecked()?true:false);
 //        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -89,20 +93,15 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
 //            }
 //        });
     }
-    public void setCheckedToggleAll(){
-        isAllChecked = !isAllChecked;
-        isSelectable = !isSelectable;
-        for(GalleryModel v : itemModelArrayList){
-            v.setChecked(isAllChecked);
-        }
-        notifyDataSetChanged();
-    }
+
 
     public void setSelectable(boolean isSelectable){
+
         this.isSelectable = isSelectable;
         notifyDataSetChanged();
         Log.d("sdfasdfsdfsdf","asdfasdfasdf");
     }
+
     public boolean getCheckedToggleAll(){
         return isAllChecked;
     }
@@ -113,6 +112,12 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
     public int getItemCount() {
         return itemModelArrayList.size();
     }
+    public void toggleChecked(int position){
+        getItem(position).setChecked(!getItem(position).getChecked());
+    }
+    public GalleryModel getItem(int position){
+        return itemModelArrayList.get(position);
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         protected ImageView thumbnail;
@@ -122,6 +127,7 @@ public class DayChildAdapter extends RecyclerView.Adapter<DayChildAdapter.ViewHo
             super(itemView);
             this.thumbnail = itemView.findViewById(R.id.thumbnail);
             this.checkBox = itemView.findViewById(R.id.checkBox_day);
+            checkBox.setVisibility(View.INVISIBLE);
 
         }
     }
