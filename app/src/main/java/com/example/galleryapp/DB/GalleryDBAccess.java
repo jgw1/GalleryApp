@@ -4,17 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.galleryapp.Gallery.GalleryModel;
-import com.example.galleryapp.GalleryDay.DayMotherModel;
 import com.example.galleryapp.GalleryDay.Picture;
 import com.example.galleryapp.Map.MapRecyclerViewModel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class GalleryDBAccess {
     private SQLiteDatabase database;
@@ -25,9 +22,8 @@ public class GalleryDBAccess {
     private String hashtag1,hashtag2,hashtag3,filtername;
     private Double Longit,latit;
     private int favorite;
-    ArrayList<DayMotherModel> allSampleData = new ArrayList<>();
+
     String file_name;
-    DayMotherModel MD = new DayMotherModel();
     ArrayList<GalleryModel> childDataModels = new ArrayList<>();
     ArrayList<MapRecyclerViewModel> mapRecyclerViewModels = new ArrayList<>();
     Long prevtime = Long.valueOf(0);
@@ -133,121 +129,4 @@ public class GalleryDBAccess {
         cursor.close();
         return DataFromDatabase;
     }
-
-    public ArrayList getDataForGallery() {
-        allSampleData = new ArrayList<>();
-
-        MD = new DayMotherModel();
-        childDataModels = new ArrayList<>();
-
-        Cursor cursor = database.rawQuery("SELECT * From picture ORDER BY date DESC", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-
-            Long time = cursor.getLong(0);
-
-            file_name = cursor.getString(0);
-            latit = cursor.getDouble(1);
-            Longit = cursor.getDouble(2);
-            favorite = cursor.getInt(3);
-            hashtag1 = cursor.getString(4);
-            hashtag2 = cursor.getString(5);
-            hashtag3 = cursor.getString(6);
-            filtername = cursor.getString(7);
-
-
-            Log.d("GWGWGWGWGWGW","time " + time);
-//            Date a = new Date(time);
-            String currentTitle = dateFormat.format(new Date(time));
-            String title = dateFormat.format(new Date(prevtime));
-
-
-            Log.d("GWGWGWGWGWGW","file_name " + file_name);
-
-            if (!currentTitle.equals(title)){
-                prevtime = time;
-                if(MD.getHeaderTitle() == null)
-                {
-                    MD.setHeaderTitle(currentTitle);
-                    childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                }
-
-                else{
-                    if(cursor.isLast()){
-                        if(currentTitle.equals(MD.getHeaderTitle())){
-                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                            MD.setAllItemsInSection(childDataModels);
-                            allSampleData.add(MD);
-                        }
-
-                        else{
-                            MD.setAllItemsInSection(childDataModels);
-                            allSampleData.add(MD);
-                            MD = new DayMotherModel();
-                            MD.setHeaderTitle(currentTitle);
-                            childDataModels = new ArrayList<>();
-                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                            MD.setAllItemsInSection(childDataModels);
-                            allSampleData.add(MD);
-                        }
-                    }
-
-                    else{
-                        if(currentTitle.equals(MD.getHeaderTitle())){
-                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                            MD.setAllItemsInSection(childDataModels);
-                            allSampleData.add(MD);
-                        }
-
-                        else{
-                            MD.setAllItemsInSection(childDataModels);
-                            allSampleData.add(MD);
-                            MD = new DayMotherModel();
-                            MD.setHeaderTitle(currentTitle);
-                            childDataModels = new ArrayList<>();
-                            childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                        }
-                    }
-                }
-
-            }else{
-                if(cursor.isLast()){
-                    if(currentTitle.equals(MD.getHeaderTitle())){
-                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                        MD.setAllItemsInSection(childDataModels);
-                        allSampleData.add(MD);
-                    }
-                    else{
-
-                        MD.setAllItemsInSection(childDataModels);
-                        allSampleData.add(MD);
-
-                        MD = new DayMotherModel();
-                        MD.setHeaderTitle(currentTitle);
-                        childDataModels = new ArrayList<>();
-                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                        MD.setAllItemsInSection(childDataModels);
-                        allSampleData.add(MD);
-                    }
-
-                }else{
-                    if(currentTitle.equals(MD.getHeaderTitle())){
-                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                    }
-                    else{
-                        MD.setAllItemsInSection(childDataModels);
-                        allSampleData.add(MD);
-                        MD = new DayMotherModel();
-                        MD.setHeaderTitle(currentTitle);
-                        childDataModels = new ArrayList<>();
-                        childDataModels.add(new GalleryModel(file_name,latit,Longit,hashtag1,hashtag2,hashtag3,favorite,filtername));
-                    }
-                }
-            }
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return allSampleData;
-    }
-
 }

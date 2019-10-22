@@ -2,10 +2,7 @@ package com.example.galleryapp.Util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.galleryapp.Gallery.GalleryModel;
-import com.example.galleryapp.GalleryDay.DayChildModel;
 import com.example.galleryapp.R;
-import com.zomato.photofilters.FilterPack;
-import com.zomato.photofilters.imageprocessors.Filter;
-import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
-import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
-import com.zomato.photofilters.utils.ThumbnailItem;
-import com.zomato.photofilters.utils.ThumbnailsManager;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 
 public class ViewPagerAdapter extends PagerAdapter {
     private ArrayList<GalleryModel> itemModelArrayList;

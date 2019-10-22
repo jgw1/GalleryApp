@@ -4,19 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.galleryapp.CompareFilter.FilterModel;
-import com.example.galleryapp.Gallery.GalleryModel;
-import com.example.galleryapp.GalleryDay.DayMotherModel;
-import com.example.galleryapp.GalleryDay.Picture;
-import com.example.galleryapp.Map.MapRecyclerViewModel;
-import com.zomato.photofilters.imageprocessors.Filter;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class FilterDBAccess {
     private SQLiteDatabase database;

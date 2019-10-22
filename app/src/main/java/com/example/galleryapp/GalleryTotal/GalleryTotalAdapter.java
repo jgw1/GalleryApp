@@ -1,17 +1,13 @@
 package com.example.galleryapp.GalleryTotal;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -19,12 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galleryapp.Gallery.GalleryModel;
 import com.example.galleryapp.Gallery.OneImage;
-import com.example.galleryapp.GalleryDay.DayChildAdapter;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.GalleryAppCode;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 

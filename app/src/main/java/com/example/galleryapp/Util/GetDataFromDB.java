@@ -5,14 +5,12 @@ import android.os.AsyncTask;
 
 import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.Gallery.GalleryModel;
-import com.example.galleryapp.GalleryDay.DayMotherModel;
 
 import java.util.ArrayList;
 
-public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherModel>> {
+public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<GalleryModel>> {
     
     private GalleryDBAccess galleryDBAccess;
-    private ArrayList<DayMotherModel> DataForAlbumDay;
     private ArrayList<GalleryModel> DataForAlbumTotal;
 
     public GetDataFromDB(Activity activity){
@@ -25,21 +23,15 @@ public class GetDataFromDB extends AsyncTask<Void, Void, ArrayList<DayMotherMode
     }
 
     @Override
-    protected ArrayList<DayMotherModel> doInBackground(Void... voids) {
+    protected ArrayList<GalleryModel> doInBackground(Void... voids) {
         galleryDBAccess.open();
-        DataForAlbumDay = galleryDBAccess.getDataForGallery();
-        for(int i =0 ;i<DataForAlbumDay.size() ;i++){
-            if(DataForAlbumDay.get(i).getHeaderTitle() == null){
-                DataForAlbumDay.remove(i);
-            }
-        }
-
+        DataForAlbumTotal = galleryDBAccess.getDataForMap();
         galleryDBAccess.close();
-        return DataForAlbumDay;
+        return DataForAlbumTotal;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<DayMotherModel> Result){
+    protected void onPostExecute(ArrayList<GalleryModel> Result){
         super.onPostExecute(Result);
     }
 

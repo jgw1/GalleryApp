@@ -1,8 +1,10 @@
 package com.example.galleryapp.Gallery;
 
+import com.example.galleryapp.GalleryDay.ItemInterface;
+
 import java.io.Serializable;
 
-public class GalleryModel implements Serializable {
+public class GalleryModel implements Serializable, ItemInterface {
     private int thumbnail, Favorite;
     private String Filename,Hashtag1,Hashtag2,Hashtag3,filtername;
     private Double Longitude,Latitude;
@@ -96,4 +98,8 @@ public class GalleryModel implements Serializable {
         return this.checked;
     }
 
+    @Override
+    public boolean isSection() {
+        return false;
+    }
 }
