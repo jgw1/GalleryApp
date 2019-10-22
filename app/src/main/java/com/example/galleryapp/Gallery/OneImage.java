@@ -217,6 +217,10 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
     private void SelectHowtoEdit(){
 //         선택 Dialog 형성
     String[] listItems = {"이미지 1개로 단순 필터 적용", "이미지 2개로 비교하며 필터 적용"};

@@ -74,8 +74,9 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
     }
 
-    public AlbumMap()
+    public AlbumMap(ArrayList<GalleryModel> galleryModels)
     {
+        this.mapTotalModel  = galleryModels;
         // required
     }
 
@@ -155,11 +156,6 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
         //선택 클러스터를 화면 중앙에 배치
         mMap.setOnCameraChangeListener(mClusterManager);
-
-        galleryDBAccess.open();
-        mapTotalModel = galleryDBAccess.getDataForMap();
-        galleryDBAccess.close();
-
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 14));
         mMap.setOnMarkerClickListener(mClusterManager);

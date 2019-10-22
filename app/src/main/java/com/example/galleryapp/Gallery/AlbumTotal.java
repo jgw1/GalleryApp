@@ -41,9 +41,9 @@ public class AlbumTotal extends Fragment {
 
     private ArrayList<String> AL_HashtagList = new ArrayList<>();
 
-    public AlbumTotal()
+    public AlbumTotal(ArrayList<GalleryModel> galleryModels)
     {
-
+        this.List_GalleryTotal  = galleryModels;
     }
     @Override
     public void onAttach(Context context){
@@ -57,11 +57,11 @@ public class AlbumTotal extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List_GalleryTotal = new ArrayList<>();
-        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
-        galleryDBAccess.open();
-        List_GalleryTotal = galleryDBAccess.getDataForMap();
-        galleryDBAccess.close();
+//        List_GalleryTotal = new ArrayList<>();
+//        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
+//        galleryDBAccess.open();
+//        List_GalleryTotal = galleryDBAccess.getDataForMap();
+//        galleryDBAccess.close();
 
     }
 
@@ -84,6 +84,15 @@ public class AlbumTotal extends Fragment {
         RV_GalleryTotalView.setHasFixedSize(true);
         RV_GalleryTotalView.setAdapter(galleryTotalAdapter);
         RV_GalleryTotalView.setLayoutManager(new GridLayoutManager(getContext(),3));
+
+        Runnable r = () -> {
+            getActivity().runOnUiThread(() -> galleryTotalAdapter.notifyDataSetChanged());
+        };
+
+        new Thread(r).start();
+
+
+
         return layout;
     }
 

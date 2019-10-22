@@ -47,16 +47,13 @@ public class AlbumDay extends Fragment {
     private static DateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
     private ArrayList<ItemInterface> mUsersAndSectionList;
     private ArrayList<GalleryModel> List_GalleryTotal;
+    private ArrayList<Integer> headerlist;
 
     Activity activity;
 
     ArrayList<String> AL_HashtagList = new ArrayList<>();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mUsersAndSectionList = new ArrayList<>();
-    }
+
 
     @Override
     public void onAttach(Context context){
@@ -66,8 +63,9 @@ public class AlbumDay extends Fragment {
         }
 
     }
-    public AlbumDay()
+    public AlbumDay(ArrayList<GalleryModel> galleryModels)
     {
+        this.List_GalleryTotal  = galleryModels;
         // required
     }
 
@@ -75,6 +73,8 @@ public class AlbumDay extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
+
 
     @Nullable
     @Override
@@ -87,11 +87,7 @@ public class AlbumDay extends Fragment {
         RV_HashtagSearchList = layout.findViewById(R.id.SearchListDay);
         IB_Search = layout.findViewById(R.id.SearchDay);
         ET_SearchHashTag =layout.findViewById(R.id.HashtagSearchDay);
-        List_GalleryTotal = new ArrayList<>();
-        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
-        galleryDBAccess.open();
-        List_GalleryTotal = galleryDBAccess.getDataForMap();
-        galleryDBAccess.close();
+
 
         return layout;
     }
@@ -115,8 +111,14 @@ public class AlbumDay extends Fragment {
         RV_HashtagSearchList.setAdapter(hashTagAdapter);
         inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         mUsersAndSectionList = new ArrayList<>();
+        headerlist = new ArrayList<>();
         getSectionalList(List_GalleryTotal);
-        GalleryDayAdapter customAdapter = new GalleryDayAdapter(mUsersAndSectionList,activity);
+        for(int i = 0;i<mUsersAndSectionList.size();i++){
+            if(mUsersAndSectionList.get(i).isSection()){
+                headerlist.add(i);
+            }
+        }
+        GalleryDayAdapter customAdapter = new GalleryDayAdapter(mUsersAndSectionList,activity,headerlist);
         GridLayoutManager manager = new GridLayoutManager(activity, 3);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView
         android:id="@+id/direction_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,5 +19,11 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
             android:gravity="center" />
+
+        <CheckBox
+            android:id="@+id/albumday_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             />
     </androidx.cardview.widget.CardView>
 </LinearLayout>

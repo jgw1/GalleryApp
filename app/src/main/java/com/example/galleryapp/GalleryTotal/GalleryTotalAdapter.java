@@ -82,7 +82,7 @@ public class GalleryTotalAdapter  extends RecyclerView.Adapter<GalleryTotalAdapt
     public void setCheckedToggle(int i) {
         if( isSelectable ) {
             mDataset.get(i).setChecked(!mDataset.get(i).getChecked());
-            notifyDataSetChanged();
+            notifyItemChanged(i);
             
         }
     }
