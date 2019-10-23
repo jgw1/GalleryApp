@@ -125,7 +125,9 @@ public class GalleryDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(GalleryAppCode.GalleryList,ImageList); // mDataset자리에 ArrayList<GalleryModel> 형태의 넣어줘야된다.
                     Log.d("SIZE","IMAGELIST SIZE : " + ImageList.size());
+                    Log.d("SIZE","HeaderPositionList : " + headerPositionList);
                     Log.d("SIZE","GalleryList " + GalleryList.size());
+                    Log.d("SIZE","GalleryList " + GalleryList);
                     Log.d("SIZE","CurrentPosition " + CurrentPosition);
                     intent.putExtras(bundle);
                     GalleryList = new ArrayList<>();
@@ -155,13 +157,15 @@ public class GalleryDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public ArrayList<Integer> GetImageList(ArrayList<Integer> arrayList,int position){
         ArrayList<Integer> NumberList = new ArrayList<>();
-        arrayList.add(mUsersAndSectionList.size());
+        ArrayList<Integer> HeaderList = new ArrayList<>();
+
         arrayList.add(position);
         Ascending ascending = new Ascending();
         Collections.sort(arrayList, ascending);
         int a = arrayList.indexOf(position);
         NumberList.add(arrayList.get(a-1));
         NumberList.add(arrayList.get(a+1));
+        arrayList.remove(a);
         return NumberList;
     }
     class Ascending implements Comparator<Integer> {

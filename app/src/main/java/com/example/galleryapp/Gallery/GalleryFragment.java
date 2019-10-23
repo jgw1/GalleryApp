@@ -69,8 +69,8 @@ public class GalleryFragment extends AppCompatActivity {
         NewAlbumDay.setTag(0);
         NewAlbumTotal.setOnClickListener(movePageListener);
         NewAlbumTotal.setTag(1);
-        NewAlbumMap.setOnClickListener(movePageListener);
-        NewAlbumMap.setTag(2);
+//        NewAlbumMap.setOnClickListener(movePageListener);
+//        NewAlbumMap.setTag(2);
 
     }
 
@@ -85,11 +85,11 @@ public class GalleryFragment extends AppCompatActivity {
             switch(position)
             {
                 case 0:
-                    return new AlbumTotal(List_GalleryTotal);
+                    return new AlbumTotal();
                 case 1:
-                    return new AlbumDay(List_GalleryTotal);
-                case 2:
-                    return new AlbumMap(List_GalleryTotal);
+                    return new AlbumDay();
+//                case 2:
+//                    return new AlbumMap(List_GalleryTotal);
                 default:
                     return null;
             }
@@ -97,7 +97,7 @@ public class GalleryFragment extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
     }
 

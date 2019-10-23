@@ -41,9 +41,9 @@ public class AlbumTotal extends Fragment {
 
     private ArrayList<String> AL_HashtagList = new ArrayList<>();
 
-    public AlbumTotal(ArrayList<GalleryModel> galleryModels)
+    public AlbumTotal()
     {
-        this.List_GalleryTotal  = galleryModels;
+
     }
     @Override
     public void onAttach(Context context){
@@ -80,16 +80,23 @@ public class AlbumTotal extends Fragment {
         ET_SearchHashTag =layout.findViewById(R.id.HashtagSearchTotal);
         IB_DELETE = layout.findViewById(R.id.DeleteTotal);
         IB_DELETE.setOnClickListener(this::onClick);
+
+        List_GalleryTotal = new ArrayList<>();
+        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
+        galleryDBAccess.open();
+        List_GalleryTotal = galleryDBAccess.getDataForMap();
+        galleryDBAccess.close();
+
         galleryTotalAdapter = new GalleryTotalAdapter(getContext(),List_GalleryTotal);
         RV_GalleryTotalView.setHasFixedSize(true);
         RV_GalleryTotalView.setAdapter(galleryTotalAdapter);
         RV_GalleryTotalView.setLayoutManager(new GridLayoutManager(getContext(),3));
 
-        Runnable r = () -> {
-            getActivity().runOnUiThread(() -> galleryTotalAdapter.notifyDataSetChanged());
-        };
-
-        new Thread(r).start();
+//        Runnable r = () -> {
+//            getActivity().runOnUiThread(() -> galleryTotalAdapter.notifyDataSetChanged());
+//        };
+//
+//        new Thread(r).start();
 
 
 
@@ -106,6 +113,7 @@ public class AlbumTotal extends Fragment {
 
 //        inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 //        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
 
         IB_Search.setOnClickListener(this::onClick);
         RV_HashtagSearchList.setLayoutManager(new GridLayoutManager(activity, 3));

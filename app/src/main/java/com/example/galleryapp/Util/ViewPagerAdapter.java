@@ -58,7 +58,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         String FileName = galleryModel.getFilename();
         File outputFile = new File(GalleryAppCode.Path,FileName);
-        Bitmap Image = BitmapUtils.resize(context, Uri.fromFile(outputFile),1000);
+        Bitmap Image = BitmapUtils.resize(context, Uri.fromFile(outputFile),800);
 
 
         imageView.setImageBitmap(Image);

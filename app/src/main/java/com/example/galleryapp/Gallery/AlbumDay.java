@@ -63,9 +63,9 @@ public class AlbumDay extends Fragment {
         }
 
     }
-    public AlbumDay(ArrayList<GalleryModel> galleryModels)
+    public AlbumDay()
     {
-        this.List_GalleryTotal  = galleryModels;
+
         // required
     }
 
@@ -97,13 +97,11 @@ public class AlbumDay extends Fragment {
 
 
 
-//        getDataFromDB = new GetDataFromDB(activity);
-//        try {
-//            allSampleData = getDataFromDB.execute().get();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        allSampleData.get(0).getAllItemsInSection();
+        List_GalleryTotal = new ArrayList<>();
+        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
+        galleryDBAccess.open();
+        List_GalleryTotal = galleryDBAccess.getDataForMap();
+        galleryDBAccess.close();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardviewalbum);
         mRecyclerView.setHasFixedSize(true);
 
@@ -118,6 +116,7 @@ public class AlbumDay extends Fragment {
                 headerlist.add(i);
             }
         }
+        headerlist.add(mUsersAndSectionList.size());
         GalleryDayAdapter customAdapter = new GalleryDayAdapter(mUsersAndSectionList,activity,headerlist);
         GridLayoutManager manager = new GridLayoutManager(activity, 3);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {

@@ -102,6 +102,7 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
     @SuppressLint("ClickableViewAccessibility")
     private void InitComponents(){
         viewPager = findViewById(R.id.view);
+        ViewPagerSetting(viewPager);
         ll_TopGalleryLayout = findViewById(R.id.OneImage_Topnavigation);
         ll_BottomGalleryLayout = findViewById(R.id.OneImage_BottomNavigation);
 
@@ -161,7 +162,9 @@ public class OneImage extends AppCompatActivity implements View.OnClickListener{
         TV_GalleryHashtag.setText(total_hashtag);
 
     }
+    private void ViewPagerSetting(ViewPager viewPager){
 
+    }
 
     @Override
     public void onClick(View view) {
