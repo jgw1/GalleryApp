@@ -74,9 +74,9 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
     }
 
-    public AlbumMap(ArrayList<GalleryModel> galleryModels)
+    public AlbumMap()
     {
-        this.mapTotalModel  = galleryModels;
+
         // required
     }
 
@@ -160,7 +160,11 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 14));
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnMapClickListener(this);
-
+        mapTotalModel = new ArrayList<>();
+        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
+        galleryDBAccess.open();
+        mapTotalModel = galleryDBAccess.getDataForMap();
+        galleryDBAccess.close();
         //결과확인을 위한 테스트용 세팅
         for(int i = 0; i< mapTotalModel.size(); i++){
             double lat = mapTotalModel.get(i).getLatitude();

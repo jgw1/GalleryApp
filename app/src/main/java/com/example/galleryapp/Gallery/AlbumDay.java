@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.galleryapp.DB.GalleryDBAccess;
@@ -144,7 +145,14 @@ public class AlbumDay extends Fragment {
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                customAdapter.notifyDataSetChanged();
 
+                
+            }
+        });
         RV_HashtagSearchList.setLayoutManager(new GridLayoutManager(activity,3));
         ET_SearchHashTag.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 

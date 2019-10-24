@@ -18,6 +18,8 @@ public class GalleryAppCode {
     public static final String GoRight = "RIGHT";
     public static final String OneImage = "ONE";
     public static final String TwoImage = "TWO";
+    public static final String EditOneImage = "이미지 1개로 단순 필터 적용";
+    public static final String EditTwoImage = "이미지 2개로 비교하며 필터 적용";
     // Camera 관련 참고 : https://yeolco.tistory.com/45?category=757621
     // UI THREAD 해결 참고 - https://stackoverflow.com/questions/14678593/the-application-may-be-doing-too-much-work-on-its-main-thread
     // ImageView - URI VS Bitmap - https://stackoverflow.com/questions/41430796/difference-between-uri-and-bitmap-image

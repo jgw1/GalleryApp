@@ -6,25 +6,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galleryapp.DB.FilterDBAccess;
-import com.example.galleryapp.DB.GalleryDBAccess;
 import com.example.galleryapp.R;
 import com.example.galleryapp.Util.BitmapUtils;
 import com.example.galleryapp.Util.GalleryAppCode;
@@ -90,25 +85,16 @@ public class FiltersListFragment extends Fragment implements ThumbnailAdapter.Th
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
         recyclerView.setAdapter(thumbnailAdapter);
         File ImageFile = new File(GalleryAppCode.Path,File_Name);
-        Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getPath());
-        prepareThumbnail(bitmap);
+        prepareThumbnail();
         return view;
     }
 
-    public void prepareThumbnail(final Bitmap bitmap) {
+    public void prepareThumbnail() {
         Runnable r = () -> {
             Bitmap thumbImage;
+            File ImageFile = new File(GalleryAppCode.Path, File_Name);
 
-            if (bitmap == null) {
-                File ImageFile = new File(GalleryAppCode.Path, File_Name);
-
-                thumbImage = BitmapUtils.resize(getActivity(), Uri.fromFile(ImageFile),100);
-            } else {
-                File ImageFile = new File(GalleryAppCode.Path, File_Name);
-                thumbImage = BitmapUtils.resize(getActivity(), Uri.fromFile(ImageFile),100);
-//                thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
-            }
-
+            thumbImage = BitmapUtils.resize(getActivity(), Uri.fromFile(ImageFile),100);
             if (thumbImage == null)
                 return;
 
