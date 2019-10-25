@@ -52,7 +52,6 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         holder.thumbnail.setOnClickListener(view -> {
             currentindex = position;
             listener.onFilterSelected(thumbnailItem.filter);
-            Log.d("GetCurrentIndex","GetCurrentIndex : " + position);
 
 
             notifyDataSetChanged();

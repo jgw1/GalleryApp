@@ -116,10 +116,10 @@ public class HashtagCustomDialog extends Dialog {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camtest";
             File file = new File(String.valueOf(FileModule.latestFileModified(path)));
             String file_name = file.getName();
-//            ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
+            ArrayList<Double> LatLng = Location.GetCurrentLocation(getContext());
             galleryDBAccess.open();
-//            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
-            galleryDBAccess.InsertData(file_name,0.0,0.0,"","","");
+            galleryDBAccess.InsertData(file_name,LatLng.get(0),LatLng.get(1),"","","");
+//            galleryDBAccess.InsertData(file_name,0.0,0.0,"","","");
             galleryDBAccess.close();
             dismiss();
 

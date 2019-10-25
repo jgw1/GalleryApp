@@ -294,7 +294,6 @@ public class OneImageViewPagerAdapter extends PagerAdapter implements View.OnCli
             galleryDBAccess.open();
             galleryDBAccess.FavoriteChange(GalleryModel,1);
             galleryDBAccess.close();
-            Log.d("GWGWGW","Favorite" + GalleryModel.getFavorite());
 
         }else{
             GalleryModel GalleryModel = itemModelArrayList.get(viewPager.getCurrentItem());
@@ -303,12 +302,10 @@ public class OneImageViewPagerAdapter extends PagerAdapter implements View.OnCli
             galleryDBAccess.open();
             galleryDBAccess.FavoriteChange(GalleryModel,0);
             galleryDBAccess.close();
-            Log.d("GWGWGW","Favorite" + GalleryModel.getFavorite());
         }
     };
     public void shareKAKAO() {
         try {
-            Log.d("KAKAO", "KAKAO");
             final KakaoLink kakaoLink = KakaoLink.getKakaoLink(context);
             final KakaoTalkLinkMessageBuilder kakaobuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
 

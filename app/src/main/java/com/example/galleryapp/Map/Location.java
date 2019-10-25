@@ -28,9 +28,7 @@ public class Location {
         android.location.Location location = locationManager.getLastKnownLocation(locationProvider); //현재 위치 정보
         double latitude = location.getLatitude(); //현재 위치 - 위도 값
         double longitude = location.getLongitude(); //현재 위치 - 경도 값
-        Log.d("GWGW","Latitude : " + latitude);
-        Log.d("GWGW","Longitude : " + longitude);
-        LatLng.add(0,latitude);
+         LatLng.add(0,latitude);
         LatLng.add(1,longitude);
         return LatLng;
     }

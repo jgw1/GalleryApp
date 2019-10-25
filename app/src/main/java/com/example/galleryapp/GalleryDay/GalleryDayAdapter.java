@@ -74,9 +74,6 @@ public class GalleryDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     notifyItemRangeChanged(currentposition,headerPositionList.get(currentposition+1));
 
-
-
-                    Log.d("POSITION","HEADERPOSITION : " + position);
                 }
             });
 
@@ -100,7 +97,6 @@ public class GalleryDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             });
             ((ItemViewHolder) holder).itemContent.setOnClickListener(view -> {
                 if(isSelectable){
-                    Log.d("SETBOOLEAN","Boolean : " + galleryModel.getChecked());
                     ((ItemViewHolder) holder).checkBox.setChecked(!galleryModel.getChecked());
                     galleryModel.setChecked(!galleryModel.getChecked());
 
@@ -124,11 +120,6 @@ public class GalleryDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     intent.putExtra(GalleryAppCode.Position,CurrentPosition);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(GalleryAppCode.GalleryList,ImageList); // mDataset자리에 ArrayList<GalleryModel> 형태의 넣어줘야된다.
-                    Log.d("SIZE","IMAGELIST SIZE : " + ImageList.size());
-                    Log.d("SIZE","HeaderPositionList : " + headerPositionList);
-                    Log.d("SIZE","GalleryList " + GalleryList.size());
-                    Log.d("SIZE","GalleryList " + GalleryList);
-                    Log.d("SIZE","CurrentPosition " + CurrentPosition);
                     intent.putExtras(bundle);
                     GalleryList = new ArrayList<>();
                     context.startActivity(intent);

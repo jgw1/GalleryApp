@@ -64,6 +64,7 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private RecyclerView mapRecyclerView;
     private int TotalClusterItem;
     private Activity activity;
+    private Context context;
     ArrayList<GalleryModel> mapClusterItemModel;
     @Override
     public void onAttach(Context context){
@@ -74,9 +75,11 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
     }
 
-    public AlbumMap()
-    {
+    public AlbumMap(Context context,ArrayList<GalleryModel> galleryModelArrayList)
 
+    {
+        this.mapTotalModel = galleryModelArrayList;
+        this.context = context;
         // required
     }
 
@@ -160,18 +163,13 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 14));
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnMapClickListener(this);
-        mapTotalModel = new ArrayList<>();
-        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
-        galleryDBAccess.open();
-        mapTotalModel = galleryDBAccess.getDataForMap();
-        galleryDBAccess.close();
+
         //결과확인을 위한 테스트용 세팅
         for(int i = 0; i< mapTotalModel.size(); i++){
             double lat = mapTotalModel.get(i).getLatitude();
             double lng = mapTotalModel.get(i).getLongitude();
             mClusterManager.addItem(new MapMarkerItem((new LatLng(lat, lng))));
         }
-        Log.d("GQGQGQ","AAFA" + mClusterManager.getMarkerCollection());
         //전체 다 하나의 마커를 하나의 클러스터로 묶을 경우 사용
         mClusterManager.cluster();
 
@@ -278,7 +276,6 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             //해당 클러스터에 포함된 마커 개수들 표현
             textview.setText(String.valueOf(cluster.getSize()));
             for(ClusterItem clusterItem : cluster.getItems()){
-                Log.d("HAHAHA","GETITEMS"+clusterItem.getPosition());
             }
 
 //            textview.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
@@ -300,7 +297,6 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         protected void  onBeforeClusterItemRendered(MapMarkerItem markerItem, MarkerOptions markerOptions){
             final IconGenerator mClusterIconGenerator;
             mClusterIconGenerator = new IconGenerator(activity);
-            Log.d("MapMarkerItem","MapMarkerItem : " + markerItem.getLocation());
             //클러스터 디자인 설정
             LayoutInflater myInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View activityview = myInflater.inflate(R.layout.clustermarker,null,false);
@@ -315,7 +311,6 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
                 LatLng LatLng = new LatLng(Latitude,Longitude);
                 if(LatLng.equals(markerItem.getLocation())){
-                    Log.d("HAHAHAQRQ","Success");
                     File currentfile = new File(GalleryAppCode.Path+galleryModel.getFilename());
                     Bitmap bitmap  = BitmapUtils.resize(getActivity(), Uri.fromFile(currentfile),100);
                     imageView.setImageBitmap(bitmap);
@@ -333,8 +328,6 @@ public class AlbumMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 //            textview.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_circle));
             //해당 클러스터에 포함된 마커 개수들 표현 디자인 설정
             textview.setText("");
-            Log.d("HAHAHA","TotalClusterItem" + TotalClusterItem);
-            Log.d("HAHAHA","markerItem" + markerItem.getLocation());
             textview.setTextSize(15f);
             textview.setGravity(View.TEXT_ALIGNMENT_CENTER);
 

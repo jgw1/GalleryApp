@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,21 +39,26 @@ public class AlbumTotal extends Fragment {
     private GalleryTotalAdapter galleryTotalAdapter;
     private boolean search,delete = false;
     private InputMethodManager inputMethodManager;
-
+    private Context context;
+    private AlbumTotalFragmentInteractionListener mListener;
     private ArrayList<String> AL_HashtagList = new ArrayList<>();
 
-    public AlbumTotal()
+    public AlbumTotal(Context context,ArrayList<GalleryModel> galleryModelArrayList)
     {
-
+        this.List_GalleryTotal = galleryModelArrayList;
+        this.context = context;
     }
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
-        if (context  instanceof Activity){
-            activity = (Activity) context;
+        if (context instanceof AlbumTotalFragmentInteractionListener) {
+            mListener = (AlbumTotalFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
-
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,11 +87,7 @@ public class AlbumTotal extends Fragment {
         IB_DELETE = layout.findViewById(R.id.DeleteTotal);
         IB_DELETE.setOnClickListener(this::onClick);
 
-        List_GalleryTotal = new ArrayList<>();
-        this.galleryDBAccess = GalleryDBAccess.getInstance(activity);
-        galleryDBAccess.open();
-        List_GalleryTotal = galleryDBAccess.getDataForMap();
-        galleryDBAccess.close();
+
 
         galleryTotalAdapter = new GalleryTotalAdapter(getContext(),List_GalleryTotal);
         RV_GalleryTotalView.setHasFixedSize(true);
@@ -177,7 +179,7 @@ public class AlbumTotal extends Fragment {
                         {
                             File file = new File(GalleryAppCode.Path,galleryModel.getFilename());
                             file.delete();
-
+                            this.galleryDBAccess = GalleryDBAccess.getInstance(context);
                             galleryDBAccess.open();
                             galleryDBAccess.delete(galleryModel);
                             galleryDBAccess.close();
@@ -187,7 +189,10 @@ public class AlbumTotal extends Fragment {
                             size=List_GalleryTotal.size();
                         }
                     }
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.detach(this).attach(this).commit();
 
+                    mListener.onAlbumtotalFragmentInteraction(List_GalleryTotal);
                     galleryTotalAdapter.setSelectable(false);
                 }
                 break;
@@ -204,6 +209,19 @@ public class AlbumTotal extends Fragment {
                 }
                 break;
         }
+    }
+    public void setData(ArrayList<GalleryModel> galleryModel){
+        List_GalleryTotal =galleryModel;
+        galleryTotalAdapter.notifyDataSetChanged();
+
+        //Fragment화면 갱신
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.detach(this).attach(this).commit();
+    }
+
+
+    public interface AlbumTotalFragmentInteractionListener {
+        void onAlbumtotalFragmentInteraction(ArrayList<GalleryModel> arrayList);
     }
 
 }

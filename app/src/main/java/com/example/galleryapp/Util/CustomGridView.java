@@ -94,7 +94,6 @@ public class CustomGridView extends View {
         paint.setStrokeWidth(5);
 
         framingRect = getFramingRect(canvas);
-        Log.d("framingRect","FramingRect : " + framingRect);
         canvas.drawRect(framingRect, paint);
     }
 
